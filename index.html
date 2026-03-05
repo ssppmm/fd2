@@ -152,10 +152,12 @@
     Dos(document.getElementById('canvas'), {
       wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
     }).ready(function(fs, main) {
-      main(["-c", "FD2.EXE"]);
-      clearInterval(interval);
-      bar.style.width = '100%';
-      document.getElementById('loading').classList.remove('show');
+      fs.extract("./bundle.jsdos").then(function() {
+        clearInterval(interval);
+        bar.style.width = '100%';
+        document.getElementById('loading').classList.remove('show');
+        main(["-c", "FD2.EXE"]);
+      });
     });
   }
 
