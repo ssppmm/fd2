@@ -1,1 +1,2 @@
+*.jsdos filter=lfs diff=lfs merge=lfs -text
 *.jsdos !text !filter !merge !diff
