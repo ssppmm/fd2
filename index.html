@@ -167,18 +167,32 @@
     }, 200);
 
     Dos(document.getElementById('dos'), {
-      url: BUNDLE_URL,
-      onEvent: (event) => {
-        if (event === 'emu-ready') {
-          clearInterval(interval);
-          bar.style.width = '100%';
-          setTimeout(() => {
-            document.getElementById('loading').classList.remove('show');
-          }, 300);
-        }
-      }
-    });
-  }
+          url: BUNDLE_URL,
+          theme: "dark",
+          onEvent: (event) => {
+            if (event === 'emu-ready') {
+              clearInterval(interval);
+              bar.style.width = '100%';
+              setTimeout(() => {
+                document.getElementById('loading').classList.remove('show');
+              }, 300);
+            }
+          },
+          dosboxConf: `
+    [sdl]
+    autolock=false
+    [dosbox]
+    machine=svga_s3
+    memsize=16
+    [cpu]
+    core=auto
+    cycles=auto
+    [autoexec]
+    mount c .
+    c:
+    FD2.EXE
+    `
+        });
 
   function toggleFullscreen() {
     const wrapper = document.querySelector('.player-wrapper');
