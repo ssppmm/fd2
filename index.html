@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flame Dragon 2</title>
-  <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
-  <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
+  <link rel="stylesheet" href="https://v7.js-dos.com/7.xx/js-dos.css" />
+  <script src="https://v7.js-dos.com/7.xx/js-dos.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -153,6 +153,7 @@
 
     Dos(document.getElementById('dos'), {
       url: BUNDLE_URL,
+      backend: "dosbox",
       onEvent: function(event) {
         if (event === 'emu-ready') {
           clearInterval(interval);
