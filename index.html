@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flame Dragon 2</title>
+  <title>炎龍騎士團 2</title>
   <link rel="stylesheet" href="https://js-dos.com/6.22/current/js-dos.css" />
   <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -38,7 +38,7 @@
     .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
     .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-    #dos { width: 100%; aspect-ratio: 4/3; max-height: 75vh; }
+    #dos-canvas { width: 100%; aspect-ratio: 4/3; max-height: 75vh; }
     #splash {
       position: absolute; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center; background: #000; cursor: pointer; z-index: 10; transition: opacity .4s;
@@ -75,7 +75,7 @@
 <header>
   <div class="logo">🐉 FLAME DRAGON 2</div>
   <div class="header-meta">
-    powered by <a href="https://js-dos.com" target="_blank">js-dos v8</a><br>
+    powered by <a href="https://js-dos.com" target="_blank">js-dos 6.22</a><br>
     <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a>
   </div>
 </header>
@@ -106,7 +106,7 @@
         <div class="progress-bar-inner" id="progress-bar"></div>
       </div>
     </div>
-    <div id="dos"></div>
+    <div id="dos-canvas"></div>
   </div>
 
   <div class="controls-section">
@@ -128,12 +128,11 @@
 </main>
 
 <footer>
-  <div>Built with <a href="https://js-dos.com" target="_blank">js-dos v8</a> · DOSBox WebAssembly</div>
+  <div>Built with <a href="https://js-dos.com" target="_blank">js-dos 6.22</a> · DOSBox WebAssembly</div>
   <div><a href="https://github.com/ssppmm/fd2" target="_blank">GitHub</a></div>
 </footer>
 
 <script>
-  var BUNDLE_URL = "./bundle.jsdos";
   var gameStarted = false;
 
   function startGame() {
@@ -151,16 +150,14 @@
       if (prog >= 95) clearInterval(interval);
     }, 200);
 
-    Dos(document.getElementById('dos'), {
+    Dos(document.getElementById('dos-canvas'), {
       wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
     }).ready(function(fs, main) {
-      fs.extract(BUNDLE_URL).then(function() {
-        main(["-c", "FD2.EXE"]);
+      fs.extract("./bundle.jsdos").then(function() {
         clearInterval(interval);
         bar.style.width = '100%';
-        setTimeout(function() {
-          document.getElementById('loading').classList.remove('show');
-        }, 300);
+        document.getElementById('loading').classList.remove('show');
+        main(["-c", "mount c .", "-c", "c:", "-c", "FD2.EXE"]);
       });
     });
   }
