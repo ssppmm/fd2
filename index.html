@@ -18,11 +18,8 @@
       --font-body: 'Noto Sans KR', sans-serif;
     }
     html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
-    header { padding: 12px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
-    .logo { font-family: var(--font-pixel); font-size: 10px; color: var(--accent); }
-    .header-links { margin-left: auto; font-size: 11px; color: var(--muted); }
-    .header-links a { color: var(--accent); text-decoration: none; margin-left: 12px; }
-    .game-status { font-family: var(--font-pixel); font-size: 7px; padding: 4px 8px; border-radius: 2px; }
+        .logo { font-family: var(--font-pixel); font-size: 10px; color: var(--accent); }
+        .game-status { font-family: var(--font-pixel); font-size: 7px; padding: 4px 8px; border-radius: 2px; }
     .status-off  { background: var(--red);   color: #fff; }
     .status-load { background: var(--blue);  color: #000; }
     .status-on   { background: var(--green); color: #000; }
@@ -161,14 +158,7 @@
 </head>
 <body>
 
-<header>
-  <div class="logo">🐉 FD2</div>
-  <span class="game-status status-off" id="gs">게임 꺼짐</span>
-  <div class="header-links">
-    <a href="https://js-dos.com" target="_blank">js-dos</a>
-    <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a>
-  </div>
-</header>
+
 
 <main>
   <!-- 게임 화면 -->
@@ -230,6 +220,10 @@
 
   <!-- 에디터 -->
   <div class="editor-col">
+    <div style="font-size:9px;color:var(--muted);text-align:right;padding:4px 6px 2px;letter-spacing:0.5px;">
+      🐉 FD2 &nbsp;|&nbsp; <span style="color:var(--yellow);font-weight:bold;">v2026.03.10.2</span>
+      &nbsp;<span id="gs" style="color:var(--muted);"></span>
+    </div>
     <div class="tabs">
       <div class="tab active" data-tab="gold">💰 골드</div>
       <div class="tab" data-tab="items">🎒 아이템</div>
@@ -251,7 +245,7 @@
         </div>
 
         <div class="lbl" style="margin-bottom:6px;">현재 골드 (게임 화면 확인)</div>
-        <input type="number" id="gold-cur-in" min="0" max="9999999" value="0"
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="gold-cur-in" placeholder="0"
           style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px;">
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:11px;" onclick="goldScan()">🔍 스캔 + MAX 적용</button>
         <div style="font-size:9px;color:var(--muted);margin-top:8px;text-align:center;">✦ 상점 재진입 시 화면에 반영됩니다</div>
