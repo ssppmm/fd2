@@ -355,8 +355,8 @@
 <script>
 // ─── 전역 상태 ───
 var fs0=null, gameStarted=false;
-var goldAddrs=[], charAddrs=[], scanResults=[], selectedAddr=null;
-var curStatType='HP';
+var goldAddrs=[];
+
 var DB='fd2-saves', SAV='FD2.SAV';
 var FILES=["FD2.EXE","FD2.DPP","FD2.SAV","FD2.TMP","ANI.DAT","BG.DAT","DATO.DAT","FDFIELD.DAT","FDICON.B24","FDMUS.DAT","FDOTHER.DAT","FDSHAP.DAT","FDTXT.DAT","FIGANI.DAT","TITLE.DAT","TAI.DAT","DIG.INI","MDI.INI","AILDRVR.LST","DPP.COM","ADLIB.MDI","ADLIBG.MDI","NULL.MDI","TANDY.MDI","PCSPKR.MDI","MPU401.MDI","MT32MPU.MDI","OPL3.MDI","PAS.MDI","PASPLUS.MDI","SBLASTER.MDI","SBPRO1.MDI","SBPRO2.MDI","SBAWE32.MDI","SNDSCAPE.MDI","ULTRA.MDI","RAP10.DIG","PROAUDIO.DIG","ADRV688.DIG","JAMMER.DIG","SBLASTER.DIG","SBPRO.DIG","SNDSCAPE.DIG","ULTRA.DIG","SB16.DIG","SAMPLE.AD","SAMPLE.BNK","SAMPLE.OPL"];
 
@@ -404,8 +404,8 @@ function scanMem(v, b, startAddr, endAddr){
 
 // ─── UI 헬퍼 ───
 function setSl(sid,lid,v){ document.getElementById(sid).value=v;document.getElementById(lid).textContent=v; }
-function log(m,t){ var a=document.getElementById('log-area'),l=document.createElement('div');l.className='ll '+(t||'info');var ts=new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit',second:'2-digit'});l.textContent='['+ts+'] '+m;a.appendChild(l);a.scrollTop=a.scrollHeight; }
-function clearLog(){ document.getElementById('log-area').innerHTML='';log('로그 초기화','info'); }
+function log(m,t){ /* 로그 탭 제거됨 */ }
+function clearLog(){ /* 로그 탭 제거됨 */ }
 function toast(m,t){ var el=document.getElementById('toast');el.textContent=m;el.className='show '+(t||'nfo');clearTimeout(el._t);el._t=setTimeout(function(){el.className='';},2500); }
 function updateStatus(){
   var el=document.getElementById('gs'),gd=document.getElementById('gold-status');
@@ -427,11 +427,6 @@ document.querySelectorAll('.tab').forEach(function(t){
 
 // ─── 골드 헬퍼 ───
 function getGoldCur(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('gold-cur-in').value)||0)); }
-function getGoldNew(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('gold-new-in').value)||0)); }
-function setGoldCur(v){ document.getElementById('gold-cur-in').value=v; }
-function setGoldNew(v){ document.getElementById('gold-new-in').value=v; }
-function nudgeGoldCur(d){ setGoldCur(Math.max(0,Math.min(9999999,getGoldCur()+d))); }
-function nudgeGoldNew(d){ setGoldNew(Math.max(0,Math.min(9999999,getGoldNew()+d))); }
 
 // ─── 골드 ───
 function goldScan(){
@@ -457,172 +452,6 @@ function applyGold(){
   toast('💰 골드 MAX!','ok');
   updateGoldDisp();
 }
-
-// ─── 캐릭터 스탯 직접 주소 방식 ───
-// 베이스: 0x18C6C0 (DOS linear address = JS 힙 인덱스, 스테이지 종료 후 기준)
-// 스테이지 중 전투 시엔 주소가 달라짐 → findCharBase()로 실제 주소 탐색
-var STAT_BASE = 0x18C6C0;  // 스테이지 종료 후 기본값
-var STAT_STEP = 0x50;
-var STAT_OFF = {
-  lv:   0x11,  // 8bit
-  chp:  0x30,  // 16bit 현HP
-  mhp:  0x32,  // 16bit MAX HP
-  cmp:  0x34,  // 16bit 현MP
-  mmp:  0x36,  // 16bit MAX MP
-  ap:   0x38,  // 16bit 최종AP
-  dp:   0x3A,  // 16bit 최종DP
-  hit:  0x3C,  // 16bit HIT
-  ev:   0x3E,  // 16bit EV
-  dx:   0x4A,  // 16bit DX
-};
-var statFoundBase = null; // 런타임에 찾은 실제 베이스
-
-function statBase(charIdx){
-  var b = statFoundBase || STAT_BASE;
-  return b + charIdx * STAT_STEP;
-}
-
-// 현재 메모리에서 사울(캐릭터0) 데이터 블록 찾기
-// 행동상태 오프셋+6 = 적아군코드(0=아군사울=?), 오프셋+2=캐릭터순서(0)
-// 간단하게: 사울의 현재 HP를 사용자가 입력하면 그 값으로 찾음
-function findCharBaseByHP(knownHP){
-  var h = heap(); if(!h) return null;
-  var lo = knownHP & 0xFF, hi = (knownHP >> 8) & 0xFF;
-  var candidates = [];
-  // 0x10000~0x400000 범위에서 16bit 값으로 스캔
-  for(var i=0x10000; i<0x400000-2; i++){
-    if(h[i]===lo && h[i+1]===hi){
-      // +0x30 위치에서 발견 → base = i - 0x30
-      var base = i - STAT_OFF.chp;
-      if(base >= 0){
-        // 검증: lv(+0x11)이 1~80 범위인지
-        var lv = h[base + STAT_OFF.lv];
-        if(lv >= 1 && lv <= 80){
-          candidates.push(base);
-        }
-      }
-    }
-  }
-  return candidates;
-}
-
-function statReadAll(){
-  var h = heap();
-  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var idx = parseInt(document.getElementById('stat-char-sel').value);
-  var base = statBase(idx);
-  var lv  = mRead(base + STAT_OFF.lv,  8);
-  var chp = mRead(base + STAT_OFF.chp, 16);
-  var mhp = mRead(base + STAT_OFF.mhp, 16);
-  var cmp = mRead(base + STAT_OFF.cmp, 16);
-  var mmp = mRead(base + STAT_OFF.mmp, 16);
-  var ap  = mRead(base + STAT_OFF.ap,  16);
-  var dp  = mRead(base + STAT_OFF.dp,  16);
-  var hit = mRead(base + STAT_OFF.hit, 16);
-  document.getElementById('sv-lv').value  = lv  || 0;
-  document.getElementById('sv-chp').value = chp || 0;
-  document.getElementById('sv-mhp').value = mhp || 0;
-  document.getElementById('sv-cmp').value = cmp || 0;
-  document.getElementById('sv-mmp').value = mmp || 0;
-  document.getElementById('sv-ap').value  = ap  || 0;
-  document.getElementById('sv-dp').value  = dp  || 0;
-  document.getElementById('sv-hit').value = hit || 0;
-  var name = document.getElementById('stat-char-sel').options[idx].text;
-  var baseStr = '0x'+(statFoundBase||STAT_BASE).toString(16);
-  document.getElementById('stat-result').textContent =
-    '📖 '+name+'  base='+baseStr+'  char@0x'+base.toString(16);
-  log('스탯 읽기: '+name+' base=0x'+base.toString(16)+'  LV='+lv+' HP='+chp+'/'+mhp,'ok');
-  toast('📖 읽기 완료','ok');
-}
-
-// 베이스 주소 수동 교정 (사울 HP로 탐색)
-function statFindBase(){
-  var h = heap(); if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var knownHP = parseInt(document.getElementById('stat-base-hp').value) || 0;
-  if(knownHP === 0){ toast('⚠ 사울의 현재 HP를 베이스 탐색 칸에 입력하세요','err'); return; }
-  log('베이스 탐색: 사울 HP='+knownHP+' 으로 검색 중...','info');
-  var cands = findCharBaseByHP(knownHP);
-  if(cands.length === 0){
-    toast('⚠ 베이스 못 찾음 - HP값 확인','err');
-    log('베이스 탐색 실패 - HP='+knownHP,'err');
-    return;
-  }
-  // 첫 번째 후보 사용
-  statFoundBase = cands[0];
-  document.getElementById('stat-result').textContent =
-    '✅ 베이스 발견: 0x'+statFoundBase.toString(16)+(cands.length>1?' ('+cands.length+'개 후보 중 첫번째)':'');
-  log('베이스 발견: 0x'+statFoundBase.toString(16)+' (후보 '+cands.length+'개)','ok');
-  toast('✅ 베이스 0x'+statFoundBase.toString(16),'ok');
-  statReadAll();
-}
-
-function statSetAllMax(){
-  document.getElementById('sv-chp').value = 9999;
-  document.getElementById('sv-mhp').value = 9999;
-  document.getElementById('sv-cmp').value = 999;
-  document.getElementById('sv-mmp').value = 999;
-  document.getElementById('sv-lv').value  = 40;
-  document.getElementById('sv-ap').value  = 9999;
-  document.getElementById('sv-dp').value  = 9999;
-  document.getElementById('sv-hit').value = 999;
-}
-
-function statWriteAll(){
-  var h = heap();
-  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var idx = parseInt(document.getElementById('stat-char-sel').value);
-  var base = statBase(idx);
-  var lv  = Math.max(1,  Math.min(80,   parseInt(document.getElementById('sv-lv').value)  ||1));
-  var chp = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-chp').value) ||0));
-  var mhp = Math.max(1,  Math.min(9999, parseInt(document.getElementById('sv-mhp').value) ||1));
-  var cmp = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-cmp').value)  ||0));
-  var mmp = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-mmp').value)  ||0));
-  var ap  = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-ap').value)  ||0));
-  var dp  = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-dp').value)  ||0));
-  var hit = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-hit').value)  ||0));
-  mWrite(base + STAT_OFF.lv,  lv,  8);
-  mWrite(base + STAT_OFF.chp, chp, 16);
-  mWrite(base + STAT_OFF.mhp, mhp, 16);
-  mWrite(base + STAT_OFF.cmp, cmp, 16);
-  mWrite(base + STAT_OFF.mmp, mmp, 16);
-  mWrite(base + STAT_OFF.ap,  ap,  16);
-  mWrite(base + STAT_OFF.dp,  dp,  16);
-  mWrite(base + STAT_OFF.hit, hit, 16);
-  var name = document.getElementById('stat-char-sel').options[idx].text;
-  document.getElementById('stat-result').textContent = '✅ '+name+' 적용 완료! (0x'+base.toString(16)+')';
-  log('스탯 쓰기: '+name+' @0x'+base.toString(16)+' LV='+lv+' HP='+chp+'/'+mhp+' MP='+cmp+'/'+mmp+' AP='+ap+' DP='+dp,'ok');
-  toast('✅ '+name+' 스탯 적용!','ok');
-}
-
-// ─── 스캔/에디트 헬퍼 ───
-function getScanVal(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('scan-val').value)||0)); }
-function nudgeScanVal(d){ var el=document.getElementById('scan-val'); el.value=Math.max(0,Math.min(9999999,(parseInt(el.value)||0)+d)); }
-function getEditVal(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('edit-val').value)||0)); }
-function setEditVal(v){ document.getElementById('edit-val').value=v; }
-function nudgeEditVal(d){ setEditVal(Math.max(0,Math.min(9999999,getEditVal()+d))); }
-
-// ─── 범용 스캔 ───
-function doScan(){
-  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var v=getScanVal(),b=parseInt(document.getElementById('scan-bits').value);
-  if(isNaN(v)){toast('⚠ 값을 입력하세요','err');return;}
-  var f=scanMem(v,b);scanResults=f;
-  document.getElementById('scan-cnt').textContent=f.length+'개';
-  log('스캔: '+v+' ('+b+'bit) → '+f.length+'개','ok');
-  renderScanList(b);
-}
-function renderScanList(b){
-  var c=document.getElementById('scan-list'),h=heap();
-  if(!scanResults.length){c.innerHTML='<div class="scan-empty">검색 결과 없음</div>';return;}
-  var html='';
-  for(var i=0;i<Math.min(scanResults.length,30);i++){var a=scanResults[i],v=h?mRead(a,b||32):'?';html+='<div class="scan-item'+(a===selectedAddr?' sel':'')+'" onclick="pickAddr('+a+','+b+')">'+'<span class="scan-addr">0x'+a.toString(16)+'</span><span class="scan-v">'+v+'</span></div>';}
-  if(scanResults.length>30)html+='<div class="scan-empty">... 외 '+(scanResults.length-30)+'개</div>';
-  c.innerHTML=html;
-}
-function pickAddr(a,b){selectedAddr=a;var v=mRead(a,b||32);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setEditVal(v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');renderScanList(b);}
-function clearScan(){scanResults=[];selectedAddr=null;document.getElementById('scan-list').innerHTML='<div class="scan-empty">스캔 결과가 여기 표시됩니다</div>';document.getElementById('scan-cnt').textContent='0개';log('스캔 초기화','info');}
-function doWrite(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,v=getEditVal(),b=parseInt(document.getElementById('edit-bits').value);if(!aStr){toast('⚠ 주소를 입력하세요','err');return;}var a=pAddr(aStr);if(isNaN(a)||a<0){toast('⚠ 잘못된 주소','err');return;}if(mWrite(a,v,b)){log('✓ 0x'+a.toString(16)+' ← '+v+' ('+b+'bit)','ok');toast('✓ 값 변경 완료!','ok');}}
-function doRead(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,b=parseInt(document.getElementById('edit-bits').value);if(!aStr)return;var a=pAddr(aStr),v=mRead(a,b);setEditVal(v||0);log('읽기: 0x'+a.toString(16)+' = '+v,'info');}
 
 // ─── IndexedDB ───
 function openDB(){return new Promise(function(r,j){var q=indexedDB.open(DB,1);q.onupgradeneeded=function(e){e.target.result.createObjectStore('saves');};q.onsuccess=function(e){r(e.target.result);};q.onerror=j;});}
