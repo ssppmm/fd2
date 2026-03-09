@@ -164,6 +164,10 @@
 <header>
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
+  <div class="header-links">
+    <a href="https://js-dos.com" target="_blank">js-dos</a>
+    <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a>
+  </div>
 </header>
 
 <main>
@@ -677,28 +681,17 @@ function itemScan(){
   var curObj  = ITEMS.find(function(x){ return x.code === curCode; });
   var curName = curObj ? curObj.name : '0x'+curCode.toString(16).toUpperCase();
 
-  // 골드 주소 기준으로 탐색 범위 설정
-  // 골드 주소(~0x20b94d3) 근처 ±0x800000 범위 우선 탐색
   var RANGE = 0x800000;
   var goldRef = goldAddrs.length > 0 ? goldAddrs[0] : 0x20b94d3;
   var s = Math.max(SCAN_START, goldRef - RANGE);
   var e = Math.min(SCAN_END,   goldRef + RANGE);
 
-  var usedGold = goldAddrs.length > 0;
-  log('1차 스캔: [0x'+curCode.toString(16).toUpperCase()+'] '+curName
-    + (usedGold ? '  📍골드 근처 0x'+s.toString(16)+'~0x'+e.toString(16) : '  (전체 범위)'),'info');
-
-  itemAddrs = scanMem(curCode, 8, s, e);
-
-  // 근처에서 못 찾으면 전체 범위로 확장
-  if(itemAddrs.length === 0 && usedGold){
-    log('근처에서 못 찾음 → 전체 범위로 확장','info');
-    itemAddrs = scanMem(curCode, 8);
+  itemAddrs = scanMem(curCode, 16, s, e);  // 16bit 스캔
+  if(itemAddrs.length === 0 && goldAddrs.length > 0){
+    itemAddrs = scanMem(curCode, 16);       // 전체 범위로 확장
   }
 
-  log('1차 결과: '+itemAddrs.length+'개 후보','ok');
   itemUpdateUI();
-
   if(itemAddrs.length === 0){
     toast('⚠ 결과 없음 — 아이템 다시 확인','err');
   } else {
@@ -706,25 +699,21 @@ function itemScan(){
   }
 }
 
-// ② 재스캔: 기존 후보 중 현재 아이템 코드와 일치하는 것만 남김 (차등 스캔)
+// ② 재스캔: 기존 후보 중 현재 아이템 코드와 일치하는 것만 남김
 function itemRescan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
   if(itemAddrs.length === 0){ toast('⚠ 먼저 1차 스캔을 하세요','err'); return; }
 
   var curCode = parseInt(document.getElementById('item-cur-sel').value);
-  var curObj  = ITEMS.find(function(x){ return x.code === curCode; });
-  var curName = curObj ? curObj.name : '0x'+curCode.toString(16).toUpperCase();
-
   var before = itemAddrs.length;
 
-  // 기존 후보 중 현재 값이 curCode인 것만 남김
+  // 16bit로 읽어서 비교
   itemAddrs = itemAddrs.filter(function(a){
-    return h[a] === curCode;
+    return (h[a] | (h[a+1] << 8)) === curCode;
   });
 
   var after = itemAddrs.length;
-  log('재스캔 [0x'+curCode.toString(16).toUpperCase()+'] '+curName+': '+before+'개 → '+after+'개','ok');
   itemUpdateUI();
 
   if(after === 0){
@@ -736,13 +725,11 @@ function itemRescan(){
   }
 }
 
-// ③ 적용: 후보 주소 전체에 새 아이템 코드 쓰기
+// ③ 적용
 function applyItem(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  if(itemAddrs.length === 0){
-    toast('⚠ 먼저 스캔하세요','err'); return;
-  }
+  if(itemAddrs.length === 0){ toast('⚠ 먼저 스캔하세요','err'); return; }
   if(itemAddrs.length > 100){
     toast('⚠ 후보가 너무 많음('+itemAddrs.length+'개) — 재스캔으로 더 좁히세요','err');
     return;
@@ -754,17 +741,18 @@ function applyItem(){
 
   var cnt = 0;
   itemAddrs.forEach(function(a){
-    if(mWrite(a, newCode, 8)) cnt++;
+    if(mWrite(a, newCode, 16)) cnt++;  // 16bit로 쓰기
   });
 
-  log('✓ 아이템 → [0x'+newCode.toString(16).toUpperCase()+'] '+newName+' ('+cnt+'개 주소 변경)','ok');
-  toast('🎒 '+newName+' 적용! ('+cnt+'개)','ok');
+  // 결과 표시
+  document.getElementById('item-addr-list').textContent =
+    '적용: ' + itemAddrs.map(function(a){
+      return '0x'+a.toString(16)+'→'+( h[a]|(h[a+1]<<8) );
+    }).join(', ');
 
-  // 적용 후 현재 아이템을 방금 쓴 값으로 업데이트 (연속 재스캔 준비)
+  toast('🎒 '+newName+' 적용! ('+cnt+'개)','ok');
   document.getElementById('item-cur-sel').value = newCode;
-  // 후보 목록 초기화 (다음 재스캔 필요)
   itemAddrs = [];
-  itemReset();
 }
 
 // ─── 버튼 연결 ───
