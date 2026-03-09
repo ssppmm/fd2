@@ -97,6 +97,9 @@
     .stat-slider { flex: 1; height: 4px; border-radius: 2px; accent-color: var(--accent); cursor: pointer; }
     .stat-apply { font-family: var(--font-pixel); font-size: 6px; padding: 5px 8px; background: var(--accent); border: none; color: #000; border-radius: 2px; cursor: pointer; white-space: nowrap; }
     .stat-apply:hover { opacity: .8; }
+    .nudge-btn { font-family: var(--font-pixel); font-size: 7px; padding: 5px 6px; background: var(--surface); border: 1px solid var(--border2); color: var(--muted); border-radius: 3px; cursor: pointer; white-space: nowrap; min-width: 36px; text-align: center; }
+    .nudge-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .nudge-btn:active { background: var(--accent); color: #000; }
     .stat-presets { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
     .preset-btn { font-family: var(--font-pixel); font-size: 6px; padding: 4px 7px; background: var(--bg); border: 1px solid var(--border2); color: var(--muted); border-radius: 2px; cursor: pointer; }
     .preset-btn:hover { border-color: var(--yellow); color: var(--yellow); }
@@ -223,51 +226,67 @@
           <div class="lbl">현재 골드 (메모리)</div>
           <div class="val" id="gold-display">---</div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
           📌 사용법<br>
-          ① 게임 시작 → 상점 입장 → 골드 확인<br>
-          ② 현재 골드값 슬라이더 맞추기<br>
-          ③ <b style="color:var(--accent)">스캔+적용</b> 클릭 → 바꿀 값 설정 → <b style="color:var(--green)">적용</b>
+          ① 게임에서 현재 골드 확인 → 아래 입력창에 입력<br>
+          ② <b style="color:var(--accent)">스캔+적용</b> → 바꿀 값 입력 → <b style="color:var(--green)">적용</b>
         </div>
+
+        <!-- ① 현재 골드 입력 -->
         <div class="stat-block">
           <div class="stat-hd">
-            <span class="stat-name">① 현재 골드값</span>
-            <span class="stat-val-display" id="gold-cur-lbl">0</span>
+            <span class="stat-name">① 현재 골드값 (게임 화면 확인)</span>
           </div>
-          <div class="stat-row">
-            <input type="range" class="stat-slider" id="gold-cur-sl" min="0" max="99999" value="0"
-              oninput="document.getElementById('gold-cur-lbl').textContent=this.value">
-            <button class="stat-apply" onclick="goldScan()">스캔+적용</button>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeGoldCur(-1000)">−1000</button>
+            <button class="nudge-btn" onclick="nudgeGoldCur(-100)">−100</button>
+            <button class="nudge-btn" onclick="nudgeGoldCur(-1)">−1</button>
+            <input type="number" id="gold-cur-in" min="0" max="99999" value="0"
+              style="flex:1;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
+              oninput="this.value=Math.max(0,Math.min(99999,parseInt(this.value)||0))">
+            <button class="nudge-btn" onclick="nudgeGoldCur(1)">+1</button>
+            <button class="nudge-btn" onclick="nudgeGoldCur(100)">+100</button>
+            <button class="nudge-btn" onclick="nudgeGoldCur(1000)">+1000</button>
           </div>
-          <div class="stat-presets">
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',100)">100</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',500)">500</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',1000)">1000</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',5000)">5000</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',9000)">9000</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',30000)">30000</button>
-            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',50000)">50000</button>
+          <div class="stat-presets" style="margin-bottom:8px;">
+            <button class="preset-btn" onclick="setGoldCur(100)">100</button>
+            <button class="preset-btn" onclick="setGoldCur(500)">500</button>
+            <button class="preset-btn" onclick="setGoldCur(1000)">1000</button>
+            <button class="preset-btn" onclick="setGoldCur(5000)">5000</button>
+            <button class="preset-btn" onclick="setGoldCur(9000)">9000</button>
+            <button class="preset-btn" onclick="setGoldCur(30000)">30000</button>
+            <button class="preset-btn" onclick="setGoldCur(50000)">50000</button>
           </div>
+          <button class="btn btn-primary" style="width:100%;padding:9px;" onclick="goldScan()">🔍 스캔+적용</button>
         </div>
+
         <hr class="divider">
+
+        <!-- ② 바꿀 골드 입력 -->
         <div class="stat-block">
           <div class="stat-hd">
             <span class="stat-name">② 바꿀 골드값</span>
-            <span class="stat-val-display" id="gold-new-lbl">99999</span>
           </div>
-          <div class="stat-row">
-            <input type="range" class="stat-slider" id="gold-new-sl" min="0" max="99999" value="99999"
-              oninput="document.getElementById('gold-new-lbl').textContent=this.value">
-            <button class="stat-apply" onclick="applyGold()">적용</button>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeGoldNew(-1000)">−1000</button>
+            <button class="nudge-btn" onclick="nudgeGoldNew(-100)">−100</button>
+            <button class="nudge-btn" onclick="nudgeGoldNew(-1)">−1</button>
+            <input type="number" id="gold-new-in" min="0" max="99999" value="99999"
+              style="flex:1;background:var(--bg);color:var(--green);border:2px solid var(--green);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
+              oninput="this.value=Math.max(0,Math.min(99999,parseInt(this.value)||0))">
+            <button class="nudge-btn" onclick="nudgeGoldNew(1)">+1</button>
+            <button class="nudge-btn" onclick="nudgeGoldNew(100)">+100</button>
+            <button class="nudge-btn" onclick="nudgeGoldNew(1000)">+1000</button>
           </div>
-          <div class="stat-presets">
-            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',0)">0</button>
-            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',9999)">9999</button>
-            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',50000)">50000</button>
-            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',99999)">MAX</button>
+          <div class="stat-presets" style="margin-bottom:8px;">
+            <button class="preset-btn" onclick="setGoldNew(0)">0</button>
+            <button class="preset-btn" onclick="setGoldNew(9999)">9999</button>
+            <button class="preset-btn" onclick="setGoldNew(50000)">50000</button>
+            <button class="preset-btn" onclick="setGoldNew(99999)">MAX</button>
           </div>
+          <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="applyGold()">✅ 적용</button>
         </div>
-        <div style="font-size:10px;color:var(--muted);">✦ 상점 재진입 시 화면에 반영됩니다</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;">✦ 상점 재진입 시 화면에 반영됩니다</div>
       </div>
     </div>
 
@@ -279,7 +298,7 @@
       </div>
       <div class="card-body">
         <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
-          📌 게임에서 값 확인 → 슬라이더 맞추기 → 스캔+적용
+          📌 항목 선택 → 현재값 입력 → 스캔+적용 → 바꿀 값 입력 → 적용
         </div>
 
         <!-- 항목 선택 버튼들 -->
@@ -292,41 +311,54 @@
 
         <div id="stat-type-lbl" style="font-family:var(--font-pixel);font-size:8px;color:var(--accent);margin-bottom:10px;">❤ HP 편집 중</div>
 
+        <!-- ① 현재값 -->
         <div class="stat-block">
-          <div class="stat-hd">
-            <span class="stat-name">① 현재값</span>
-            <span class="stat-val-display" id="char-cur-lbl">0</span>
+          <div class="stat-hd"><span class="stat-name">① 현재값 (게임 화면 확인)</span></div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeStatCur(-100)">−100</button>
+            <button class="nudge-btn" onclick="nudgeStatCur(-10)">−10</button>
+            <button class="nudge-btn" onclick="nudgeStatCur(-1)">−1</button>
+            <input type="number" id="char-cur-in" min="0" max="9999" value="0"
+              style="flex:1;background:var(--bg);color:var(--red);border:2px solid var(--red);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
+              oninput="clampStatCur()">
+            <button class="nudge-btn" onclick="nudgeStatCur(1)">+1</button>
+            <button class="nudge-btn" onclick="nudgeStatCur(10)">+10</button>
+            <button class="nudge-btn" onclick="nudgeStatCur(100)">+100</button>
           </div>
-          <div class="stat-row">
-            <input type="range" class="stat-slider" id="char-cur-sl" min="0" max="9999" value="0"
-              oninput="document.getElementById('char-cur-lbl').textContent=this.value">
-            <button class="stat-apply" onclick="charScan()">스캔+적용</button>
+          <div class="stat-presets" id="char-presets" style="margin-bottom:8px;">
+            <button class="preset-btn" onclick="setStatCur(1)">1</button>
+            <button class="preset-btn" onclick="setStatCur(50)">50</button>
+            <button class="preset-btn" onclick="setStatCur(100)">100</button>
+            <button class="preset-btn" onclick="setStatCur(500)">500</button>
+            <button class="preset-btn" onclick="setStatCur(999)">999</button>
           </div>
-          <div class="stat-presets" id="char-presets">
-            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',1)">1</button>
-            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',50)">50</button>
-            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',100)">100</button>
-            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',500)">500</button>
-            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',999)">999</button>
-          </div>
+          <button class="btn btn-primary" style="width:100%;padding:9px;" onclick="charScan()">🔍 스캔+적용</button>
         </div>
+
         <hr class="divider">
+
+        <!-- ② 바꿀 값 -->
         <div class="stat-block">
-          <div class="stat-hd">
-            <span class="stat-name">② 바꿀 값</span>
-            <span class="stat-val-display" id="char-new-lbl">9999</span>
+          <div class="stat-hd"><span class="stat-name">② 바꿀 값</span></div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeStatNew(-100)">−100</button>
+            <button class="nudge-btn" onclick="nudgeStatNew(-10)">−10</button>
+            <button class="nudge-btn" onclick="nudgeStatNew(-1)">−1</button>
+            <input type="number" id="char-new-in" min="0" max="9999" value="9999"
+              style="flex:1;background:var(--bg);color:var(--green);border:2px solid var(--green);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
+              oninput="clampStatNew()">
+            <button class="nudge-btn" onclick="nudgeStatNew(1)">+1</button>
+            <button class="nudge-btn" onclick="nudgeStatNew(10)">+10</button>
+            <button class="nudge-btn" onclick="nudgeStatNew(100)">+100</button>
           </div>
-          <div class="stat-row">
-            <input type="range" class="stat-slider" id="char-new-sl" min="0" max="9999" value="9999"
-              oninput="document.getElementById('char-new-lbl').textContent=this.value">
-            <button class="stat-apply" onclick="applyChar()">적용</button>
+          <div class="stat-presets" style="margin-bottom:8px;">
+            <button class="preset-btn" onclick="setStatNew(1)">1</button>
+            <button class="preset-btn" onclick="setStatNew(999)">999</button>
+            <button class="preset-btn" id="stat-max-btn" onclick="setStatNewMax()">MAX</button>
           </div>
-          <div class="stat-presets">
-            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',1)">1</button>
-            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',999)">999</button>
-            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',9999)">MAX</button>
-          </div>
+          <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="applyChar()">✅ 적용</button>
         </div>
+
         <hr class="divider">
         <div id="char-cnt" style="font-family:var(--font-pixel);font-size:7px;color:var(--muted);margin-bottom:6px;">스캔 결과: 0개</div>
         <div class="scan-results" id="char-list">
@@ -507,11 +539,18 @@ document.querySelectorAll('.tab').forEach(function(t){
   });
 });
 
+// ─── 골드 헬퍼 ───
+function getGoldCur(){ return Math.max(0,Math.min(99999,parseInt(document.getElementById('gold-cur-in').value)||0)); }
+function getGoldNew(){ return Math.max(0,Math.min(99999,parseInt(document.getElementById('gold-new-in').value)||0)); }
+function setGoldCur(v){ document.getElementById('gold-cur-in').value=v; }
+function setGoldNew(v){ document.getElementById('gold-new-in').value=v; }
+function nudgeGoldCur(d){ setGoldCur(Math.max(0,Math.min(99999,getGoldCur()+d))); }
+function nudgeGoldNew(d){ setGoldNew(Math.max(0,Math.min(99999,getGoldNew()+d))); }
+
 // ─── 골드 ───
 function goldScan(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var cur=parseInt(document.getElementById('gold-cur-sl').value);
-  if(isNaN(cur)){toast('⚠ 현재 골드값을 설정하세요','err');return;}
+  var cur=getGoldCur();
   log('골드 스캔: '+cur,'info');
   var f32=scanMem(cur,32);
   var f16=scanMem(cur,16).filter(function(a){return!f32.includes(a);});
@@ -525,7 +564,7 @@ function goldScan(){
 function applyGold(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
   if(goldAddrs.length===0){toast('⚠ 먼저 스캔+적용을 누르세요','err');return;}
-  var nv=parseInt(document.getElementById('gold-new-sl').value);
+  var nv=getGoldNew();
   var cnt=0;
   goldAddrs.forEach(function(a){if(mWrite(a,nv,32))cnt++;mWrite(a,nv,16);});
   log('✓ 골드 → '+nv+' ('+cnt+'개 적용)','ok');
@@ -533,26 +572,41 @@ function applyGold(){
   updateGoldDisp();
 }
 
+// ─── 캐릭터 스탯 헬퍼 ───
+function getStatCur(){ var cfg=statCfg[curStatType]; return Math.max(0,Math.min(cfg.max,parseInt(document.getElementById('char-cur-in').value)||0)); }
+function getStatNew(){ var cfg=statCfg[curStatType]; return Math.max(0,Math.min(cfg.max,parseInt(document.getElementById('char-new-in').value)||0)); }
+function setStatCur(v){ document.getElementById('char-cur-in').value=v; }
+function setStatNew(v){ document.getElementById('char-new-in').value=v; }
+function setStatNewMax(){ setStatNew(statCfg[curStatType].max); }
+function nudgeStatCur(d){ var cfg=statCfg[curStatType]; setStatCur(Math.max(0,Math.min(cfg.max,getStatCur()+d))); }
+function nudgeStatNew(d){ var cfg=statCfg[curStatType]; setStatNew(Math.max(0,Math.min(cfg.max,getStatNew()+d))); }
+function clampStatCur(){ var cfg=statCfg[curStatType]; var el=document.getElementById('char-cur-in'); el.value=Math.max(0,Math.min(cfg.max,parseInt(el.value)||0)); }
+function clampStatNew(){ var cfg=statCfg[curStatType]; var el=document.getElementById('char-new-in'); el.value=Math.max(0,Math.min(cfg.max,parseInt(el.value)||0)); }
+
 // ─── 캐릭터 스탯 ───
 var statCfg={HP:{max:9999,pre:[1,50,100,500,999,9999],lbl:'❤ HP 편집 중'},MP:{max:999,pre:[0,50,100,500,999],lbl:'💙 MP 편집 중'},EXP:{max:99999,pre:[0,1000,9999,50000,99999],lbl:'⭐ 경험치 편집 중'},LV:{max:50,pre:[1,5,10,20,30,50],lbl:'🆙 레벨 편집 중'}};
 function setStatType(t){
-  curStatType=t;var cfg=statCfg[t];
+  curStatType=t; var cfg=statCfg[t];
   document.getElementById('stat-type-lbl').textContent=cfg.lbl;
-  document.getElementById('char-cur-sl').max=cfg.max;
-  document.getElementById('char-new-sl').max=cfg.max;
-  setSl('char-new-sl','char-new-lbl',cfg.max);
+  document.getElementById('char-cur-in').max=cfg.max;
+  document.getElementById('char-new-in').max=cfg.max;
+  setStatNew(cfg.max);
+  // 입력창 색상 변경
+  var colorMap={HP:'var(--red)',MP:'var(--blue)',EXP:'var(--green)',LV:'var(--yellow)'};
+  var col=colorMap[t]||'var(--accent)';
+  document.getElementById('char-cur-in').style.color=col;
+  document.getElementById('char-cur-in').style.borderColor=col;
   var pe=document.getElementById('char-presets');
-  pe.innerHTML=cfg.pre.map(function(v){return'<button class="preset-btn" onclick="setSl(\'char-cur-sl\',\'char-cur-lbl\','+v+')">'+v+'</button>';}).join('');
-  charAddrs=[];document.getElementById('char-list').innerHTML='<div class="scan-empty">스캔 후 주소 목록 표시</div>';
+  pe.innerHTML=cfg.pre.map(function(v){return'<button class="preset-btn" onclick="setStatCur('+v+')">'+v+'</button>';}).join('');
+  charAddrs=[]; document.getElementById('char-list').innerHTML='<div class="scan-empty">스캔 후 주소 목록 표시</div>';
   document.getElementById('char-cnt').textContent='스캔 결과: 0개';
   log(cfg.lbl+' 선택','info');
 }
 function charScan(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var cur=parseInt(document.getElementById('char-cur-sl').value);
-  if(isNaN(cur)){toast('⚠ 현재값을 설정하세요','err');return;}
+  var cur=getStatCur();
   var b=(curStatType==='LV')?8:16;
-  var f=scanMem(cur,b);if(f.length===0)f=scanMem(cur,32);
+  var f=scanMem(cur,b); if(f.length===0)f=scanMem(cur,32);
   charAddrs=f;
   document.getElementById('char-cnt').textContent='스캔 결과: '+f.length+'개';
   renderCharList(b);
@@ -571,7 +625,7 @@ function renderCharList(b){
 function applyChar(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
   if(!charAddrs.length){toast('⚠ 먼저 스캔하세요','err');return;}
-  var nv=parseInt(document.getElementById('char-new-sl').value);
+  var nv=getStatNew();
   var b=(curStatType==='LV')?8:16,cnt=0;
   charAddrs.forEach(function(a){if(mWrite(a,nv,b))cnt++;});
   log('✓ '+curStatType+' → '+nv+' ('+cnt+'개 적용)','ok');
