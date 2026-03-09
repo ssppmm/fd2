@@ -442,81 +442,73 @@
       </div>
       <div class="card-body" style="padding:10px;">
 
-        <!-- ① 캐릭터 선택 드롭다운 -->
+        <!-- ① 캐릭터 선택 -->
         <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
         <select id="item-char-sel" onchange="onItemCharChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
-          <option value="0">1번 캐릭터</option>
-          <option value="1">2번 캐릭터</option>
-          <option value="2">3번 캐릭터</option>
-          <option value="3">4번 캐릭터</option>
-          <option value="4">5번 캐릭터</option>
-          <option value="5">6번 캐릭터</option>
-          <option value="6">7번 캐릭터</option>
-          <option value="7">8번 캐릭터</option>
-          <option value="8">9번 캐릭터</option>
-          <option value="9">10번 캐릭터</option>
-          <option value="10">11번 캐릭터</option>
-          <option value="11">12번 캐릭터</option>
-          <option value="12">13번 캐릭터</option>
-          <option value="13">14번 캐릭터</option>
-          <option value="14">15번 캐릭터</option>
-          <option value="15">16번 캐릭터</option>
-          <option value="16">17번 캐릭터</option>
-          <option value="17">18번 캐릭터</option>
-          <option value="18">19번 캐릭터</option>
-          <option value="19">20번 캐릭터</option>
-          <option value="20">21번 캐릭터</option>
-          <option value="21">22번 캐릭터</option>
-          <option value="22">23번 캐릭터</option>
-          <option value="23">24번 캐릭터</option>
-          <option value="24">25번 캐릭터</option>
-          <option value="25">26번 캐릭터</option>
-          <option value="26">27번 캐릭터</option>
-          <option value="27">28번 캐릭터</option>
-          <option value="28">29번 캐릭터</option>
-          <option value="29">30번 캐릭터</option>
+          <option value="0">1번 캐릭터</option><option value="1">2번 캐릭터</option>
+          <option value="2">3번 캐릭터</option><option value="3">4번 캐릭터</option>
+          <option value="4">5번 캐릭터</option><option value="5">6번 캐릭터</option>
+          <option value="6">7번 캐릭터</option><option value="7">8번 캐릭터</option>
+          <option value="8">9번 캐릭터</option><option value="9">10번 캐릭터</option>
+          <option value="10">11번 캐릭터</option><option value="11">12번 캐릭터</option>
+          <option value="12">13번 캐릭터</option><option value="13">14번 캐릭터</option>
+          <option value="14">15번 캐릭터</option><option value="15">16번 캐릭터</option>
+          <option value="16">17번 캐릭터</option><option value="17">18번 캐릭터</option>
+          <option value="18">19번 캐릭터</option><option value="19">20번 캐릭터</option>
+          <option value="20">21번 캐릭터</option><option value="21">22번 캐릭터</option>
+          <option value="22">23번 캐릭터</option><option value="23">24번 캐릭터</option>
+          <option value="24">25번 캐릭터</option><option value="25">26번 캐릭터</option>
+          <option value="26">27번 캐릭터</option><option value="27">28번 캐릭터</option>
+          <option value="28">29번 캐릭터</option><option value="29">30번 캐릭터</option>
         </select>
 
-        <!-- ② 슬롯 선택 드롭다운 -->
+        <!-- ② 슬롯 선택 -->
         <div class="lbl" style="margin-bottom:4px;">② 슬롯 (장비 위치)</div>
         <select id="item-slot-sel" onchange="onItemSlotChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
           <option value="0">슬롯 0 — 무기</option>
           <option value="1">슬롯 1 — 갑옷</option>
           <option value="2">슬롯 2 — 보조1</option>
           <option value="3">슬롯 3 — 보조2</option>
-          <option value="4">슬롯 4</option>
-          <option value="5">슬롯 5</option>
-          <option value="6">슬롯 6</option>
-          <option value="7">슬롯 7</option>
-          <option value="8">슬롯 8</option>
-          <option value="9">슬롯 9</option>
-          <option value="10">슬롯 10</option>
-          <option value="11">슬롯 11</option>
-          <option value="12">슬롯 12</option>
-          <option value="13">슬롯 13</option>
-          <option value="14">슬롯 14</option>
-          <option value="15">슬롯 15</option>
+          <option value="4">슬롯 4</option><option value="5">슬롯 5</option>
+          <option value="6">슬롯 6</option><option value="7">슬롯 7</option>
+          <option value="8">슬롯 8</option><option value="9">슬롯 9</option>
+          <option value="10">슬롯 10</option><option value="11">슬롯 11</option>
+          <option value="12">슬롯 12</option><option value="13">슬롯 13</option>
+          <option value="14">슬롯 14</option><option value="15">슬롯 15</option>
         </select>
 
-        <!-- ③ 아이템 선택 드롭다운 (카테고리 그룹) -->
-        <div class="lbl" style="margin-bottom:4px;">③ 바꿀 아이템</div>
-        <div style="font-size:8px;margin-bottom:5px;background:var(--surface2);padding:5px 8px;border-radius:3px;">
-          🔥 <span style="color:#ff9900;font-weight:bold;">주황색</span> = 최강 OB 아이템 &nbsp;|&nbsp; 일반 = 흰색
+        <!-- ③ 현재 아이템 선택 (스캔 기준값) -->
+        <div class="lbl" style="margin-bottom:4px;">③ 지금 슬롯에 있는 아이템 <span style="color:var(--muted);font-size:7px;">(게임 화면에서 확인)</span></div>
+        <div style="font-size:8px;margin-bottom:5px;padding:4px 8px;background:var(--surface2);border-radius:3px;">
+          🔥 <span style="color:#ff9900;font-weight:bold;">주황색</span> = 최강 OB 아이템
         </div>
-        <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:10px;">
+        <select id="item-cur-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--accent);border-radius:4px;padding:6px;font-size:9px;margin-bottom:6px;">
           <!-- JS로 채워짐 -->
         </select>
 
-        <!-- 현재 슬롯 상태 표시 -->
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:7px 10px;margin-bottom:10px;font-size:8px;line-height:1.7;">
-          <span style="color:var(--muted);">현재 슬롯:</span>
-          <span id="cur-slot-info" style="color:var(--yellow);margin-left:4px;">—</span>
+        <!-- 스캔 버튼 -->
+        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="itemScan()">
+          🔍 현재 아이템으로 메모리 스캔
+        </button>
+
+        <!-- 스캔 결과 상태 표시 -->
+        <div id="item-scan-status" style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:7px 10px;margin-bottom:10px;font-size:8px;line-height:1.8;display:none;">
+          <div>📍 발견된 주소: <span id="item-addr-cnt" style="color:var(--green);font-weight:bold;">0개</span></div>
+          <div id="item-addr-list" style="color:var(--muted);font-size:7px;margin-top:2px;"></div>
         </div>
 
-        <!-- 버튼 -->
+        <hr class="divider">
+
+        <!-- ④ 바꿀 아이템 선택 -->
+        <div class="lbl" style="margin-bottom:4px;">④ 바꿀 아이템</div>
+        <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--green);border-radius:4px;padding:6px;font-size:9px;margin-bottom:10px;">
+          <!-- JS로 채워짐 -->
+        </select>
+
+        <!-- 적용 버튼 -->
         <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="applyItem()">✅ 적용</button>
         <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">
-          저장(세이브) 후 다음 전투/화면전환 시 반영됩니다
+          스캔 후 적용 → 세이브 후 전투/화면전환 시 반영
         </div>
       </div>
     </div>
@@ -848,9 +840,10 @@ var ITEM_GROUPS = [
   {label:'💎 재료/눈', range:[0xC9,0xD6]},
 ];
 
-// 아이템 선택 드롭다운 초기화 (vip 아이템은 색상 강조)
-(function initItemSelect(){
-  var sel = document.getElementById('item-new-sel');
+// 아이템 선택 드롭다운 초기화 (vip 아이템은 색상 강조) — 현재/바꿀 양쪽 동일하게
+function buildItemSelect(selId, defaultCode){
+  var sel = document.getElementById(selId);
+  if(!sel) return;
   sel.innerHTML = '';
   ITEMS.forEach(function(item){
     var opt = document.createElement('option');
@@ -862,42 +855,91 @@ var ITEM_GROUPS = [
       opt.style.fontWeight = 'bold';
       opt.style.background = '#1a1200';
     }
+    if(item.code === defaultCode) opt.selected = true;
     sel.appendChild(opt);
   });
-})();
-
-function onItemCharChange(){ updateCurSlotInfo(); }
-function onItemSlotChange(){ updateCurSlotInfo(); }
-
-function updateCurSlotInfo(){
-  var el = document.getElementById('cur-slot-info');
-  var charIdx = parseInt(document.getElementById('item-char-sel').value);
-  var slotIdx = parseInt(document.getElementById('item-slot-sel').value);
-  el.textContent = (charIdx+1)+'번 캐릭터 / 슬롯 '+slotIdx+' — 메모리 주소 탐색 필요';
 }
 
-function applyItem(){
+// 초기화: 현재아이템=단검(0), 바꿀아이템=염룡검(0x0B, 첫번째 OB)
+buildItemSelect('item-cur-sel', 0x00);
+buildItemSelect('item-new-sel', 0x0B);
+
+// 아이템 스캔으로 찾은 주소 목록
+var itemAddrs = [];
+
+function onItemCharChange(){ itemAddrs = []; resetItemScanUI(); }
+function onItemSlotChange(){ itemAddrs = []; resetItemScanUI(); }
+
+function resetItemScanUI(){
+  document.getElementById('item-scan-status').style.display = 'none';
+  document.getElementById('item-addr-cnt').textContent = '0개';
+  document.getElementById('item-addr-list').textContent = '';
+}
+
+// ③ 현재 아이템 코드로 8bit 메모리 스캔
+function itemScan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var charIdx = parseInt(document.getElementById('item-char-sel').value);
-  var slotIdx = parseInt(document.getElementById('item-slot-sel').value);
-  var code    = parseInt(document.getElementById('item-new-sel').value);
-  var itemObj = ITEMS.find(function(x){ return x.code === code; });
-  var itemName = itemObj ? itemObj.name : '알 수 없음';
 
-  log('아이템 적용 시도: '+(charIdx+1)+'번 캐릭터 슬롯'+slotIdx+' → [0x'+code.toString(16).toUpperCase()+'] '+itemName, 'info');
+  var curCode = parseInt(document.getElementById('item-cur-sel').value);
+  var curObj  = ITEMS.find(function(x){ return x.code === curCode; });
+  var curName = curObj ? curObj.name : '코드 0x'+curCode.toString(16);
 
-  // 골드 주소 기준으로 아이템 메모리 탐색
-  if(goldAddrs.length === 0){
-    toast('⚠ 골드 탭에서 스캔 먼저 실행!','err');
-    log('골드 주소 필요 — 골드 탭 → 스캔+적용 실행 후 재시도','err');
+  log('아이템 스캔: [0x'+curCode.toString(16).toUpperCase()+'] '+curName+' (8bit)','info');
+
+  // 8bit 스캔
+  var found = scanMem(curCode, 8);
+
+  itemAddrs = found;
+  document.getElementById('item-scan-status').style.display = 'block';
+  document.getElementById('item-addr-cnt').textContent = found.length + '개';
+
+  if(found.length === 0){
+    toast('⚠ 주소 없음 — 현재 아이템을 다시 확인하세요','err');
+    document.getElementById('item-addr-list').textContent = '결과 없음. 게임에서 아이템 확인 후 재시도';
+    log('스캔 결과 없음 — 현재 슬롯 아이템이 맞는지 확인하세요','err');
     return;
   }
 
-  // 스캔 탭 안내: 현재 장착 아이템 코드값으로 직접 스캔
-  toast('스캔 탭 → 값 입력해서 주소 탐색 가능','warn');
-  log('TIP: 스캔 탭에서 현재 무기 코드(0x00~0xD6)로 8비트 스캔 → 주소 찾기 → 직접 쓰기','warn');
-  log('예) 단검=0, 장검=2, 피갑=0x84, 약초=0xC0','info');
+  // 상위 10개 주소 표시
+  var addrText = found.slice(0, 10).map(function(a){
+    return '0x'+a.toString(16);
+  }).join('  ');
+  if(found.length > 10) addrText += ' ... 외 '+(found.length-10)+'개';
+  document.getElementById('item-addr-list').textContent = addrText;
+
+  toast('🔍 '+found.length+'개 발견 — 이제 ④ 아이템 선택 후 적용!','ok');
+  log('스캔 완료: '+found.length+'개 주소 발견','ok');
+}
+
+// ④ 바꿀 아이템으로 메모리 쓰기
+function applyItem(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+
+  if(itemAddrs.length === 0){
+    toast('⚠ 먼저 🔍 스캔을 실행하세요!','err');
+    log('주소 없음 — ③ 현재 아이템 선택 후 스캔 먼저 실행','err');
+    return;
+  }
+
+  var newCode = parseInt(document.getElementById('item-new-sel').value);
+  var newObj  = ITEMS.find(function(x){ return x.code === newCode; });
+  var newName = newObj ? newObj.name : '코드 0x'+newCode.toString(16);
+
+  var cnt = 0;
+  itemAddrs.forEach(function(a){
+    if(mWrite(a, newCode, 8)) cnt++;
+  });
+
+  log('✓ 아이템 변경: → [0x'+newCode.toString(16).toUpperCase()+'] '+newName+' ('+cnt+'개 주소에 쓰기 완료)','ok');
+  toast('🎒 '+newName+' 적용! ('+cnt+'개)','ok');
+
+  // 적용 후 현재아이템 선택을 바꾼 아이템으로 업데이트 (연속 변경 편의)
+  document.getElementById('item-cur-sel').value = newCode;
+  // 주소 초기화 (새 스캔 필요 표시)
+  itemAddrs = [];
+  resetItemScanUI();
 }
 
 // ─── 버튼 연결 ───
