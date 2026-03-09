@@ -249,67 +249,16 @@
           <div class="lbl">현재 골드 (메모리)</div>
           <div class="val" id="gold-display">---</div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
-          📌 사용법<br>
-          ① 게임에서 현재 골드 확인 → 아래 입력창에 입력<br>
-          ② <b style="color:var(--accent)">스캔+적용</b> → 바꿀 값 입력 → <b style="color:var(--green)">적용</b>
+        <div style="font-size:9px;color:var(--muted);margin-bottom:12px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
+          📌 게임에서 현재 골드 확인 → 입력 → <b style="color:var(--accent)">스캔+MAX 적용</b>
         </div>
 
-        <!-- ① 현재 골드 입력 -->
-        <div class="stat-block">
-          <div class="stat-hd">
-            <span class="stat-name">① 현재 골드값 (게임 화면 확인)</span>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
-            <button class="nudge-btn" onclick="nudgeGoldCur(-10000)">−1만</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(-1000)">−1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(-1)">−1</button>
-            <input type="number" id="gold-cur-in" min="0" max="9999999" value="0"
-              style="flex:1;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
-            <button class="nudge-btn" onclick="nudgeGoldCur(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(1000)">+1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(10000)">+1만</button>
-          </div>
-          <div class="stat-presets" style="margin-bottom:8px;">
-            <button class="preset-btn" onclick="setGoldCur(100)">100</button>
-            <button class="preset-btn" onclick="setGoldCur(500)">500</button>
-            <button class="preset-btn" onclick="setGoldCur(1000)">1000</button>
-            <button class="preset-btn" onclick="setGoldCur(5000)">5000</button>
-            <button class="preset-btn" onclick="setGoldCur(9000)">9000</button>
-            <button class="preset-btn" onclick="setGoldCur(30000)">30000</button>
-            <button class="preset-btn" onclick="setGoldCur(50000)">50000</button>
-          </div>
-          <button class="btn btn-primary" style="width:100%;padding:9px;" onclick="goldScan()">🔍 스캔+적용</button>
-        </div>
-
-        <hr class="divider">
-
-        <!-- ② 바꿀 골드 입력 -->
-        <div class="stat-block">
-          <div class="stat-hd">
-            <span class="stat-name">② 바꿀 골드값</span>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
-            <button class="nudge-btn" onclick="nudgeGoldNew(-10000)">−1만</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(-1000)">−1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(-1)">−1</button>
-            <input type="number" id="gold-new-in" min="0" max="9999999" value="9999999"
-              style="flex:1;background:var(--bg);color:var(--green);border:2px solid var(--green);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
-            <button class="nudge-btn" onclick="nudgeGoldNew(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(1000)">+1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(10000)">+1만</button>
-          </div>
-          <div class="stat-presets" style="margin-bottom:8px;">
-            <button class="preset-btn" onclick="setGoldNew(0)">0</button>
-            <button class="preset-btn" onclick="setGoldNew(9999)">9999</button>
-            <button class="preset-btn" onclick="setGoldNew(50000)">50000</button>
-            <button class="preset-btn" onclick="setGoldNew(9999999)">MAX</button>
-          </div>
-          <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="applyGold()">✅ 적용</button>
-        </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:6px;">✦ 상점 재진입 시 화면에 반영됩니다</div>
+        <div class="lbl" style="margin-bottom:6px;">현재 골드 (게임 화면 확인)</div>
+        <input type="number" id="gold-cur-in" min="0" max="9999999" value="0"
+          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px;"
+          oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
+        <button class="btn btn-primary" style="width:100%;padding:11px;font-size:11px;" onclick="goldScan()">🔍 스캔 + MAX 적용</button>
+        <div style="font-size:9px;color:var(--muted);margin-top:8px;text-align:center;">✦ 상점 재진입 시 화면에 반영됩니다</div>
       </div>
     </div>
 
@@ -430,21 +379,13 @@
       </div>
       <div class="card-body">
 
-        <!-- 스캔 값 입력 -->
-        <div class="lbl" style="margin-bottom:4px;">① 찾을 값 입력</div>
-        <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
-          <button class="nudge-btn" onclick="nudgeScanVal(-100)">−100</button>
-          <button class="nudge-btn" onclick="nudgeScanVal(-10)">−10</button>
-          <button class="nudge-btn" onclick="nudgeScanVal(-1)">−1</button>
-          <input type="number" id="scan-val" min="0" max="9999999" value="0"
-            style="flex:1;background:var(--bg);color:var(--accent);border:2px solid var(--accent);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);">
-          <button class="nudge-btn" onclick="nudgeScanVal(1)">+1</button>
-          <button class="nudge-btn" onclick="nudgeScanVal(10)">+10</button>
-          <button class="nudge-btn" onclick="nudgeScanVal(100)">+100</button>
-        </div>
-        <div style="display:flex;gap:5px;align-items:center;margin-bottom:8px;">
+        <!-- 스캔 -->
+        <div class="lbl" style="margin-bottom:4px;">① 찾을 값</div>
+        <input type="number" id="scan-val" min="0" max="9999999" value="0"
+          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--accent);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:6px;">
+        <div style="display:flex;gap:5px;margin-bottom:8px;">
           <select class="scan-sel" id="scan-bits" style="flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;">
-            <option value="32">32bit (골드/경험치)</option>
+            <option value="32">32bit (골드)</option>
             <option value="16">16bit (HP/MP)</option>
             <option value="8">8bit (레벨/아이템)</option>
           </select>
@@ -458,8 +399,8 @@
         <hr class="divider">
 
         <!-- 직접 수정 -->
-        <div style="font-family:var(--font-pixel);font-size:7px;color:var(--accent);margin-bottom:8px;">✏ 주소 직접 수정</div>
-        <div style="display:flex;gap:5px;margin-bottom:6px;">
+        <div style="font-size:8px;color:var(--accent);margin-bottom:6px;">✏ 주소 직접 수정</div>
+        <div style="display:flex;gap:5px;margin-bottom:8px;">
           <input class="scan-in" id="edit-addr" placeholder="주소 (예: 0x20b94d3)" style="flex:1" />
           <select class="scan-sel" id="edit-bits" style="background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:8px;">
             <option value="32">32bit</option>
@@ -467,30 +408,11 @@
             <option value="8">8bit</option>
           </select>
         </div>
-        <div class="lbl" style="margin-bottom:6px;">새 값</div>
-        <!-- 숫자 직접 입력 (크게) -->
         <input type="number" id="edit-val" min="0" max="9999999" value="0"
-          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--yellow);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;font-family:var(--font-pixel);margin-bottom:6px;">
-        <!-- 미세조정 버튼 -->
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:8px;">
-          <button class="nudge-btn" onclick="nudgeEditVal(-1000)">−1K</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(-100)">−100</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(-1)">−1</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(1)">+1</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(100)">+100</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(1000)">+1K</button>
-        </div>
-        <!-- 프리셋 버튼 -->
-        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">
-          <button class="preset-btn" onclick="setEditVal(0)">0</button>
-          <button class="preset-btn" onclick="setEditVal(999)">999</button>
-          <button class="preset-btn" onclick="setEditVal(9999)">9999</button>
-          <button class="preset-btn" onclick="setEditVal(99999)">99999</button>
-          <button class="preset-btn" onclick="setEditVal(9999999)">MAX</button>
-        </div>
+          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--yellow);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:8px;">
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-ul" style="flex:1" onclick="doWrite()">✏ 적용</button>
-          <button class="btn btn-ghost" onclick="doRead()">📖 읽기</button>
+          <button class="btn btn-ul" style="flex:1;padding:10px;" onclick="doWrite()">✏ 적용</button>
+          <button class="btn btn-ghost" style="padding:10px 14px;" onclick="doRead()">📖 읽기</button>
         </div>
       </div>
     </div>
@@ -702,12 +624,12 @@ function goldScan(){
 }
 function applyGold(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  if(goldAddrs.length===0){toast('⚠ 먼저 스캔+적용을 누르세요','err');return;}
-  var nv=getGoldNew();
+  if(goldAddrs.length===0){toast('⚠ 먼저 스캔+MAX 적용을 누르세요','err');return;}
+  var nv=9999999;
   var cnt=0;
   goldAddrs.forEach(function(a){if(mWrite(a,nv,32))cnt++;mWrite(a,nv,16);});
-  log('✓ 골드 → '+nv+' ('+cnt+'개 적용)','ok');
-  toast('💰 골드 '+nv.toLocaleString()+'!','ok');
+  log('✓ 골드 MAX → '+nv+' ('+cnt+'개 적용)','ok');
+  toast('💰 골드 MAX!','ok');
   updateGoldDisp();
 }
 
