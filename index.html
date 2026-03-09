@@ -290,76 +290,93 @@
     <div class="tab-panel card" id="panel-chars">
       <div class="card-hd">
         <span class="card-ttl">👤 캐릭터 스탯</span>
-        <span class="badge b-purple">메모리 스캔</span>
+        <span class="badge b-purple">직접 주소</span>
       </div>
       <div class="card-body">
         <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
-          📌 항목 선택 → 현재값 입력 → 스캔+적용 → 바꿀 값 입력 → 적용
+          📌 캐릭터 선택 → 현재값 읽기 → 값 수정 → 적용
         </div>
 
-        <!-- 항목 선택 버튼들 -->
-        <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
-          <button class="preset-btn" id="st-hp"  style="border-color:var(--red);color:var(--red)"    onclick="setStatType('HP')">❤ HP</button>
-          <button class="preset-btn" id="st-mp"  style="border-color:var(--blue);color:var(--blue)"  onclick="setStatType('MP')">💙 MP</button>
-          <button class="preset-btn" id="st-exp" style="border-color:var(--green);color:var(--green)" onclick="setStatType('EXP')">⭐ 경험치</button>
-          <button class="preset-btn" id="st-lv"  style="border-color:var(--yellow);color:var(--yellow)" onclick="setStatType('LV')">🆙 레벨</button>
-        </div>
+        <!-- 캐릭터 선택 -->
+        <div class="lbl" style="margin-bottom:4px;">① 캐릭터 선택</div>
+        <select id="stat-char-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:10px;margin-bottom:8px;" onchange="statReadAll()">
+          <option value="0">01. 사울 (검사)</option><option value="1">02. 아래스 (기사)</option>
+          <option value="2">03. 유니 (법사)</option><option value="3">04. 카일 (기계기병)</option>
+          <option value="4">05. 마린 (승려)</option><option value="5">06. 하노 (전사)</option>
+          <option value="6">07. 시리아 (궁병)</option><option value="7">08. 티노 (검사)</option>
+          <option value="8">09. 소피아 (승려)</option><option value="9">10. 페이커 (궁병)</option>
+          <option value="10">11. 하와터 (전사)</option><option value="11">12. 위나 (승려)</option>
+          <option value="12">13. 케리 (무사)</option><option value="13">14. 샨 (법사)</option>
+          <option value="14">15. 사이클린 (무사)</option><option value="15">16. 미티 (검사)</option>
+          <option value="16">17. 파나로시아 (용인)</option><option value="17">18. 샤도 (닌자)</option>
+          <option value="18">19. 카리스 (무사)</option><option value="19">20. 래터 (기사)</option>
+          <option value="20">21. 로나 (기사)</option><option value="21">22. 히올프 (승려)</option>
+          <option value="22">23. 란스로타 (기사)</option><option value="23">24. 다커스 (전사)</option>
+          <option value="24">25. 미아스튜더 (용인)</option><option value="25">26. 카라스 (용인)</option>
+          <option value="26">27. 워터 (기계기병)</option><option value="27">28. 아치메치 (법사)</option>
+          <option value="28">29. 롤렌 (궁병)</option><option value="29">30. 샌디라스 (용인)</option>
+        </select>
 
-        <div id="stat-type-lbl" style="font-family:var(--font-pixel);font-size:8px;color:var(--accent);margin-bottom:10px;">❤ HP 편집 중</div>
+        <!-- 읽기 버튼 -->
+        <button class="btn btn-primary" style="width:100%;padding:9px;margin-bottom:12px;" onclick="statReadAll()">📖 현재값 읽기</button>
 
-        <!-- ① 현재값 -->
-        <div class="stat-block">
-          <div class="stat-hd"><span class="stat-name">① 현재값 (게임 화면 확인)</span></div>
-          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
-            <button class="nudge-btn" onclick="nudgeStatCur(-100)">−100</button>
-            <button class="nudge-btn" onclick="nudgeStatCur(-10)">−10</button>
-            <button class="nudge-btn" onclick="nudgeStatCur(-1)">−1</button>
-            <input type="number" id="char-cur-in" min="0" max="9999" value="0"
-              style="flex:1;background:var(--bg);color:var(--red);border:2px solid var(--red);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="clampStatCur()">
-            <button class="nudge-btn" onclick="nudgeStatCur(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeStatCur(10)">+10</button>
-            <button class="nudge-btn" onclick="nudgeStatCur(100)">+100</button>
+        <!-- 스탯 그리드 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <!-- 현 HP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--red);font-family:var(--font-pixel);margin-bottom:3px;">❤ 현 HP</div>
+            <input type="number" id="sv-chp" min="0" max="9999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
           </div>
-          <div class="stat-presets" id="char-presets" style="margin-bottom:8px;">
-            <button class="preset-btn" onclick="setStatCur(1)">1</button>
-            <button class="preset-btn" onclick="setStatCur(50)">50</button>
-            <button class="preset-btn" onclick="setStatCur(100)">100</button>
-            <button class="preset-btn" onclick="setStatCur(500)">500</button>
-            <button class="preset-btn" onclick="setStatCur(999)">999</button>
+          <!-- MAX HP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--red);font-family:var(--font-pixel);margin-bottom:3px;">❤ MAX HP</div>
+            <input type="number" id="sv-mhp" min="0" max="9999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
           </div>
-          <button class="btn btn-primary" style="width:100%;padding:9px;" onclick="charScan()">🔍 스캔+적용</button>
+          <!-- 현 MP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--blue);font-family:var(--font-pixel);margin-bottom:3px;">💙 현 MP</div>
+            <input type="number" id="sv-cmp" min="0" max="999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
+          <!-- MAX MP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--blue);font-family:var(--font-pixel);margin-bottom:3px;">💙 MAX MP</div>
+            <input type="number" id="sv-mmp" min="0" max="999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
+          <!-- 레벨 -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--yellow);font-family:var(--font-pixel);margin-bottom:3px;">🆙 레벨</div>
+            <input type="number" id="sv-lv" min="1" max="80" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
+          <!-- 최종 AP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--orange);font-family:var(--font-pixel);margin-bottom:3px;">⚔ 최종 AP</div>
+            <input type="number" id="sv-ap" min="0" max="9999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
+          <!-- 최종 DP -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--green);font-family:var(--font-pixel);margin-bottom:3px;">🛡 최종 DP</div>
+            <input type="number" id="sv-dp" min="0" max="9999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
+          <!-- HIT -->
+          <div style="background:var(--surface2);border-radius:4px;padding:6px;">
+            <div style="font-size:8px;color:var(--accent);font-family:var(--font-pixel);margin-bottom:3px;">🎯 HIT</div>
+            <input type="number" id="sv-hit" min="0" max="999" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;">
+          </div>
         </div>
 
-        <hr class="divider">
-
-        <!-- ② 바꿀 값 -->
-        <div class="stat-block">
-          <div class="stat-hd"><span class="stat-name">② 바꿀 값</span></div>
-          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
-            <button class="nudge-btn" onclick="nudgeStatNew(-100)">−100</button>
-            <button class="nudge-btn" onclick="nudgeStatNew(-10)">−10</button>
-            <button class="nudge-btn" onclick="nudgeStatNew(-1)">−1</button>
-            <input type="number" id="char-new-in" min="0" max="9999" value="9999"
-              style="flex:1;background:var(--bg);color:var(--green);border:2px solid var(--green);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="clampStatNew()">
-            <button class="nudge-btn" onclick="nudgeStatNew(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeStatNew(10)">+10</button>
-            <button class="nudge-btn" onclick="nudgeStatNew(100)">+100</button>
-          </div>
-          <div class="stat-presets" style="margin-bottom:8px;">
-            <button class="preset-btn" onclick="setStatNew(1)">1</button>
-            <button class="preset-btn" onclick="setStatNew(999)">999</button>
-            <button class="preset-btn" id="stat-max-btn" onclick="setStatNewMax()">MAX</button>
-          </div>
-          <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="applyChar()">✅ 적용</button>
+        <!-- MAX 버튼들 -->
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
+          <button class="preset-btn" style="border-color:var(--red);color:var(--red)" onclick="document.getElementById('sv-chp').value=9999;document.getElementById('sv-mhp').value=9999;">HP MAX</button>
+          <button class="preset-btn" style="border-color:var(--blue);color:var(--blue)" onclick="document.getElementById('sv-cmp').value=999;document.getElementById('sv-mmp').value=999;">MP MAX</button>
+          <button class="preset-btn" style="border-color:var(--yellow);color:var(--yellow)" onclick="document.getElementById('sv-lv').value=40;">LV 40</button>
+          <button class="preset-btn" style="border-color:var(--orange);color:var(--orange)" onclick="document.getElementById('sv-ap').value=9999;">AP MAX</button>
+          <button class="preset-btn" style="border-color:var(--green);color:var(--green)" onclick="document.getElementById('sv-dp').value=9999;">DP MAX</button>
+          <button class="preset-btn" onclick="statSetAllMax()">🔥 전체 MAX</button>
         </div>
 
-        <hr class="divider">
-        <div id="char-cnt" style="font-family:var(--font-pixel);font-size:7px;color:var(--muted);margin-bottom:6px;">스캔 결과: 0개</div>
-        <div class="scan-results" id="char-list">
-          <div class="scan-empty">스캔 후 주소 목록 표시</div>
-        </div>
+        <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="statWriteAll()">✅ 적용</button>
+
+        <div id="stat-result" style="font-family:var(--font-pixel);font-size:7px;color:var(--muted);margin-top:8px;text-align:center;"></div>
       </div>
     </div>
 
@@ -602,66 +619,82 @@ function applyGold(){
   updateGoldDisp();
 }
 
-// ─── 캐릭터 스탯 헬퍼 ───
-function getStatCur(){ var cfg=statCfg[curStatType]; return Math.max(0,Math.min(cfg.max,parseInt(document.getElementById('char-cur-in').value)||0)); }
-function getStatNew(){ var cfg=statCfg[curStatType]; return Math.max(0,Math.min(cfg.max,parseInt(document.getElementById('char-new-in').value)||0)); }
-function setStatCur(v){ document.getElementById('char-cur-in').value=v; }
-function setStatNew(v){ document.getElementById('char-new-in').value=v; }
-function setStatNewMax(){ setStatNew(statCfg[curStatType].max); }
-function nudgeStatCur(d){ var cfg=statCfg[curStatType]; setStatCur(Math.max(0,Math.min(cfg.max,getStatCur()+d))); }
-function nudgeStatNew(d){ var cfg=statCfg[curStatType]; setStatNew(Math.max(0,Math.min(cfg.max,getStatNew()+d))); }
-function clampStatCur(){ var cfg=statCfg[curStatType]; var el=document.getElementById('char-cur-in'); el.value=Math.max(0,Math.min(cfg.max,parseInt(el.value)||0)); }
-function clampStatNew(){ var cfg=statCfg[curStatType]; var el=document.getElementById('char-new-in'); el.value=Math.max(0,Math.min(cfg.max,parseInt(el.value)||0)); }
+// ─── 캐릭터 스탯 직접 주소 방식 ───
+// 베이스: 0x18C6C0, 캐릭터 간격: 0x50
+var STAT_BASE = 0x18C6C0;
+var STAT_STEP = 0x50;
+// 오프셋 (이미지 메모리맵 기준)
+var STAT_OFF = {
+  lv:   0x11, // 1byte
+  chp:  0x30, // 2byte 현HP
+  mhp:  0x32, // 2byte MAX HP
+  cmp:  0x34, // 2byte 현MP
+  mmp:  0x36, // 2byte MAX MP
+  ap:   0x38, // 2byte 최종AP
+  dp:   0x3A, // 2byte 최종DP
+  hit:  0x3C, // 2byte HIT
+};
 
-// ─── 캐릭터 스탯 ───
-var statCfg={HP:{max:9999,pre:[1,50,100,500,999,9999],lbl:'❤ HP 편집 중'},MP:{max:999,pre:[0,50,100,500,999],lbl:'💙 MP 편집 중'},EXP:{max:99999,pre:[0,1000,9999,50000,99999],lbl:'⭐ 경험치 편집 중'},LV:{max:50,pre:[1,5,10,20,30,50],lbl:'🆙 레벨 편집 중'}};
-function setStatType(t){
-  curStatType=t; var cfg=statCfg[t];
-  document.getElementById('stat-type-lbl').textContent=cfg.lbl;
-  document.getElementById('char-cur-in').max=cfg.max;
-  document.getElementById('char-new-in').max=cfg.max;
-  setStatNew(cfg.max);
-  // 입력창 색상 변경
-  var colorMap={HP:'var(--red)',MP:'var(--blue)',EXP:'var(--green)',LV:'var(--yellow)'};
-  var col=colorMap[t]||'var(--accent)';
-  document.getElementById('char-cur-in').style.color=col;
-  document.getElementById('char-cur-in').style.borderColor=col;
-  var pe=document.getElementById('char-presets');
-  pe.innerHTML=cfg.pre.map(function(v){return'<button class="preset-btn" onclick="setStatCur('+v+')">'+v+'</button>';}).join('');
-  charAddrs=[]; document.getElementById('char-list').innerHTML='<div class="scan-empty">스캔 후 주소 목록 표시</div>';
-  document.getElementById('char-cnt').textContent='스캔 결과: 0개';
-  log(cfg.lbl+' 선택','info');
+function statBase(charIdx){
+  return STAT_BASE + charIdx * STAT_STEP;
 }
-function charScan(){
-  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var cur=getStatCur();
-  var b=(curStatType==='LV')?8:16;
-  var f=scanMem(cur,b); if(f.length===0)f=scanMem(cur,32);
-  charAddrs=f;
-  document.getElementById('char-cnt').textContent='스캔 결과: '+f.length+'개';
-  renderCharList(b);
-  log(curStatType+' 스캔: '+cur+' → '+f.length+'개','ok');
-  toast('🔍 '+f.length+'개 발견','nfo');
-  if(f.length>0)applyChar();
+
+function statReadAll(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  var idx = parseInt(document.getElementById('stat-char-sel').value);
+  var base = statBase(idx);
+  document.getElementById('sv-lv').value  = mRead(base + STAT_OFF.lv,  8)  || 0;
+  document.getElementById('sv-chp').value = mRead(base + STAT_OFF.chp, 16) || 0;
+  document.getElementById('sv-mhp').value = mRead(base + STAT_OFF.mhp, 16) || 0;
+  document.getElementById('sv-cmp').value = mRead(base + STAT_OFF.cmp, 16) || 0;
+  document.getElementById('sv-mmp').value = mRead(base + STAT_OFF.mmp, 16) || 0;
+  document.getElementById('sv-ap').value  = mRead(base + STAT_OFF.ap,  16) || 0;
+  document.getElementById('sv-dp').value  = mRead(base + STAT_OFF.dp,  16) || 0;
+  document.getElementById('sv-hit').value = mRead(base + STAT_OFF.hit, 16) || 0;
+  var name = document.getElementById('stat-char-sel').options[idx].text;
+  document.getElementById('stat-result').textContent = '📖 '+name+' 읽기 완료  base=0x'+base.toString(16);
+  log('스탯 읽기: '+name+' (base=0x'+base.toString(16)+')','ok');
+  toast('📖 읽기 완료','ok');
 }
-function renderCharList(b){
-  var c=document.getElementById('char-list'),h=heap();
-  if(!charAddrs.length){c.innerHTML='<div class="scan-empty">검색 결과 없음</div>';return;}
-  var html='';
-  for(var i=0;i<Math.min(charAddrs.length,30);i++){var a=charAddrs[i],v=h?mRead(a,b||16):'?';html+='<div class="scan-item'+(a===selectedAddr?' sel':'')+'" onclick="selAddr('+a+','+b+')">'+'<span class="scan-addr">0x'+a.toString(16)+'</span><span class="scan-v">'+v+'</span></div>';}
-  if(charAddrs.length>30)html+='<div class="scan-empty">... 외 '+(charAddrs.length-30)+'개</div>';
-  c.innerHTML=html;
+
+function statSetAllMax(){
+  document.getElementById('sv-chp').value = 9999;
+  document.getElementById('sv-mhp').value = 9999;
+  document.getElementById('sv-cmp').value = 999;
+  document.getElementById('sv-mmp').value = 999;
+  document.getElementById('sv-lv').value  = 40;
+  document.getElementById('sv-ap').value  = 9999;
+  document.getElementById('sv-dp').value  = 9999;
+  document.getElementById('sv-hit').value = 999;
 }
-function applyChar(){
-  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  if(!charAddrs.length){toast('⚠ 먼저 스캔하세요','err');return;}
-  var nv=getStatNew();
-  var b=(curStatType==='LV')?8:16,cnt=0;
-  charAddrs.forEach(function(a){if(mWrite(a,nv,b))cnt++;});
-  log('✓ '+curStatType+' → '+nv+' ('+cnt+'개 적용)','ok');
-  toast('✓ '+curStatType+' '+nv+'!','ok');
+
+function statWriteAll(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  var idx = parseInt(document.getElementById('stat-char-sel').value);
+  var base = statBase(idx);
+  var lv  = Math.max(1,  Math.min(80,   parseInt(document.getElementById('sv-lv').value)  ||1));
+  var chp = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-chp').value) ||0));
+  var mhp = Math.max(1,  Math.min(9999, parseInt(document.getElementById('sv-mhp').value) ||1));
+  var cmp = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-cmp').value)  ||0));
+  var mmp = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-mmp').value)  ||0));
+  var ap  = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-ap').value)  ||0));
+  var dp  = Math.max(0,  Math.min(9999, parseInt(document.getElementById('sv-dp').value)  ||0));
+  var hit = Math.max(0,  Math.min(999,  parseInt(document.getElementById('sv-hit').value)  ||0));
+  mWrite(base + STAT_OFF.lv,  lv,  8);
+  mWrite(base + STAT_OFF.chp, chp, 16);
+  mWrite(base + STAT_OFF.mhp, mhp, 16);
+  mWrite(base + STAT_OFF.cmp, cmp, 16);
+  mWrite(base + STAT_OFF.mmp, mmp, 16);
+  mWrite(base + STAT_OFF.ap,  ap,  16);
+  mWrite(base + STAT_OFF.dp,  dp,  16);
+  mWrite(base + STAT_OFF.hit, hit, 16);
+  var name = document.getElementById('stat-char-sel').options[idx].text;
+  document.getElementById('stat-result').textContent = '✅ '+name+' 적용 완료!';
+  log('스탯 쓰기: '+name+' LV='+lv+' HP='+chp+'/'+mhp+' MP='+cmp+'/'+mmp+' AP='+ap+' DP='+dp,'ok');
+  toast('✅ '+name+' 스탯 적용!','ok');
 }
-function selAddr(a,b){selectedAddr=a;var v=mRead(a,b||16);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setEditVal(v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');}
 
 // ─── 스캔/에디트 헬퍼 ───
 function getScanVal(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('scan-val').value)||0)); }
