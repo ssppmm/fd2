@@ -64,18 +64,14 @@
     .loading-text { font-family: var(--font-pixel); font-size: 10px; color: var(--accent); margin-bottom: 20px; animation: pulse 1s infinite; }
     .progress-bar-outer { width: 260px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .progress-bar-inner { height: 100%; background: var(--accent); width: 0%; transition: width .3s; }
-
-    /* 세이브 패널 */
     .save-panel {
       margin-top: 16px; padding: 16px 20px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     }
     .save-panel-left .title { font-family: var(--font-pixel); font-size: 8px; color: #4a9eff; margin-bottom: 6px; }
-    .save-panel-left .desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+    .save-panel-left .desc { font-size: 11px; color: var(--muted); line-height: 1.8; }
     .save-panel-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* 토스트 */
     #save-toast {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       font-family: var(--font-pixel); font-size: 9px;
@@ -86,8 +82,6 @@
     #save-toast.success { background: #4aff8a; color: #000; }
     #save-toast.error { background: #ff4a4a; color: #fff; }
     #save-toast.info { background: #4a9eff; color: #000; }
-
-    /* 모바일 터치 컨트롤 */
     .touch-controls { display: none; margin-top: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
     @media (pointer: coarse) {
       .touch-controls { display: flex; justify-content: space-between; align-items: center; }
@@ -107,7 +101,6 @@
     .dpad-center{ grid-column: 2; grid-row: 2; background: transparent; border: none; pointer-events: none; }
     .dpad-right { grid-column: 3; grid-row: 2; }
     .dpad-down  { grid-column: 2; grid-row: 3; }
-
     .pc-controls { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .control-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
     .control-card h3 { font-family: var(--font-pixel); font-size: 9px; color: var(--accent); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
@@ -162,7 +155,6 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  <!-- 세이브 패널 -->
   <div class="save-panel">
     <div class="save-panel-left">
       <div class="title">💾 세이브 관리</div>
@@ -179,7 +171,6 @@
     </div>
   </div>
 
-  <!-- 모바일 터치 컨트롤 -->
   <div class="touch-controls">
     <div class="dpad">
       <button class="touch-btn dpad-up"    data-key="ArrowUp">↑</button>
@@ -194,7 +185,6 @@
     </div>
   </div>
 
-  <!-- PC 컨트롤 안내 -->
   <div class="pc-controls">
     <div class="control-card">
       <h3>⌨ 기본 조작키</h3>
@@ -222,8 +212,7 @@
 
 <script>
   var gameStarted = false;
-  var dosInstance = null;  // dos 인스턴스 저장
-  var fsInstance = null;   // fs 인스턴스 저장
+  var fsInstance = null;
   var DB_NAME = 'fd2-saves';
   var SAVE_FILE = 'FD2.SAV';
 
@@ -285,95 +274,69 @@
     document.getElementById('save-status').textContent = data ? '💾 저장된 세이브 있음' : '';
   });
 
-  // 💾 저장 — IndexedDB에 현재 세이브 저장
+  // 세이브 파일 읽기 (fsInstance.fs.readFile 사용)
+  function readSaveFile() {
+    if (!fsInstance) return null;
+    try {
+      return fsInstance.fs.readFile('/' + SAVE_FILE);
+    } catch(e) {
+      return null;
+    }
+  }
+
+  // 💾 저장 → IndexedDB
   function doSave() {
     if (!fsInstance) { showToast('⚠ 게임 실행 후 저장하세요', 'error'); return; }
-    // js-dos 6.22 FS에서 파일 읽기
-    var FS = window.Module && window.Module.FS;
-    if (!FS) { showToast('⚠ FS를 찾을 수 없어요', 'error'); return; }
-    try {
-      var data = FS.readFile('/' + SAVE_FILE);
-      if (data && data.length > 0) {
-        dbSet(SAVE_FILE, data).then(function() {
-          showToast('💾 저장 완료!', 'success');
-          document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
-        });
-      } else {
-        showToast('⚠ 저장할 데이터가 없어요', 'error');
-      }
-    } catch(e) {
-      // 경로 다시 시도
-      try {
-        var data2 = FS.readFile('/home/web_user/' + SAVE_FILE);
-        if (data2 && data2.length > 0) {
-          dbSet(SAVE_FILE, data2).then(function() {
-            showToast('💾 저장 완료!', 'success');
-          });
-        }
-      } catch(e2) {
-        showToast('⚠ 저장 실패 - 게임 내에서 먼저 저장하세요', 'error');
-      }
+    var data = readSaveFile();
+    if (data && data.length > 0) {
+      dbSet(SAVE_FILE, data).then(function() {
+        showToast('💾 저장 완료!', 'success');
+        document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
+      });
+    } else {
+      showToast('⚠ 게임 내에서 먼저 저장하세요', 'error');
     }
   }
 
-  // ⬇ 다운로드
+  // ⬇ 다운로드 → 파일로
   function doDownload() {
-    if (!fsInstance) { showToast('⚠ 게임 실행 후 다운로드하세요', 'error'); return; }
-    var FS = window.Module && window.Module.FS;
-    if (!FS) { showToast('⚠ FS를 찾을 수 없어요', 'error'); return; }
+    // 1. 게임 실행 중이면 현재 fs에서 읽기
+    var data = readSaveFile();
 
-    var paths = ['/' + SAVE_FILE, '/home/web_user/' + SAVE_FILE, '/c/' + SAVE_FILE];
-    var data = null;
-
-    for (var i = 0; i < paths.length; i++) {
-      try {
-        data = FS.readFile(paths[i]);
-        if (data && data.length > 0) break;
-      } catch(e) {}
-    }
-
-    if (data && data.length > 0) {
-      var blob = new Blob([data], { type: 'application/octet-stream' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'FD2.SAV';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-      showToast('⬇ FD2.SAV 다운로드 완료!', 'success');
-    } else {
-      // IndexedDB에서라도 다운로드
+    // 2. 없으면 IndexedDB에서 읽기
+    if (!data || data.length === 0) {
       dbGet(SAVE_FILE).then(function(saved) {
         if (saved && saved.length > 0) {
-          var blob = new Blob([saved], { type: 'application/octet-stream' });
-          var a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = 'FD2.SAV';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          showToast('⬇ 저장된 세이브 다운로드 완료!', 'success');
+          downloadBlob(saved);
         } else {
-          showToast('⚠ 저장된 세이브가 없어요. 먼저 💾 저장을 눌러주세요', 'error');
+          showToast('⚠ 먼저 💾 저장을 눌러주세요', 'error');
         }
       });
+      return;
     }
+    downloadBlob(data);
   }
 
-  // ⬆ 불러오기
+  function downloadBlob(data) {
+    var blob = new Blob([data], { type: 'application/octet-stream' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FD2.SAV';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    showToast('⬇ FD2.SAV 다운로드 완료!', 'success');
+  }
+
+  // ⬆ 불러오기 → IndexedDB에 저장 후 fs에도 적용
   function doUpload(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
       var data = new Uint8Array(e.target.result);
       dbSet(SAVE_FILE, data).then(function() {
         if (fsInstance) {
-          var FS = window.Module && window.Module.FS;
-          if (FS) {
-            try { FS.writeFile('/' + SAVE_FILE, data); } catch(err) {}
-            try { FS.writeFile('/home/web_user/' + SAVE_FILE, data); } catch(err) {}
-          }
+          try { fsInstance.fs.writeFile('/' + SAVE_FILE, data); } catch(err) {}
         }
         showToast('⬆ 불러오기 완료! 게임을 재시작하세요', 'success');
         document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
@@ -408,7 +371,7 @@
     var bar = document.getElementById('progress-bar');
     var loaded = 0;
 
-    dosInstance = Dos(document.getElementById('canvas'), {
+    Dos(document.getElementById('canvas'), {
       wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
     }).ready(function(fs, main) {
       fsInstance = fs;
