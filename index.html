@@ -345,7 +345,10 @@
         </select>
 
         <!-- 읽기 버튼 -->
-        <button class="btn btn-primary" style="width:100%;padding:9px;margin-bottom:12px;" onclick="statReadAll()">📖 현재값 읽기</button>
+        <div style="display:flex;gap:6px;margin-bottom:12px;">
+          <button class="btn btn-primary" style="flex:1;padding:9px;" onclick="statReadAll()">📖 현재값 읽기</button>
+          <button class="btn btn-ghost"   style="flex:1;padding:9px;font-size:9px;" onclick="statFindBase()" title="사울 HP를 입력 후 눌러서 정확한 메모리 위치 탐색">🔎 베이스 탐색</button>
+        </div>
 
         <!-- 스탯 그리드 -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
@@ -486,8 +489,8 @@
       </div>
       <div class="card-body" style="padding:10px;">
 
-        <!-- ① 캐릭터 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
+        <!-- ① 캐릭터 선택 (참고용) -->
+        <div class="lbl" style="margin-bottom:4px;">① 캐릭터 <span style="color:var(--muted);font-size:7px;">(참고용)</span></div>
         <select id="item-char-sel" onchange="onItemCharChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
           <option value="0">01. 사울 (검사)</option><option value="1">02. 아래스 (기사)</option>
           <option value="2">03. 유니 (법사)</option><option value="3">04. 카일 (기계기병)</option>
@@ -506,8 +509,8 @@
           <option value="28">29. 롤렌 (궁병)</option><option value="29">30. 샌디라스 (용인)</option>
         </select>
 
-        <!-- ② 슬롯 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">② 슬롯 (장비 위치)</div>
+        <!-- ② 슬롯 선택 (참고용) -->
+        <div class="lbl" style="margin-bottom:4px;">② 슬롯 <span style="color:var(--muted);font-size:7px;">(참고용)</span></div>
         <select id="item-slot-sel" onchange="onItemSlotChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
           <option value="0">슬롯 0 — 무기</option>
           <option value="1">슬롯 1 — 갑옷</option>
@@ -521,30 +524,42 @@
           <option value="14">슬롯 14</option><option value="15">슬롯 15</option>
         </select>
 
-        <!-- ③ 현재 아이템 선택 (스캔 기준값) -->
-        <div class="lbl" style="margin-bottom:4px;">③ 지금 슬롯에 있는 아이템 <span style="color:var(--muted);font-size:7px;">(게임 화면에서 확인)</span></div>
-        <div style="font-size:8px;margin-bottom:5px;padding:4px 8px;background:var(--surface2);border-radius:3px;">
-          🔥 <span style="color:#ff9900;font-weight:bold;">주황색</span> = 최강 OB 아이템
+        <!-- 차등 스캔 안내 -->
+        <div style="font-size:9px;line-height:1.9;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
+          <b style="color:var(--accent);">📌 사용법</b><br>
+          ③ 현재 아이템 선택 → <b>🔍 1차 스캔</b><br>
+          게임에서 아이템 <b>착용/해제</b> 반복<br>
+          → 바뀐 아이템으로 변경 → <b>🔎 재스캔</b>으로 범위 축소<br>
+          → 후보 <b style="color:var(--green);">5개 이하</b>로 줄면 → <b>✅ 적용</b>
         </div>
+
+        <!-- ③ 현재 아이템 -->
+        <div class="lbl" style="margin-bottom:4px;">③ 지금 슬롯 아이템 <span style="color:var(--muted);font-size:7px;">(게임 화면 확인)</span></div>
         <select id="item-cur-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--accent);border-radius:4px;padding:6px;font-size:9px;margin-bottom:6px;">
           <!-- JS로 채워짐 -->
         </select>
 
-        <!-- 스캔 버튼 -->
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="itemScan()">
-          🔍 현재 아이템으로 메모리 스캔
-        </button>
+        <!-- 스캔 버튼들 -->
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <button class="btn btn-primary" style="flex:1;padding:8px;" onclick="itemScan()">🔍 1차 스캔</button>
+          <button class="btn btn-ghost"   style="flex:1;padding:8px;font-size:9px;" onclick="itemRescan()">🔎 재스캔</button>
+          <button class="btn btn-ghost"   style="padding:8px 10px;font-size:12px;" onclick="itemReset()" title="초기화">↺</button>
+        </div>
 
-        <!-- 스캔 결과 상태 표시 -->
-        <div id="item-scan-status" style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:7px 10px;margin-bottom:10px;font-size:8px;line-height:1.8;display:none;">
-          <div>📍 발견된 주소: <span id="item-addr-cnt" style="color:var(--green);font-weight:bold;">0개</span></div>
-          <div id="item-addr-list" style="color:var(--muted);font-size:7px;margin-top:2px;"></div>
+        <!-- 스캔 상태 표시 -->
+        <div id="item-scan-status" style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;font-size:8px;line-height:2;display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span>📍 후보 주소</span>
+            <span id="item-addr-cnt" style="color:var(--green);font-weight:bold;font-size:13px;">0개</span>
+          </div>
+          <div id="item-addr-list" style="color:var(--muted);font-size:7px;margin-top:2px;word-break:break-all;max-height:60px;overflow-y:auto;"></div>
+          <div id="item-scan-hint" style="font-size:8px;margin-top:4px;"></div>
         </div>
 
         <hr class="divider">
 
-        <!-- ④ 바꿀 아이템 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">④ 바꿀 아이템</div>
+        <!-- ④ 바꿀 아이템 -->
+        <div class="lbl" style="margin-bottom:4px;">④ 바꿀 아이템 <span style="color:#ff9900;font-size:7px;">🔥주황=최강OB</span></div>
         <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--green);border-radius:4px;padding:6px;font-size:9px;margin-bottom:10px;">
           <!-- JS로 채워짐 -->
         </select>
@@ -552,7 +567,7 @@
         <!-- 적용 버튼 -->
         <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="applyItem()">✅ 적용</button>
         <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">
-          스캔 후 적용 → 세이브 후 전투/화면전환 시 반영
+          적용 후 전투/화면전환 시 게임에 반영됨
         </div>
       </div>
     </div>
@@ -585,10 +600,45 @@ var FILES=["FD2.EXE","FD2.DPP","FD2.SAV","FD2.TMP","ANI.DAT","BG.DAT","DATO.DAT"
 
 // ─── 메모리 ───
 function heap(){ return (fs0&&fs0.em&&fs0.em.HEAPU8)?fs0.em.HEAPU8:null; }
-function mRead(a,b){ var h=heap();if(!h)return null;b=b||32;if(b===8)return h[a];if(b===16)return h[a]|(h[a+1]<<8);return(h[a]|(h[a+1]<<8)|(h[a+2]<<16)|(h[a+3]<<24))>>>0; }
-function mWrite(a,v,b){ var h=heap();if(!h)return false;b=b||32;v=v>>>0;if(b>=8)h[a]=v&0xFF;if(b>=16)h[a+1]=(v>>8)&0xFF;if(b>=32){h[a+2]=(v>>16)&0xFF;h[a+3]=(v>>24)&0xFF;}return true; }
+function mRead(a,b){ var h=heap();if(!h||a<0||a+4>h.length)return null;b=b||32;if(b===8)return h[a];if(b===16)return h[a]|(h[a+1]<<8);return(h[a]|(h[a+1]<<8)|(h[a+2]<<16)|(h[a+3]<<24))>>>0; }
+function mWrite(a,v,b){ var h=heap();if(!h||a<0||a+4>h.length)return false;b=b||32;v=v>>>0;if(b>=8)h[a]=v&0xFF;if(b>=16)h[a+1]=(v>>8)&0xFF;if(b>=32){h[a+2]=(v>>16)&0xFF;h[a+3]=(v>>24)&0xFF;}return true; }
 function pAddr(s){ s=(s||'').trim();return(s.startsWith('0x')||s.startsWith('0X'))?parseInt(s,16):parseInt(s,10); }
-function scanMem(v,b){ var h=heap();if(!h)return[];v=v>>>0;b=b||32;var lo=v&0xFF,hi=(v>>8)&0xFF,hi2=(v>>16)&0xFF,hi3=(v>>24)&0xFF,f=[];if(b===32){for(var i=0;i<h.length-4;i++){if(h[i]===lo&&h[i+1]===hi&&h[i+2]===hi2&&h[i+3]===hi3){f.push(i);if(f.length>=100)break;}}}else if(b===16){for(var i=0;i<h.length-2;i++){if(h[i]===lo&&h[i+1]===hi){f.push(i);if(f.length>=100)break;}}}else{for(var i=0;i<h.length;i++){if(h[i]===lo){f.push(i);if(f.length>=100)break;}}}return f; }
+
+// DOSBox wasm 힙에서 DOS 게임 데이터는 0x1000000~0x2200000 범위에 있음
+// (이전 세션에서 골드 주소 0x20b94d3으로 확인됨)
+var SCAN_START = 0x1000000;
+var SCAN_END   = 0x2200000;
+
+// DOS 세그먼트 주소 → JS 힙 절대주소 변환
+// 0x18C6C0은 DOS linear address. DOSBox wasm에서 DOS 메모리는 힙의 앞부분에 직접 매핑됨
+// 실제 오프셋은 fs0.em.HEAPU8의 byteOffset 또는 0 (wasm linear memory 시작 = DOS 메모리)
+// 검증: 골드 0x20b94d3은 JS 힙 주소 그대로 사용했을 때 맞았음
+// → DOSBox wasm linear memory에서 DOS 주소는 그대로 JS 힙 인덱스로 사용 가능
+// → 단, 0x18C6C0 같은 낮은 주소는 SCAN_START 아래라 범위가 다름
+// → 스테이지 종료 후 캐릭터 데이터는 SCAN_START 위에 있을 수 있음
+// → 실제 주소를 런타임에 찾아야 함 (아래 findCharBase 참조)
+
+function scanMem(v, b, startAddr, endAddr){
+  var h=heap(); if(!h) return [];
+  v=v>>>0; b=b||32;
+  var s = startAddr || SCAN_START;
+  var e = Math.min(endAddr || SCAN_END, h.length-4);
+  var lo=v&0xFF, hi=(v>>8)&0xFF, hi2=(v>>16)&0xFF, hi3=(v>>24)&0xFF, f=[];
+  if(b===32){
+    for(var i=s;i<e;i++){
+      if(h[i]===lo&&h[i+1]===hi&&h[i+2]===hi2&&h[i+3]===hi3) f.push(i);
+    }
+  } else if(b===16){
+    for(var i=s;i<e-2;i++){
+      if(h[i]===lo&&h[i+1]===hi) f.push(i);
+    }
+  } else {
+    for(var i=s;i<e;i++){
+      if(h[i]===lo) f.push(i);
+    }
+  }
+  return f;
+}
 
 // ─── UI 헬퍼 ───
 function setSl(sid,lid,v){ document.getElementById(sid).value=v;document.getElementById(lid).textContent=v; }
@@ -625,11 +675,11 @@ function nudgeGoldNew(d){ setGoldNew(Math.max(0,Math.min(9999999,getGoldNew()+d)
 function goldScan(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
   var cur=getGoldCur();
-  log('골드 스캔: '+cur,'info');
+  log('골드 스캔: '+cur+' (범위 0x'+SCAN_START.toString(16)+'~0x'+SCAN_END.toString(16)+')','info');
   var f32=scanMem(cur,32);
-  var f16=scanMem(cur,16).filter(function(a){return!f32.includes(a);});
+  var f16=scanMem(cur,16).filter(function(a){return!f32.some(function(x){return Math.abs(x-a)<4;});});
   goldAddrs=f32.concat(f16);
-  log('골드 주소 '+goldAddrs.length+'개 발견','ok');
+  log('골드 주소 '+goldAddrs.length+'개 발견 (32bit:'+f32.length+' 16bit:'+f16.length+')','ok');
   toast('🔍 '+goldAddrs.length+'개 발견','nfo');
   updateGoldDisp();
   if(goldAddrs.length===0){toast('⚠ 주소 없음 - 값을 다시 확인하세요','err');return;}
@@ -647,23 +697,51 @@ function applyGold(){
 }
 
 // ─── 캐릭터 스탯 직접 주소 방식 ───
-// 베이스: 0x18C6C0, 캐릭터 간격: 0x50
-var STAT_BASE = 0x18C6C0;
+// 베이스: 0x18C6C0 (DOS linear address = JS 힙 인덱스, 스테이지 종료 후 기준)
+// 스테이지 중 전투 시엔 주소가 달라짐 → findCharBase()로 실제 주소 탐색
+var STAT_BASE = 0x18C6C0;  // 스테이지 종료 후 기본값
 var STAT_STEP = 0x50;
-// 오프셋 (이미지 메모리맵 기준)
 var STAT_OFF = {
-  lv:   0x11, // 1byte
-  chp:  0x30, // 2byte 현HP
-  mhp:  0x32, // 2byte MAX HP
-  cmp:  0x34, // 2byte 현MP
-  mmp:  0x36, // 2byte MAX MP
-  ap:   0x38, // 2byte 최종AP
-  dp:   0x3A, // 2byte 최종DP
-  hit:  0x3C, // 2byte HIT
+  lv:   0x11,  // 8bit
+  chp:  0x30,  // 16bit 현HP
+  mhp:  0x32,  // 16bit MAX HP
+  cmp:  0x34,  // 16bit 현MP
+  mmp:  0x36,  // 16bit MAX MP
+  ap:   0x38,  // 16bit 최종AP
+  dp:   0x3A,  // 16bit 최종DP
+  hit:  0x3C,  // 16bit HIT
+  ev:   0x3E,  // 16bit EV
+  dx:   0x4A,  // 16bit DX
 };
+var statFoundBase = null; // 런타임에 찾은 실제 베이스
 
 function statBase(charIdx){
-  return STAT_BASE + charIdx * STAT_STEP;
+  var b = statFoundBase || STAT_BASE;
+  return b + charIdx * STAT_STEP;
+}
+
+// 현재 메모리에서 사울(캐릭터0) 데이터 블록 찾기
+// 행동상태 오프셋+6 = 적아군코드(0=아군사울=?), 오프셋+2=캐릭터순서(0)
+// 간단하게: 사울의 현재 HP를 사용자가 입력하면 그 값으로 찾음
+function findCharBaseByHP(knownHP){
+  var h = heap(); if(!h) return null;
+  var lo = knownHP & 0xFF, hi = (knownHP >> 8) & 0xFF;
+  var candidates = [];
+  // 0x10000~0x400000 범위에서 16bit 값으로 스캔
+  for(var i=0x10000; i<0x400000-2; i++){
+    if(h[i]===lo && h[i+1]===hi){
+      // +0x30 위치에서 발견 → base = i - 0x30
+      var base = i - STAT_OFF.chp;
+      if(base >= 0){
+        // 검증: lv(+0x11)이 1~80 범위인지
+        var lv = h[base + STAT_OFF.lv];
+        if(lv >= 1 && lv <= 80){
+          candidates.push(base);
+        }
+      }
+    }
+  }
+  return candidates;
 }
 
 function statReadAll(){
@@ -671,18 +749,49 @@ function statReadAll(){
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
   var idx = parseInt(document.getElementById('stat-char-sel').value);
   var base = statBase(idx);
-  document.getElementById('sv-lv').value  = mRead(base + STAT_OFF.lv,  8)  || 0;
-  document.getElementById('sv-chp').value = mRead(base + STAT_OFF.chp, 16) || 0;
-  document.getElementById('sv-mhp').value = mRead(base + STAT_OFF.mhp, 16) || 0;
-  document.getElementById('sv-cmp').value = mRead(base + STAT_OFF.cmp, 16) || 0;
-  document.getElementById('sv-mmp').value = mRead(base + STAT_OFF.mmp, 16) || 0;
-  document.getElementById('sv-ap').value  = mRead(base + STAT_OFF.ap,  16) || 0;
-  document.getElementById('sv-dp').value  = mRead(base + STAT_OFF.dp,  16) || 0;
-  document.getElementById('sv-hit').value = mRead(base + STAT_OFF.hit, 16) || 0;
+  var lv  = mRead(base + STAT_OFF.lv,  8);
+  var chp = mRead(base + STAT_OFF.chp, 16);
+  var mhp = mRead(base + STAT_OFF.mhp, 16);
+  var cmp = mRead(base + STAT_OFF.cmp, 16);
+  var mmp = mRead(base + STAT_OFF.mmp, 16);
+  var ap  = mRead(base + STAT_OFF.ap,  16);
+  var dp  = mRead(base + STAT_OFF.dp,  16);
+  var hit = mRead(base + STAT_OFF.hit, 16);
+  document.getElementById('sv-lv').value  = lv  || 0;
+  document.getElementById('sv-chp').value = chp || 0;
+  document.getElementById('sv-mhp').value = mhp || 0;
+  document.getElementById('sv-cmp').value = cmp || 0;
+  document.getElementById('sv-mmp').value = mmp || 0;
+  document.getElementById('sv-ap').value  = ap  || 0;
+  document.getElementById('sv-dp').value  = dp  || 0;
+  document.getElementById('sv-hit').value = hit || 0;
   var name = document.getElementById('stat-char-sel').options[idx].text;
-  document.getElementById('stat-result').textContent = '📖 '+name+' 읽기 완료  base=0x'+base.toString(16);
-  log('스탯 읽기: '+name+' (base=0x'+base.toString(16)+')','ok');
+  var baseStr = '0x'+(statFoundBase||STAT_BASE).toString(16);
+  document.getElementById('stat-result').textContent =
+    '📖 '+name+'  base='+baseStr+'  char@0x'+base.toString(16);
+  log('스탯 읽기: '+name+' base=0x'+base.toString(16)+'  LV='+lv+' HP='+chp+'/'+mhp,'ok');
   toast('📖 읽기 완료','ok');
+}
+
+// 베이스 주소 수동 교정 (사울 HP로 탐색)
+function statFindBase(){
+  var h = heap(); if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  var knownHP = parseInt(document.getElementById('sv-chp').value) || 0;
+  if(knownHP === 0){ toast('⚠ 사울의 현재 HP를 먼저 입력하세요','err'); return; }
+  log('베이스 탐색: 사울 HP='+knownHP+' 으로 검색 중...','info');
+  var cands = findCharBaseByHP(knownHP);
+  if(cands.length === 0){
+    toast('⚠ 베이스 못 찾음 - HP값 확인','err');
+    log('베이스 탐색 실패 - HP='+knownHP,'err');
+    return;
+  }
+  // 첫 번째 후보 사용
+  statFoundBase = cands[0];
+  document.getElementById('stat-result').textContent =
+    '✅ 베이스 발견: 0x'+statFoundBase.toString(16)+(cands.length>1?' ('+cands.length+'개 후보 중 첫번째)':'');
+  log('베이스 발견: 0x'+statFoundBase.toString(16)+' (후보 '+cands.length+'개)','ok');
+  toast('✅ 베이스 0x'+statFoundBase.toString(16),'ok');
+  statReadAll();
 }
 
 function statSetAllMax(){
@@ -718,8 +827,8 @@ function statWriteAll(){
   mWrite(base + STAT_OFF.dp,  dp,  16);
   mWrite(base + STAT_OFF.hit, hit, 16);
   var name = document.getElementById('stat-char-sel').options[idx].text;
-  document.getElementById('stat-result').textContent = '✅ '+name+' 적용 완료!';
-  log('스탯 쓰기: '+name+' LV='+lv+' HP='+chp+'/'+mhp+' MP='+cmp+'/'+mmp+' AP='+ap+' DP='+dp,'ok');
+  document.getElementById('stat-result').textContent = '✅ '+name+' 적용 완료! (0x'+base.toString(16)+')';
+  log('스탯 쓰기: '+name+' @0x'+base.toString(16)+' LV='+lv+' HP='+chp+'/'+mhp+' MP='+cmp+'/'+mmp+' AP='+ap+' DP='+dp,'ok');
   toast('✅ '+name+' 스탯 적용!','ok');
 }
 
@@ -924,82 +1033,132 @@ function buildItemSelect(selId, defaultCode){
 buildItemSelect('item-cur-sel', 0x00);
 buildItemSelect('item-new-sel', 0x0B);
 
-// 아이템 스캔으로 찾은 주소 목록
-var itemAddrs = [];
+// ─── 아이템 차등 스캔 ───
+var itemAddrs = [];   // 현재 후보 주소 목록
 
-function onItemCharChange(){ itemAddrs = []; resetItemScanUI(); }
-function onItemSlotChange(){ itemAddrs = []; resetItemScanUI(); }
+function onItemCharChange(){ itemReset(); }
+function onItemSlotChange(){ itemReset(); }
 
-function resetItemScanUI(){
+function itemReset(){
+  itemAddrs = [];
   document.getElementById('item-scan-status').style.display = 'none';
   document.getElementById('item-addr-cnt').textContent = '0개';
   document.getElementById('item-addr-list').textContent = '';
+  document.getElementById('item-scan-hint').textContent = '';
+  log('아이템 스캔 초기화','info');
 }
 
-// ③ 현재 아이템 코드로 8bit 메모리 스캔
+function itemUpdateUI(){
+  var cnt = itemAddrs.length;
+  document.getElementById('item-scan-status').style.display = 'block';
+  document.getElementById('item-addr-cnt').textContent = cnt + '개';
+
+  // 주소 목록 표시 (최대 30개)
+  var show = itemAddrs.slice(0, 30).map(function(a){
+    return '0x'+a.toString(16);
+  }).join('  ');
+  if(cnt > 30) show += '\n... 외 '+(cnt-30)+'개';
+  document.getElementById('item-addr-list').textContent = show;
+
+  // 힌트 메시지
+  var hint = document.getElementById('item-scan-hint');
+  if(cnt === 0){
+    hint.style.color = 'var(--red)';
+    hint.textContent = '⚠ 결과 없음 — 아이템 확인 후 재시도';
+  } else if(cnt <= 5){
+    hint.style.color = 'var(--green)';
+    hint.textContent = '✅ '+cnt+'개로 좁혀짐! ④ 아이템 선택 후 적용하세요';
+  } else if(cnt <= 50){
+    hint.style.color = 'var(--yellow)';
+    hint.textContent = '🔄 아이템 착용/해제 후 재스캔으로 더 좁히세요 ('+cnt+'개)';
+  } else {
+    hint.style.color = 'var(--muted)';
+    hint.textContent = '🔄 많음('+cnt+'개) — 게임에서 아이템 바꾼 뒤 재스캔 반복하세요';
+  }
+}
+
+// ① 1차 스캔: 현재 아이템 코드로 전체 후보 수집
 function itemScan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
 
   var curCode = parseInt(document.getElementById('item-cur-sel').value);
   var curObj  = ITEMS.find(function(x){ return x.code === curCode; });
-  var curName = curObj ? curObj.name : '코드 0x'+curCode.toString(16);
+  var curName = curObj ? curObj.name : '0x'+curCode.toString(16).toUpperCase();
 
-  log('아이템 스캔: [0x'+curCode.toString(16).toUpperCase()+'] '+curName+' (8bit)','info');
+  log('1차 스캔: [0x'+curCode.toString(16).toUpperCase()+'] '+curName,'info');
 
-  // 8bit 스캔
-  var found = scanMem(curCode, 8);
+  itemAddrs = scanMem(curCode, 8);
 
-  itemAddrs = found;
-  document.getElementById('item-scan-status').style.display = 'block';
-  document.getElementById('item-addr-cnt').textContent = found.length + '개';
+  log('1차 결과: '+itemAddrs.length+'개 후보','ok');
+  itemUpdateUI();
 
-  if(found.length === 0){
-    toast('⚠ 주소 없음 — 현재 아이템을 다시 확인하세요','err');
-    document.getElementById('item-addr-list').textContent = '결과 없음. 게임에서 아이템 확인 후 재시도';
-    log('스캔 결과 없음 — 현재 슬롯 아이템이 맞는지 확인하세요','err');
-    return;
+  if(itemAddrs.length === 0){
+    toast('⚠ 결과 없음 — 아이템 다시 확인','err');
+  } else {
+    toast('🔍 '+itemAddrs.length+'개 — 게임에서 아이템 바꾼 뒤 재스캔!','ok');
   }
-
-  // 상위 10개 주소 표시
-  var addrText = found.slice(0, 10).map(function(a){
-    return '0x'+a.toString(16);
-  }).join('  ');
-  if(found.length > 10) addrText += ' ... 외 '+(found.length-10)+'개';
-  document.getElementById('item-addr-list').textContent = addrText;
-
-  toast('🔍 '+found.length+'개 발견 — 이제 ④ 아이템 선택 후 적용!','ok');
-  log('스캔 완료: '+found.length+'개 주소 발견','ok');
 }
 
-// ④ 바꿀 아이템으로 메모리 쓰기
+// ② 재스캔: 기존 후보 중 현재 아이템 코드와 일치하는 것만 남김 (차등 스캔)
+function itemRescan(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  if(itemAddrs.length === 0){ toast('⚠ 먼저 1차 스캔을 하세요','err'); return; }
+
+  var curCode = parseInt(document.getElementById('item-cur-sel').value);
+  var curObj  = ITEMS.find(function(x){ return x.code === curCode; });
+  var curName = curObj ? curObj.name : '0x'+curCode.toString(16).toUpperCase();
+
+  var before = itemAddrs.length;
+
+  // 기존 후보 중 현재 값이 curCode인 것만 남김
+  itemAddrs = itemAddrs.filter(function(a){
+    return h[a] === curCode;
+  });
+
+  var after = itemAddrs.length;
+  log('재스캔 [0x'+curCode.toString(16).toUpperCase()+'] '+curName+': '+before+'개 → '+after+'개','ok');
+  itemUpdateUI();
+
+  if(after === 0){
+    toast('⚠ 0개 — 아이템 선택이 맞는지 확인하세요','err');
+  } else if(after <= 5){
+    toast('✅ '+after+'개로 좁혀짐! 이제 적용하세요','ok');
+  } else {
+    toast('🔄 '+after+'개 — 아이템 바꾼 뒤 재스캔 반복','nfo');
+  }
+}
+
+// ③ 적용: 후보 주소 전체에 새 아이템 코드 쓰기
 function applyItem(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-
   if(itemAddrs.length === 0){
-    toast('⚠ 먼저 🔍 스캔을 실행하세요!','err');
-    log('주소 없음 — ③ 현재 아이템 선택 후 스캔 먼저 실행','err');
+    toast('⚠ 먼저 스캔하세요','err'); return;
+  }
+  if(itemAddrs.length > 100){
+    toast('⚠ 후보가 너무 많음('+itemAddrs.length+'개) — 재스캔으로 더 좁히세요','err');
     return;
   }
 
   var newCode = parseInt(document.getElementById('item-new-sel').value);
   var newObj  = ITEMS.find(function(x){ return x.code === newCode; });
-  var newName = newObj ? newObj.name : '코드 0x'+newCode.toString(16);
+  var newName = newObj ? newObj.name : '0x'+newCode.toString(16).toUpperCase();
 
   var cnt = 0;
   itemAddrs.forEach(function(a){
     if(mWrite(a, newCode, 8)) cnt++;
   });
 
-  log('✓ 아이템 변경: → [0x'+newCode.toString(16).toUpperCase()+'] '+newName+' ('+cnt+'개 주소에 쓰기 완료)','ok');
+  log('✓ 아이템 → [0x'+newCode.toString(16).toUpperCase()+'] '+newName+' ('+cnt+'개 주소 변경)','ok');
   toast('🎒 '+newName+' 적용! ('+cnt+'개)','ok');
 
-  // 적용 후 현재아이템 선택을 바꾼 아이템으로 업데이트 (연속 변경 편의)
+  // 적용 후 현재 아이템을 방금 쓴 값으로 업데이트 (연속 재스캔 준비)
   document.getElementById('item-cur-sel').value = newCode;
-  // 주소 초기화 (새 스캔 필요 표시)
+  // 후보 목록 초기화 (다음 재스캔 필요)
   itemAddrs = [];
-  resetItemScanUI();
+  itemReset();
 }
 
 // ─── 버튼 연결 ───
