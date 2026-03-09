@@ -26,16 +26,22 @@
     .game-info {
       display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
       padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+      flex-wrap: wrap;
     }
     .game-badge { font-family: var(--font-pixel); font-size: 8px; padding: 5px 8px; background: var(--accent); color: #000; border-radius: 2px; }
     .game-title-block h1 { font-family: var(--font-pixel); font-size: 11px; margin-bottom: 4px; }
     .game-title-block p { font-size: 11px; color: var(--muted); }
-    .game-actions { margin-left: auto; display: flex; gap: 8px; }
-    .btn { font-family: var(--font-pixel); font-size: 8px; padding: 8px 12px; border: 1px solid; border-radius: 2px; cursor: pointer; transition: all .2s; }
+    .game-actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn { font-family: var(--font-pixel); font-size: 7px; padding: 7px 10px; border: 1px solid; border-radius: 2px; cursor: pointer; transition: all .2s; white-space: nowrap; }
     .btn-primary { background: var(--accent); border-color: var(--accent); color: #000; }
     .btn-primary:hover { background: transparent; color: var(--accent); }
     .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-blue { background: transparent; border-color: #4a9eff; color: #4a9eff; }
+    .btn-blue:hover { background: #4a9eff; color: #000; }
+    .btn-green { background: transparent; border-color: #4aff8a; color: #4aff8a; }
+    .btn-green:hover { background: #4aff8a; color: #000; }
+
     .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
     #canvas { width: 100%; aspect-ratio: 4/3; max-height: 60vh; display: block; }
     #splash {
@@ -45,7 +51,8 @@
     #splash.hidden { opacity: 0; pointer-events: none; }
     .splash-icon { font-size: 64px; margin-bottom: 20px; }
     .splash-title { font-family: var(--font-pixel); font-size: 13px; color: var(--accent); margin-bottom: 10px; text-align: center; line-height: 1.8; }
-    .splash-sub { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+    .splash-sub { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .save-status { font-size: 11px; color: #4a9eff; margin-bottom: 24px; min-height: 18px; }
     .play-btn {
       font-family: var(--font-pixel); font-size: 10px; padding: 12px 28px;
       background: transparent; border: 2px solid var(--accent); color: var(--accent);
@@ -59,66 +66,49 @@
     .progress-bar-outer { width: 260px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .progress-bar-inner { height: 100%; background: var(--accent); width: 0%; transition: width .3s; }
 
-    /* 모바일 터치 컨트롤 */
-    .touch-controls {
-      display: none;
-      margin-top: 16px;
-      padding: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
+    /* 세이브 패널 */
+    .save-panel {
+      margin-top: 16px; padding: 16px 20px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     }
+    .save-panel-title { font-family: var(--font-pixel); font-size: 8px; color: #4a9eff; }
+    .save-panel-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .save-panel-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* 토스트 */
+    #save-toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      font-family: var(--font-pixel); font-size: 9px;
+      padding: 10px 20px; border-radius: 4px; z-index: 9999;
+      opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap;
+    }
+    #save-toast.show { opacity: 1; }
+    #save-toast.success { background: #4aff8a; color: #000; }
+    #save-toast.error { background: #ff4a4a; color: #fff; }
+    #save-toast.info { background: #4a9eff; color: #000; }
+
+    /* 모바일 터치 컨트롤 */
+    .touch-controls { display: none; margin-top: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
     @media (pointer: coarse) {
       .touch-controls { display: flex; justify-content: space-between; align-items: center; }
       .pc-controls { display: none; }
     }
-    .dpad {
-      display: grid;
-      grid-template-columns: repeat(3, 56px);
-      grid-template-rows: repeat(3, 56px);
-      gap: 4px;
-    }
-    .action-btns {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .dpad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 4px; }
+    .action-btns { display: flex; flex-direction: column; gap: 10px; }
     .touch-btn {
-      width: 56px; height: 56px;
-      background: #1e1e2e;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 20px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: all .1s;
-      touch-action: manipulation;
+      width: 56px; height: 56px; background: #1e1e2e; border: 2px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 20px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; user-select: none; -webkit-user-select: none; transition: all .1s; touch-action: manipulation;
     }
-    .touch-btn:active, .touch-btn.pressed {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #000;
-      transform: scale(0.92);
-    }
-    .touch-btn.action {
-      width: 72px; height: 56px;
-      font-family: var(--font-pixel);
-      font-size: 9px;
-      background: #1a1a2e;
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .touch-btn.empty { background: transparent; border: none; pointer-events: none; }
+    .touch-btn:active, .touch-btn.pressed { background: var(--accent); border-color: var(--accent); color: #000; transform: scale(0.92); }
+    .touch-btn.action { width: 72px; height: 56px; font-family: var(--font-pixel); font-size: 9px; background: #1a1a2e; border-color: var(--accent); color: var(--accent); }
     .dpad-up    { grid-column: 2; grid-row: 1; }
     .dpad-left  { grid-column: 1; grid-row: 2; }
     .dpad-center{ grid-column: 2; grid-row: 2; background: transparent; border: none; pointer-events: none; }
     .dpad-right { grid-column: 3; grid-row: 2; }
     .dpad-down  { grid-column: 2; grid-row: 3; }
 
-    /* PC 컨트롤 안내 */
     .pc-controls { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .control-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
     .control-card h3 { font-family: var(--font-pixel); font-size: 9px; color: var(--accent); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
@@ -133,18 +123,26 @@
 
 <header>
   <div class="logo">🐉 FLAME DRAGON 2</div>
+  <div class="header-meta">
+    powered by <a href="https://js-dos.com" target="_blank">js-dos 6.22</a><br>
+    <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a>
+  </div>
 </header>
 
 <main>
   <div class="game-info">
     <div class="game-badge">DOS</div>
     <div class="game-title-block">
-      <h1>용의기사 2</h1>
+      <h1>炎龍騎士團 2</h1>
       <p>Flame Dragon 2 · 1995 · 턴제 전략 RPG</p>
     </div>
     <div class="game-actions">
-      <button class="btn btn-ghost" id="btn-fullscreen">⛶ 전체화면</button>
+      <button class="btn btn-blue"    id="btn-save">💾 저장</button>
+      <button class="btn btn-blue"    id="btn-download">⬇ 다운로드</button>
+      <button class="btn btn-green"   id="btn-upload-trigger">⬆ 불러오기</button>
+      <button class="btn btn-ghost"   id="btn-fullscreen">⛶ 전체화면</button>
       <button class="btn btn-primary" id="btn-start">▶ 시작하기</button>
+      <input type="file" id="btn-upload" accept=".SAV,.sav" style="display:none" />
     </div>
   </div>
 
@@ -153,6 +151,7 @@
       <div class="splash-icon">🐉</div>
       <div class="splash-title">FLAME DRAGON 2</div>
       <div class="splash-sub">클릭하여 시작</div>
+      <div class="save-status" id="save-status"></div>
       <button class="play-btn" id="btn-play">▶ PLAY</button>
     </div>
     <div id="loading">
@@ -164,7 +163,20 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  <!-- 모바일 터치 컨트롤 (터치 기기에서만 표시) -->
+  <!-- 세이브 안내 패널 -->
+  <div class="save-panel">
+    <div>
+      <div class="save-panel-title">💾 세이브 가이드</div>
+      <div class="save-panel-desc">저장 = 브라우저에 보관 · 다운로드 = 파일로 저장 · 불러오기 = 파일에서 복원</div>
+    </div>
+    <div class="save-panel-btns">
+      <button class="btn btn-blue" id="btn-save2">💾 저장</button>
+      <button class="btn btn-blue" id="btn-download2">⬇ 다운로드</button>
+      <button class="btn btn-green" id="btn-upload-trigger2">⬆ 불러오기</button>
+    </div>
+  </div>
+
+  <!-- 모바일 터치 컨트롤 -->
   <div class="touch-controls">
     <div class="dpad">
       <button class="touch-btn dpad-up"    data-key="ArrowUp">↑</button>
@@ -203,8 +215,13 @@
   <div><a href="https://github.com/ssppmm/fd2" target="_blank">GitHub</a></div>
 </footer>
 
+<div id="save-toast"></div>
+
 <script>
   var gameStarted = false;
+  var dosFs = null;
+  var DB_NAME = 'fd2-saves';
+  var SAVE_FILE = 'FD2.SAV';
 
   var gameFiles = [
     "FD2.EXE", "FD2.DPP", "FD2.SAV", "FD2.TMP",
@@ -223,103 +240,178 @@
     "SAMPLE.AD", "SAMPLE.BNK", "SAMPLE.OPL"
   ];
 
+  // IndexedDB
+  function openDB() {
+    return new Promise(function(resolve, reject) {
+      var req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = function(e) { e.target.result.createObjectStore('saves'); };
+      req.onsuccess = function(e) { resolve(e.target.result); };
+      req.onerror = function() { reject(); };
+    });
+  }
+  function dbGet(key) {
+    return openDB().then(function(db) {
+      return new Promise(function(resolve) {
+        var req = db.transaction('saves','readonly').objectStore('saves').get(key);
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror = function() { resolve(null); };
+      });
+    });
+  }
+  function dbSet(key, value) {
+    return openDB().then(function(db) {
+      return new Promise(function(resolve) {
+        var tx = db.transaction('saves','readwrite');
+        tx.objectStore('saves').put(value, key);
+        tx.oncomplete = resolve;
+      });
+    });
+  }
+
+  // 토스트
+  function showToast(msg, type) {
+    var t = document.getElementById('save-toast');
+    t.textContent = msg;
+    t.className = 'show ' + (type || 'info');
+    setTimeout(function() { t.className = ''; }, 2500);
+  }
+
+  // 시작화면 세이브 상태
+  dbGet(SAVE_FILE).then(function(data) {
+    document.getElementById('save-status').textContent = data ? '💾 저장된 세이브 있음' : '';
+  });
+
+  // 💾 저장 (IndexedDB)
+  function doSave() {
+    if (!dosFs) { showToast('⚠ 게임 실행 후 저장하세요', 'error'); return; }
+    try {
+      var data = dosFs.readFile(SAVE_FILE);
+      if (data && data.length > 0) {
+        dbSet(SAVE_FILE, data).then(function() {
+          showToast('💾 브라우저에 저장 완료!', 'success');
+        });
+      } else {
+        showToast('⚠ 저장할 데이터가 없어요', 'error');
+      }
+    } catch(e) { showToast('⚠ 저장 실패: ' + e.message, 'error'); }
+  }
+
+  // ⬇ 다운로드 (파일로)
+  function doDownload() {
+    if (!dosFs) { showToast('⚠ 게임 실행 후 다운로드하세요', 'error'); return; }
+    try {
+      var data = dosFs.readFile(SAVE_FILE);
+      if (data && data.length > 0) {
+        var blob = new Blob([data], { type: 'application/octet-stream' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'FD2.SAV';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('⬇ FD2.SAV 다운로드 완료!', 'success');
+      } else {
+        showToast('⚠ 저장할 데이터가 없어요', 'error');
+      }
+    } catch(e) { showToast('⚠ 다운로드 실패', 'error'); }
+  }
+
+  // ⬆ 불러오기 (파일에서)
+  function doUpload(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var data = new Uint8Array(e.target.result);
+      // IndexedDB에 저장
+      dbSet(SAVE_FILE, data).then(function() {
+        // 게임 실행 중이면 fs에도 적용
+        if (dosFs) {
+          try { dosFs.createFile(SAVE_FILE, data); } catch(err) {}
+        }
+        showToast('⬆ 세이브 불러오기 완료! 게임을 재시작하세요', 'success');
+        document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // 버튼 이벤트
+  ['btn-save','btn-save2'].forEach(function(id) {
+    document.getElementById(id).addEventListener('click', doSave);
+  });
+  ['btn-download','btn-download2'].forEach(function(id) {
+    document.getElementById(id).addEventListener('click', doDownload);
+  });
+  ['btn-upload-trigger','btn-upload-trigger2'].forEach(function(id) {
+    document.getElementById(id).addEventListener('click', function() {
+      document.getElementById('btn-upload').click();
+    });
+  });
+  document.getElementById('btn-upload').addEventListener('change', function(e) {
+    if (e.target.files[0]) doUpload(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  // 게임 시작
   function startGame() {
     if (gameStarted) return;
     gameStarted = true;
-
     document.getElementById('splash').classList.add('hidden');
     document.getElementById('loading').classList.add('show');
-
     var bar = document.getElementById('progress-bar');
     var loaded = 0;
 
     Dos(document.getElementById('canvas'), {
       wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
     }).ready(function(fs, main) {
-      var promises = gameFiles.map(function(filename) {
-        return fetch("./" + filename)
-          .then(function(r) { return r.arrayBuffer(); })
-          .then(function(buf) {
-            fs.createFile(filename, new Uint8Array(buf));
-            loaded++;
-            bar.style.width = Math.round((loaded / gameFiles.length) * 100) + '%';
-          });
-      });
-
-      Promise.all(promises).then(function() {
-        bar.style.width = '100%';
-        document.getElementById('loading').classList.remove('show');
-        main(["-c", "FD2.EXE"]);
-      }).catch(function(e) {
-        console.error("파일 로드 실패:", e);
+      dosFs = fs;
+      dbGet(SAVE_FILE).then(function(savedData) {
+        var promises = gameFiles.map(function(filename) {
+          return fetch("./" + filename)
+            .then(function(r) { return r.arrayBuffer(); })
+            .then(function(buf) {
+              if (filename === SAVE_FILE && savedData && savedData.length > 0) {
+                fs.createFile(filename, savedData);
+              } else {
+                fs.createFile(filename, new Uint8Array(buf));
+              }
+              loaded++;
+              bar.style.width = Math.round((loaded / gameFiles.length) * 100) + '%';
+            });
+        });
+        Promise.all(promises).then(function() {
+          bar.style.width = '100%';
+          document.getElementById('loading').classList.remove('show');
+          main(["-c", "FD2.EXE"]);
+        });
       });
     });
   }
 
   function toggleFullscreen() {
-    var wrapper = document.querySelector('.player-wrapper');
-    if (!document.fullscreenElement) {
-      if (wrapper.requestFullscreen) wrapper.requestFullscreen();
-    } else {
-      if (document.exitFullscreen) document.exitFullscreen();
-    }
+    var w = document.querySelector('.player-wrapper');
+    if (!document.fullscreenElement) { if (w.requestFullscreen) w.requestFullscreen(); }
+    else { if (document.exitFullscreen) document.exitFullscreen(); }
   }
 
-  // 터치 버튼 키 이벤트 전송
+  // 터치 버튼
   function sendKey(key, type) {
-    var canvas = document.getElementById('canvas');
-    var event = new KeyboardEvent(type, {
-      key: key, code: key, keyCode: getKeyCode(key),
-      bubbles: true, cancelable: true
-    });
-    canvas.dispatchEvent(event);
-    document.dispatchEvent(event);
+    var codes = { 'ArrowUp':38,'ArrowDown':40,'ArrowLeft':37,'ArrowRight':39,'Enter':13,'Escape':27 };
+    var ev = new KeyboardEvent(type, { key:key, code:key, keyCode:codes[key]||0, bubbles:true, cancelable:true });
+    document.getElementById('canvas').dispatchEvent(ev);
+    document.dispatchEvent(ev);
   }
-
-  function getKeyCode(key) {
-    var codes = {
-      'ArrowUp': 38, 'ArrowDown': 40, 'ArrowLeft': 37, 'ArrowRight': 39,
-      'Enter': 13, 'Escape': 27
-    };
-    return codes[key] || 0;
-  }
-
-  // 터치 버튼 이벤트 등록
   document.querySelectorAll('.touch-btn[data-key]').forEach(function(btn) {
     var key = btn.getAttribute('data-key');
-
-    btn.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      btn.classList.add('pressed');
-      sendKey(key, 'keydown');
-    }, { passive: false });
-
-    btn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      btn.classList.remove('pressed');
-      sendKey(key, 'keyup');
-    }, { passive: false });
-
-    btn.addEventListener('mousedown', function() {
-      btn.classList.add('pressed');
-      sendKey(key, 'keydown');
-    });
-
-    btn.addEventListener('mouseup', function() {
-      btn.classList.remove('pressed');
-      sendKey(key, 'keyup');
-    });
+    btn.addEventListener('touchstart', function(e) { e.preventDefault(); btn.classList.add('pressed'); sendKey(key,'keydown'); }, {passive:false});
+    btn.addEventListener('touchend',   function(e) { e.preventDefault(); btn.classList.remove('pressed'); sendKey(key,'keyup'); }, {passive:false});
+    btn.addEventListener('mousedown',  function() { btn.classList.add('pressed'); sendKey(key,'keydown'); });
+    btn.addEventListener('mouseup',    function() { btn.classList.remove('pressed'); sendKey(key,'keyup'); });
   });
 
   document.getElementById('btn-start').addEventListener('click', startGame);
   document.getElementById('btn-play').addEventListener('click', startGame);
   document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
-
   document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && !gameStarted) {
-      e.preventDefault();
-      startGame();
-    }
+    if (e.code === 'Space' && !gameStarted) { e.preventDefault(); startGame(); }
   });
 </script>
 </body>
