@@ -9,777 +9,838 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0f; --surface: #12121a; --border: #2a2a3e;
+      --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
+      --border: #2a2a3e; --border2: #3a3a5e;
       --accent: #ff6b00; --text: #e8e8f0; --muted: #6b6b8a;
-      --green: #4aff8a; --blue: #4a9eff; --red: #ff4a6a; --yellow: #ffd84a;
+      --green: #4aff8a; --blue: #4a9eff; --red: #ff4a6a;
+      --yellow: #ffd84a; --purple: #c44aff;
       --font-pixel: 'Press Start 2P', monospace;
       --font-body: 'Noto Sans KR', sans-serif;
     }
-    html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); }
-    header { padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface); }
-    .logo { font-family: var(--font-pixel); font-size: 11px; color: var(--accent); }
-    .header-meta { font-size: 10px; color: var(--muted); text-align: right; line-height: 1.8; }
-    .header-meta a { color: var(--accent); text-decoration: none; }
-
-    main { max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
-    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
-
-    /* ── 왼쪽: 게임 ── */
-    .game-col {}
-    .game-info { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; flex-wrap: wrap; }
-    .game-badge { font-family: var(--font-pixel); font-size: 8px; padding: 5px 8px; background: var(--accent); color: #000; border-radius: 2px; }
-    .game-title-block h1 { font-family: var(--font-pixel); font-size: 10px; margin-bottom: 3px; }
-    .game-title-block p { font-size: 11px; color: var(--muted); }
-    .game-actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
-    .btn { font-family: var(--font-pixel); font-size: 7px; padding: 6px 9px; border: 1px solid; border-radius: 2px; cursor: pointer; transition: all .2s; white-space: nowrap; }
-    .btn-primary { background: var(--accent); border-color: var(--accent); color: #000; }
-    .btn-primary:hover { background: transparent; color: var(--accent); }
-    .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-blue { background: transparent; border-color: var(--blue); color: var(--blue); }
-    .btn-blue:hover { background: var(--blue); color: #000; }
-    .btn-green { background: transparent; border-color: var(--green); color: var(--green); }
-    .btn-green:hover { background: var(--green); color: #000; }
-    .btn-red { background: transparent; border-color: var(--red); color: var(--red); }
-    .btn-red:hover { background: var(--red); color: #fff; }
-
-    .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-    #canvas { width: 100%; aspect-ratio: 4/3; max-height: 55vh; display: block; }
-    #splash { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; cursor: pointer; z-index: 10; transition: opacity .4s; }
+    html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+    header { padding: 12px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: var(--font-pixel); font-size: 10px; color: var(--accent); }
+    .header-links { margin-left: auto; font-size: 11px; color: var(--muted); }
+    .header-links a { color: var(--accent); text-decoration: none; margin-left: 12px; }
+    .game-status { font-family: var(--font-pixel); font-size: 7px; padding: 4px 8px; border-radius: 2px; }
+    .status-off  { background: var(--red);   color: #fff; }
+    .status-load { background: var(--blue);  color: #000; }
+    .status-on   { background: var(--green); color: #000; }
+    main { max-width: 1300px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+    @media (max-width: 960px) { main { grid-template-columns: 1fr; } }
+    .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    #canvas { width: 100%; aspect-ratio: 4/3; max-height: 52vh; display: block; }
+    #splash { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; z-index: 10; transition: opacity .4s; }
     #splash.hidden { opacity: 0; pointer-events: none; }
-    .splash-icon { font-size: 56px; margin-bottom: 16px; }
-    .splash-title { font-family: var(--font-pixel); font-size: 12px; color: var(--accent); margin-bottom: 8px; line-height: 1.8; }
-    .splash-sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-    .save-status { font-size: 11px; color: var(--blue); margin-bottom: 20px; min-height: 16px; }
-    .play-btn { font-family: var(--font-pixel); font-size: 10px; padding: 10px 24px; background: transparent; border: 2px solid var(--accent); color: var(--accent); cursor: pointer; animation: pulse 2s infinite; transition: all .2s; }
+    .splash-dragon { font-size: 64px; margin-bottom: 12px; }
+    .splash-ttl { font-family: var(--font-pixel); font-size: 11px; color: var(--accent); margin-bottom: 6px; line-height: 2; }
+    .splash-sub { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .save-notice { font-size: 11px; color: var(--blue); min-height: 16px; margin-bottom: 18px; }
+    .play-btn { font-family: var(--font-pixel); font-size: 9px; padding: 10px 28px; background: transparent; border: 2px solid var(--accent); color: var(--accent); cursor: pointer; animation: blink 1.8s infinite; }
     .play-btn:hover { background: var(--accent); color: #000; animation: none; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
     #loading { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: #000; z-index: 11; }
     #loading.show { display: flex; }
-    .loading-text { font-family: var(--font-pixel); font-size: 9px; color: var(--accent); margin-bottom: 16px; animation: pulse 1s infinite; }
-    .progress-bar-outer { width: 240px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .progress-bar-inner { height: 100%; background: var(--accent); width: 0%; transition: width .3s; }
-
-    .save-panel { margin-top: 12px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .save-panel-left .title { font-family: var(--font-pixel); font-size: 7px; color: var(--blue); margin-bottom: 5px; }
-    .save-panel-left .desc { font-size: 11px; color: var(--muted); line-height: 1.7; }
-    .save-panel-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    /* ── 오른쪽: 치트 에디터 ── */
-    .editor-col { display: flex; flex-direction: column; gap: 14px; }
-
-    .editor-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-    .editor-card-header { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .editor-card-title { font-family: var(--font-pixel); font-size: 8px; color: var(--accent); }
-    .editor-card-badge { font-family: var(--font-pixel); font-size: 7px; padding: 3px 7px; border-radius: 2px; }
-    .badge-red { background: var(--red); color: #fff; }
-    .badge-green { background: var(--green); color: #000; }
-    .badge-blue { background: var(--blue); color: #000; }
-
-    .editor-card-body { padding: 14px; }
-
-    /* 메모리 스캐너 */
-    .scan-row { display: flex; gap: 6px; margin-bottom: 10px; }
-    .scan-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; font-family: var(--font-pixel); font-size: 8px; border-radius: 2px; outline: none; }
-    .scan-input:focus { border-color: var(--accent); }
-    .scan-input::placeholder { color: var(--muted); }
-    .scan-results { max-height: 180px; overflow-y: auto; }
-    .scan-result-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin-bottom: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; transition: border-color .15s; }
-    .scan-result-item:hover { border-color: var(--accent); }
-    .scan-result-item.selected { border-color: var(--yellow); background: rgba(255,216,74,.05); }
+    .loading-txt { font-family: var(--font-pixel); font-size: 9px; color: var(--accent); margin-bottom: 14px; animation: blink 1s infinite; }
+    .prog-outer { width: 260px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .prog-inner { height: 100%; background: var(--accent); width: 0%; transition: width .3s; }
+    .prog-label { font-size: 10px; color: var(--muted); margin-top: 8px; }
+    .game-toolbar { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 0; align-items: center; }
+    .btn { font-family: var(--font-pixel); font-size: 7px; padding: 7px 10px; border: 1px solid; border-radius: 3px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .btn-start { background: var(--accent); border-color: var(--accent); color: #000; }
+    .btn-start:hover { background: transparent; color: var(--accent); }
+    .btn-save  { background: transparent; border-color: var(--blue);  color: var(--blue); }
+    .btn-save:hover  { background: var(--blue);  color: #000; }
+    .btn-dl    { background: transparent; border-color: var(--blue);  color: var(--blue); }
+    .btn-dl:hover    { background: var(--blue);  color: #000; }
+    .btn-ul    { background: transparent; border-color: var(--green); color: var(--green); }
+    .btn-ul:hover    { background: var(--green); color: #000; }
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .touch-controls { display: none; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-top: 8px; }
+    @media (pointer: coarse) { .touch-controls { display: flex; justify-content: space-between; align-items: center; } .pc-ctrl { display: none !important; } }
+    .dpad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 3px; }
+    .act-btns { display: flex; flex-direction: column; gap: 8px; }
+    .touch-btn { width: 56px; height: 56px; background: #1e1e2e; border: 2px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; -webkit-user-select: none; transition: all .1s; touch-action: manipulation; }
+    .touch-btn:active, .touch-btn.pressed { background: var(--accent); border-color: var(--accent); color: #000; transform: scale(0.9); }
+    .touch-btn.act { width: 72px; height: 56px; font-family: var(--font-pixel); font-size: 7px; background: #1a1a2e; border-color: var(--accent); color: var(--accent); }
+    .dp-up{grid-column:2;grid-row:1} .dp-l{grid-column:1;grid-row:2} .dp-c{grid-column:2;grid-row:2;background:transparent;border:none;pointer-events:none} .dp-r{grid-column:3;grid-row:2} .dp-d{grid-column:2;grid-row:3}
+    .pc-ctrl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .ctrl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 12px; }
+    .ctrl-card h3 { font-family: var(--font-pixel); font-size: 7px; color: var(--accent); margin-bottom: 10px; }
+    .k-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .key { font-family: var(--font-pixel); font-size: 7px; padding: 3px 6px; background: var(--bg); border: 1px solid var(--border2); border-radius: 2px; min-width: 32px; text-align: center; }
+    .k-desc { color: var(--muted); font-size: 11px; }
+    .editor-col { display: flex; flex-direction: column; gap: 12px; }
+    .tabs { display: flex; gap: 3px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
+    .tab { flex: 1; font-family: var(--font-pixel); font-size: 7px; padding: 7px 4px; text-align: center; border: 1px solid transparent; border-radius: 2px; cursor: pointer; color: var(--muted); transition: all .2s; }
+    .tab:hover { color: var(--text); border-color: var(--border2); }
+    .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .card-hd { padding: 9px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-ttl { font-family: var(--font-pixel); font-size: 8px; color: var(--accent); }
+    .badge { font-family: var(--font-pixel); font-size: 6px; padding: 3px 6px; border-radius: 2px; }
+    .b-green  { background: var(--green);  color: #000; }
+    .b-red    { background: var(--red);    color: #fff; }
+    .b-blue   { background: var(--blue);   color: #000; }
+    .b-yellow { background: var(--yellow); color: #000; }
+    .active-char { border-color: var(--accent) !important; color: var(--accent) !important; }
+    .b-purple { background: var(--purple); color: #fff; }
+    .card-body { padding: 12px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .stat-block { margin-bottom: 14px; }
+    .stat-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .stat-name { font-family: var(--font-pixel); font-size: 7px; color: var(--muted); }
+    .stat-val-display { font-family: var(--font-pixel); font-size: 9px; color: var(--yellow); min-width: 60px; text-align: right; }
+    .stat-row { display: flex; gap: 6px; align-items: center; }
+    .stat-slider { flex: 1; height: 4px; border-radius: 2px; accent-color: var(--accent); cursor: pointer; }
+    .stat-apply { font-family: var(--font-pixel); font-size: 6px; padding: 5px 8px; background: var(--accent); border: none; color: #000; border-radius: 2px; cursor: pointer; white-space: nowrap; }
+    .stat-apply:hover { opacity: .8; }
+    .stat-presets { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+    .preset-btn { font-family: var(--font-pixel); font-size: 6px; padding: 4px 7px; background: var(--bg); border: 1px solid var(--border2); color: var(--muted); border-radius: 2px; cursor: pointer; }
+    .preset-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+    .scan-row { display: flex; gap: 6px; margin-bottom: 8px; }
+    .scan-in { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; font-family: var(--font-pixel); font-size: 8px; border-radius: 3px; outline: none; }
+    .scan-in:focus { border-color: var(--accent); }
+    .scan-in::placeholder { color: var(--muted); }
+    .scan-sel { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 6px; font-size: 11px; border-radius: 3px; outline: none; }
+    .scan-results { max-height: 160px; overflow-y: auto; }
+    .scan-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; margin-bottom: 3px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; transition: border-color .15s; }
+    .scan-item:hover { border-color: var(--accent); }
+    .scan-item.sel { border-color: var(--yellow); background: rgba(255,216,74,.05); }
     .scan-addr { font-family: monospace; font-size: 10px; color: var(--blue); min-width: 80px; }
-    .scan-val { font-family: var(--font-pixel); font-size: 8px; color: var(--yellow); }
-    .scan-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 16px; }
-
-    /* 값 수정 */
-    .edit-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
-    .edit-label { font-family: var(--font-pixel); font-size: 7px; color: var(--muted); min-width: 60px; }
-    .edit-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; font-family: var(--font-pixel); font-size: 8px; border-radius: 2px; outline: none; }
-    .edit-input:focus { border-color: var(--green); }
-
-    /* 퀵 치트 */
-    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .quick-btn { font-family: var(--font-pixel); font-size: 7px; padding: 8px 6px; border-radius: 2px; cursor: pointer; border: 1px solid var(--border); background: var(--bg); color: var(--text); transition: all .2s; text-align: center; line-height: 1.6; }
-    .quick-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-    .quick-btn.active { border-color: var(--green); color: var(--green); background: rgba(74,255,138,.05); }
-
-    /* 상태 로그 */
-    .log-area { background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 8px 10px; max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 10px; }
-    .log-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.03); }
-    .log-line.ok { color: var(--green); }
-    .log-line.err { color: var(--red); }
-    .log-line.info { color: var(--blue); }
-    .log-line.warn { color: var(--yellow); }
-
-    /* 토스트 */
-    #save-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-family: var(--font-pixel); font-size: 9px; padding: 9px 18px; border-radius: 4px; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
-    #save-toast.show { opacity: 1; }
-    #save-toast.success { background: var(--green); color: #000; }
-    #save-toast.error { background: var(--red); color: #fff; }
-    #save-toast.info { background: var(--blue); color: #000; }
-
-    /* 모바일 터치 */
-    .touch-controls { display: none; margin-top: 12px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
-    @media (pointer: coarse) { .touch-controls { display: flex; justify-content: space-between; align-items: center; } .pc-controls { display: none !important; } }
-    .dpad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); gap: 3px; }
-    .action-btns { display: flex; flex-direction: column; gap: 8px; }
-    .touch-btn { width: 52px; height: 52px; background: #1e1e2e; border: 2px solid var(--border); border-radius: 8px; color: var(--text); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; -webkit-user-select: none; transition: all .1s; touch-action: manipulation; }
-    .touch-btn:active, .touch-btn.pressed { background: var(--accent); border-color: var(--accent); color: #000; transform: scale(0.92); }
-    .touch-btn.action { width: 68px; height: 52px; font-family: var(--font-pixel); font-size: 8px; background: #1a1a2e; border-color: var(--accent); color: var(--accent); }
-    .dpad-up{grid-column:2;grid-row:1} .dpad-left{grid-column:1;grid-row:2} .dpad-center{grid-column:2;grid-row:2;background:transparent;border:none;pointer-events:none} .dpad-right{grid-column:3;grid-row:2} .dpad-down{grid-column:2;grid-row:3}
-    .pc-controls { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .control-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 16px; }
-    .control-card h3 { font-family: var(--font-pixel); font-size: 8px; color: var(--accent); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .key-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-    .key { font-family: var(--font-pixel); font-size: 7px; padding: 3px 7px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; min-width: 36px; text-align: center; }
-    .key-desc { color: var(--muted); font-size: 11px; }
-
-    footer { margin-top: 28px; padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
-    footer a { color: var(--accent); text-decoration: none; }
-
-    /* 스크롤바 */
-    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .scan-v { font-family: var(--font-pixel); font-size: 8px; color: var(--yellow); }
+    .scan-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 14px; }
+    .log-area { background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 8px 10px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 10px; }
+    .ll { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.03); }
+    .ll.ok   { color: var(--green); }
+    .ll.err  { color: var(--red); }
+    .ll.info { color: var(--blue); }
+    .ll.warn { color: var(--yellow); }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); font-family: var(--font-pixel); font-size: 8px; padding: 9px 18px; border-radius: 4px; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
+    #toast.show { opacity: 1; }
+    #toast.ok  { background: var(--green);  color: #000; }
+    #toast.err { background: var(--red);    color: #fff; }
+    #toast.nfo { background: var(--blue);   color: #000; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    input[type=range] { -webkit-appearance: none; appearance: none; background: var(--border2); border-radius: 2px; height: 4px; width: 100%; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+    .gold-big { text-align:center; margin-bottom:14px; }
+    .gold-big .lbl { font-size:10px; color:var(--muted); margin-bottom:4px; }
+    .gold-big .val { font-family:var(--font-pixel); font-size:18px; color:var(--yellow); }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">🐉 FLAME DRAGON 2</div>
-  <div class="header-meta">powered by <a href="https://js-dos.com" target="_blank">js-dos 6.22</a> · <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a></div>
+  <div class="logo">🐉 FD2</div>
+  <span class="game-status status-off" id="gs">게임 꺼짐</span>
+  <div class="header-links">
+    <a href="https://js-dos.com" target="_blank">js-dos</a>
+    <a href="https://github.com/ssppmm/fd2" target="_blank">GitHub ↗</a>
+  </div>
 </header>
 
 <main>
-  <!-- ── 왼쪽: 게임 ── -->
-  <div class="game-col">
-    <div class="game-info">
-      <div class="game-badge">DOS</div>
-      <div class="game-title-block">
-        <h1>炎龍騎士團 2</h1>
-        <p>Flame Dragon 2 · 1995 · 턴제 전략 RPG</p>
-      </div>
-      <div class="game-actions">
-        <button class="btn btn-blue"    id="btn-save">💾 저장</button>
-        <button class="btn btn-blue"    id="btn-download">⬇ 다운로드</button>
-        <button class="btn btn-green"   id="btn-upload-trigger">⬆ 불러오기</button>
-        <button class="btn btn-ghost"   id="btn-fullscreen">⛶ 전체화면</button>
-        <button class="btn btn-primary" id="btn-start">▶ 시작하기</button>
-        <input type="file" id="btn-upload" accept=".SAV,.sav" style="display:none" />
-      </div>
-    </div>
-
+  <!-- 게임 화면 -->
+  <div>
     <div class="player-wrapper">
       <div id="splash">
-        <div class="splash-icon">🐉</div>
-        <div class="splash-title">FLAME DRAGON 2</div>
-        <div class="splash-sub">클릭하여 시작</div>
-        <div class="save-status" id="save-status"></div>
+        <div class="splash-dragon">🐉</div>
+        <div class="splash-ttl">炎龍騎士團 2</div>
+        <div class="splash-sub">Flame Dragon 2 · 1995</div>
+        <div class="save-notice" id="save-notice"></div>
         <button class="play-btn" id="btn-play">▶ PLAY</button>
       </div>
       <div id="loading">
-        <div class="loading-text">LOADING...</div>
-        <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar"></div></div>
+        <div class="loading-txt">LOADING...</div>
+        <div class="prog-outer"><div class="prog-inner" id="prog"></div></div>
+        <div class="prog-label" id="prog-label">0 / 0</div>
       </div>
       <canvas id="canvas"></canvas>
     </div>
 
-    <div class="save-panel">
-      <div class="save-panel-left">
-        <div class="title">💾 세이브 관리</div>
-        <div class="desc">저장 → 브라우저 보관 · 다운로드 → FD2.SAV 파일 · 불러오기 → 파일 업로드</div>
-      </div>
-      <div class="save-panel-btns">
-        <button class="btn btn-blue"  id="btn-save2">💾 저장</button>
-        <button class="btn btn-blue"  id="btn-download2">⬇ 다운로드</button>
-        <button class="btn btn-green" id="btn-upload-trigger2">⬆ 불러오기</button>
-      </div>
+    <div class="game-toolbar">
+      <button class="btn btn-start" id="btn-start">▶ 시작</button>
+      <button class="btn btn-save"  id="btn-save">💾 저장</button>
+      <button class="btn btn-dl"    id="btn-dl">⬇ 다운로드</button>
+      <button class="btn btn-ul"    id="btn-ul-t">⬆ 불러오기</button>
+      <button class="btn btn-ghost" id="btn-full">⛶ 전체화면</button>
+      <input type="file" id="btn-ul" accept=".SAV,.sav" style="display:none" />
     </div>
 
     <div class="touch-controls">
       <div class="dpad">
-        <button class="touch-btn dpad-up"    data-key="ArrowUp">↑</button>
-        <button class="touch-btn dpad-left"  data-key="ArrowLeft">←</button>
-        <div class="touch-btn dpad-center"></div>
-        <button class="touch-btn dpad-right" data-key="ArrowRight">→</button>
-        <button class="touch-btn dpad-down"  data-key="ArrowDown">↓</button>
+        <button class="touch-btn dp-up" data-key="ArrowUp">↑</button>
+        <button class="touch-btn dp-l"  data-key="ArrowLeft">←</button>
+        <div    class="touch-btn dp-c"></div>
+        <button class="touch-btn dp-r"  data-key="ArrowRight">→</button>
+        <button class="touch-btn dp-d"  data-key="ArrowDown">↓</button>
       </div>
-      <div class="action-btns">
-        <button class="touch-btn action" data-key="Enter">Enter</button>
-        <button class="touch-btn action" data-key="Escape">Esc</button>
+      <div class="act-btns">
+        <button class="touch-btn act" data-key="Enter">Enter</button>
+        <button class="touch-btn act" data-key="Escape">Esc</button>
       </div>
     </div>
-    <div class="pc-controls">
-      <div class="control-card">
-        <h3>⌨ 기본 조작키</h3>
-        <div class="key-row"><span class="key">↑↓←→</span><span class="key-desc">이동</span></div>
-        <div class="key-row"><span class="key">Enter</span><span class="key-desc">확인</span></div>
-        <div class="key-row"><span class="key">Esc</span><span class="key-desc">취소</span></div>
+
+    <div class="pc-ctrl">
+      <div class="ctrl-card">
+        <h3>⌨ 기본 조작</h3>
+        <div class="k-row"><span class="key">↑↓←→</span><span class="k-desc">이동</span></div>
+        <div class="k-row"><span class="key">Enter</span><span class="k-desc">확인</span></div>
+        <div class="k-row"><span class="key">Esc</span><span class="k-desc">취소</span></div>
       </div>
-      <div class="control-card">
-        <h3>🖥 DOSBox 단축키</h3>
-        <div class="key-row"><span class="key">Ctrl+F10</span><span class="key-desc">마우스 해제</span></div>
-        <div class="key-row"><span class="key">Alt+Enter</span><span class="key-desc">전체화면</span></div>
+      <div class="ctrl-card">
+        <h3>🖥 DOSBox</h3>
+        <div class="k-row"><span class="key">Ctrl+F10</span><span class="k-desc">마우스 해제</span></div>
+        <div class="k-row"><span class="key">Alt+Enter</span><span class="k-desc">전체화면</span></div>
       </div>
     </div>
   </div>
 
-  <!-- ── 오른쪽: 치트 에디터 ── -->
+  <!-- 에디터 -->
   <div class="editor-col">
+    <div class="tabs">
+      <div class="tab active" data-tab="gold">💰 골드</div>
+      <div class="tab" data-tab="chars">👤 스탯</div>
+      <div class="tab" data-tab="scan">🔍 스캔</div>
+      <div class="tab" data-tab="items">🎒 아이템</div>
+      <div class="tab" data-tab="log">📋 로그</div>
+    </div>
 
-    <!-- ⚡ 퀵 치트 -->
-    <div class="editor-card">
-      <div class="editor-card-header">
-        <span class="editor-card-title">⚡ 퀵 치트</span>
-        <span class="editor-card-badge badge-red" id="editor-status">게임 시작 필요</span>
+    <!-- 골드 탭 -->
+    <div class="tab-panel active card" id="panel-gold">
+      <div class="card-hd">
+        <span class="card-ttl">💰 골드 편집</span>
+        <span class="badge b-red" id="gold-status">게임 시작 필요</span>
       </div>
-      <div class="editor-card-body">
-        <div class="quick-grid" id="quick-grid">
-          <button class="quick-btn" onclick="quickCheat('gold_max')">💰 골드 MAX<br><small style="font-size:6px;color:var(--muted)">99999</small></button>
-          <button class="quick-btn" onclick="quickCheat('gold_reset')">💸 골드 초기화<br><small style="font-size:6px;color:var(--muted)">0</small></button>
-          <button class="quick-btn" onclick="quickCheat('gold_x10')">💎 골드 ×10<br><small style="font-size:6px;color:var(--muted)">현재값 × 10</small></button>
-          <button class="quick-btn" onclick="quickCheat('gold_add')">➕ 골드 +5000<br><small style="font-size:6px;color:var(--muted)">현재값 + 5000</small></button>
+      <div class="card-body">
+        <div class="gold-big">
+          <div class="lbl">현재 골드 (메모리)</div>
+          <div class="val" id="gold-display">---</div>
         </div>
-        <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7;">
-          ℹ 치트 적용 후 상점 재진입 시 반영됩니다
+        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
+          📌 사용법<br>
+          ① 게임 시작 → 상점 입장 → 골드 확인<br>
+          ② 현재 골드값 슬라이더 맞추기<br>
+          ③ <b style="color:var(--accent)">스캔+적용</b> 클릭 → 바꿀 값 설정 → <b style="color:var(--green)">적용</b>
+        </div>
+        <div class="stat-block">
+          <div class="stat-hd">
+            <span class="stat-name">① 현재 골드값</span>
+            <span class="stat-val-display" id="gold-cur-lbl">0</span>
+          </div>
+          <div class="stat-row">
+            <input type="range" class="stat-slider" id="gold-cur-sl" min="0" max="99999" value="0"
+              oninput="document.getElementById('gold-cur-lbl').textContent=this.value">
+            <button class="stat-apply" onclick="goldScan()">스캔+적용</button>
+          </div>
+          <div class="stat-presets">
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',100)">100</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',500)">500</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',1000)">1000</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',5000)">5000</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',9000)">9000</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',30000)">30000</button>
+            <button class="preset-btn" onclick="setSl('gold-cur-sl','gold-cur-lbl',50000)">50000</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="stat-block">
+          <div class="stat-hd">
+            <span class="stat-name">② 바꿀 골드값</span>
+            <span class="stat-val-display" id="gold-new-lbl">99999</span>
+          </div>
+          <div class="stat-row">
+            <input type="range" class="stat-slider" id="gold-new-sl" min="0" max="99999" value="99999"
+              oninput="document.getElementById('gold-new-lbl').textContent=this.value">
+            <button class="stat-apply" onclick="applyGold()">적용</button>
+          </div>
+          <div class="stat-presets">
+            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',0)">0</button>
+            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',9999)">9999</button>
+            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',50000)">50000</button>
+            <button class="preset-btn" onclick="setSl('gold-new-sl','gold-new-lbl',99999)">MAX</button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);">✦ 상점 재진입 시 화면에 반영됩니다</div>
+      </div>
+    </div>
+
+    <!-- 스탯 탭 -->
+    <div class="tab-panel card" id="panel-chars">
+      <div class="card-hd">
+        <span class="card-ttl">👤 캐릭터 스탯</span>
+        <span class="badge b-purple">메모리 스캔</span>
+      </div>
+      <div class="card-body">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;background:var(--surface2);padding:8px;border-radius:3px;">
+          📌 게임에서 값 확인 → 슬라이더 맞추기 → 스캔+적용
+        </div>
+
+        <!-- 항목 선택 버튼들 -->
+        <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="preset-btn" id="st-hp"  style="border-color:var(--red);color:var(--red)"    onclick="setStatType('HP')">❤ HP</button>
+          <button class="preset-btn" id="st-mp"  style="border-color:var(--blue);color:var(--blue)"  onclick="setStatType('MP')">💙 MP</button>
+          <button class="preset-btn" id="st-exp" style="border-color:var(--green);color:var(--green)" onclick="setStatType('EXP')">⭐ 경험치</button>
+          <button class="preset-btn" id="st-lv"  style="border-color:var(--yellow);color:var(--yellow)" onclick="setStatType('LV')">🆙 레벨</button>
+        </div>
+
+        <div id="stat-type-lbl" style="font-family:var(--font-pixel);font-size:8px;color:var(--accent);margin-bottom:10px;">❤ HP 편집 중</div>
+
+        <div class="stat-block">
+          <div class="stat-hd">
+            <span class="stat-name">① 현재값</span>
+            <span class="stat-val-display" id="char-cur-lbl">0</span>
+          </div>
+          <div class="stat-row">
+            <input type="range" class="stat-slider" id="char-cur-sl" min="0" max="9999" value="0"
+              oninput="document.getElementById('char-cur-lbl').textContent=this.value">
+            <button class="stat-apply" onclick="charScan()">스캔+적용</button>
+          </div>
+          <div class="stat-presets" id="char-presets">
+            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',1)">1</button>
+            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',50)">50</button>
+            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',100)">100</button>
+            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',500)">500</button>
+            <button class="preset-btn" onclick="setSl('char-cur-sl','char-cur-lbl',999)">999</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="stat-block">
+          <div class="stat-hd">
+            <span class="stat-name">② 바꿀 값</span>
+            <span class="stat-val-display" id="char-new-lbl">9999</span>
+          </div>
+          <div class="stat-row">
+            <input type="range" class="stat-slider" id="char-new-sl" min="0" max="9999" value="9999"
+              oninput="document.getElementById('char-new-lbl').textContent=this.value">
+            <button class="stat-apply" onclick="applyChar()">적용</button>
+          </div>
+          <div class="stat-presets">
+            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',1)">1</button>
+            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',999)">999</button>
+            <button class="preset-btn" onclick="setSl('char-new-sl','char-new-lbl',9999)">MAX</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div id="char-cnt" style="font-family:var(--font-pixel);font-size:7px;color:var(--muted);margin-bottom:6px;">스캔 결과: 0개</div>
+        <div class="scan-results" id="char-list">
+          <div class="scan-empty">스캔 후 주소 목록 표시</div>
         </div>
       </div>
     </div>
 
-    <!-- 🔍 메모리 스캐너 -->
-    <div class="editor-card">
-      <div class="editor-card-header">
-        <span class="editor-card-title">🔍 메모리 스캐너</span>
-        <span class="editor-card-badge badge-blue" id="scan-count">0개</span>
+    <!-- 스캔 탭 -->
+    <div class="tab-panel card" id="panel-scan">
+      <div class="card-hd">
+        <span class="card-ttl">🔍 메모리 스캐너</span>
+        <span class="badge b-blue" id="scan-cnt">0개</span>
       </div>
-      <div class="editor-card-body">
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.7;">
-          게임 화면에서 확인한 값(예: 골드 9000)을 입력하면 메모리에서 주소를 찾아줍니다
-        </div>
+      <div class="card-body">
         <div class="scan-row">
-          <input class="scan-input" id="scan-input" type="number" placeholder="값 입력 (예: 9000)" />
-          <select class="scan-input" id="scan-type" style="width:80px;flex:none;">
-            <option value="32">32비트</option>
-            <option value="16">16비트</option>
+          <input class="scan-in" id="scan-val" type="number" placeholder="현재값 입력 (예: 9000)" />
+          <select class="scan-sel" id="scan-bits">
+            <option value="32">32bit</option>
+            <option value="16">16bit</option>
+            <option value="8">8bit</option>
           </select>
         </div>
         <div class="scan-row">
-          <button class="btn btn-primary" style="flex:1" onclick="doScan()">🔍 스캔</button>
+          <button class="btn btn-start" style="flex:1" onclick="doScan()">🔍 스캔</button>
           <button class="btn btn-ghost" onclick="clearScan()">초기화</button>
         </div>
-        <div class="scan-results" id="scan-results">
+        <div class="scan-results" id="scan-list">
           <div class="scan-empty">스캔 결과가 여기 표시됩니다</div>
         </div>
-      </div>
-    </div>
-
-    <!-- ✏️ 값 수정 -->
-    <div class="editor-card">
-      <div class="editor-card-header">
-        <span class="editor-card-title">✏️ 값 직접 수정</span>
-      </div>
-      <div class="editor-card-body">
-        <div class="edit-row">
-          <span class="edit-label">주소</span>
-          <input class="edit-input" id="edit-addr" placeholder="0x20b94d3" />
-        </div>
-        <div class="edit-row">
-          <span class="edit-label">새 값</span>
-          <input class="edit-input" id="edit-val" type="number" placeholder="99999" />
-        </div>
-        <div class="edit-row">
-          <span class="edit-label">비트</span>
-          <select class="edit-input" id="edit-bits">
-            <option value="32">32비트</option>
-            <option value="16">16비트</option>
-            <option value="8">8비트</option>
+        <hr class="divider">
+        <div style="font-family:var(--font-pixel);font-size:7px;color:var(--accent);margin-bottom:8px;">✏ 직접 수정</div>
+        <div class="scan-row">
+          <input class="scan-in" id="edit-addr" placeholder="주소 (예: 0x20b94d3)" style="flex:1" />
+          <select class="scan-sel" id="edit-bits">
+            <option value="32">32bit</option>
+            <option value="16">16bit</option>
+            <option value="8">8bit</option>
           </select>
         </div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="btn btn-green" style="flex:1" onclick="doWrite()">✏️ 적용</button>
+        <div class="stat-block">
+          <div class="stat-hd">
+            <span class="stat-name">새 값</span>
+            <span class="stat-val-display" id="edit-lbl">0</span>
+          </div>
+          <div class="stat-row">
+            <input type="range" class="stat-slider" id="edit-sl" min="0" max="99999" value="0"
+              oninput="document.getElementById('edit-lbl').textContent=this.value">
+          </div>
+          <div class="stat-presets">
+            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',0)">0</button>
+            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',999)">999</button>
+            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',9999)">9999</button>
+            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',99999)">99999</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-ul" style="flex:1" onclick="doWrite()">✏ 적용</button>
           <button class="btn btn-ghost" onclick="doRead()">📖 읽기</button>
         </div>
       </div>
     </div>
 
-    <!-- 📋 로그 -->
-    <div class="editor-card">
-      <div class="editor-card-header">
-        <span class="editor-card-title">📋 로그</span>
-        <button class="btn btn-ghost" style="font-size:6px;padding:3px 6px" onclick="clearLog()">지우기</button>
+    <!-- 로그 탭 -->
+    <!-- 아이템 탭 -->
+    <div class="tab-panel card" id="panel-items">
+      <div class="card-hd">
+        <span class="card-ttl">🎒 아이템 편집</span>
+        <span class="badge b-blue" id="item-status">게임 시작 필요</span>
       </div>
-      <div class="editor-card-body" style="padding:10px;">
-        <div class="log-area" id="log-area">
-          <div class="log-line info">// 치트 에디터 준비됨</div>
-          <div class="log-line info">// 게임을 시작하고 값을 스캔하세요</div>
+      <div class="card-body" style="padding:10px;">
+        <div style="font-size:7px;color:var(--muted);margin-bottom:8px;">
+          ① 캐릭터 선택 → ② 슬롯 번호 입력 → ③ 아이템 선택 → ④ 적용
+        </div>
+
+        <!-- 캐릭터 선택 -->
+        <div class="lbl" style="margin-bottom:4px;">캐릭터 슬롯 (0~5)</div>
+        <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost char-btn active-char" data-ch="0" onclick="selChar(0)">1P</button>
+          <button class="btn btn-ghost char-btn" data-ch="1" onclick="selChar(1)">2P</button>
+          <button class="btn btn-ghost char-btn" data-ch="2" onclick="selChar(2)">3P</button>
+          <button class="btn btn-ghost char-btn" data-ch="3" onclick="selChar(3)">4P</button>
+          <button class="btn btn-ghost char-btn" data-ch="4" onclick="selChar(4)">5P</button>
+          <button class="btn btn-ghost char-btn" data-ch="5" onclick="selChar(5)">6P</button>
+        </div>
+
+        <!-- 아이템 슬롯 선택 -->
+        <div class="lbl" style="margin-bottom:4px;">아이템 슬롯 (0~15)</div>
+        <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap;">
+          <script>for(var _i=0;_i<16;_i++) document.write('<button class="btn btn-ghost item-slot-btn" data-slot="'+_i+'" onclick="selSlot('+_i+')" style="min-width:28px;padding:4px 6px;font-size:8px;">'+_i+'</button>');</script>
+        </div>
+
+        <!-- 현재 선택 정보 -->
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:8px;font-size:8px;">
+          <div>캐릭터: <span id="sel-char-lbl" style="color:var(--accent);font-weight:bold;">1P (0)</span> &nbsp; 슬롯: <span id="sel-slot-lbl" style="color:var(--yellow);font-weight:bold;">0</span></div>
+          <div style="margin-top:4px;">현재 아이템 코드: <span id="cur-item-code" style="color:var(--muted);">스캔 필요</span></div>
+          <div>현재 아이템명: <span id="cur-item-name" style="color:var(--muted);">-</span></div>
+        </div>
+
+        <!-- 아이템 검색 필터 -->
+        <div class="lbl" style="margin-bottom:4px;">아이템 선택</div>
+        <div style="display:flex;gap:4px;margin-bottom:4px;">
+          <select id="item-cat" onchange="filterItems()" style="flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:4px;font-size:8px;">
+            <option value="all">전체</option>
+            <option value="sword">검류</option>
+            <option value="dagger">단검/도류</option>
+            <option value="spear">창/재류</option>
+            <option value="axe">도끼/추류</option>
+            <option value="bow">궁류</option>
+            <option value="staff">장/곤류</option>
+            <option value="claw">조류/팔뚝</option>
+            <option value="special">특수무기</option>
+            <option value="armor">갑옷류</option>
+            <option value="robe">포/복류</option>
+            <option value="consume">소비아이템</option>
+            <option value="etc">기타</option>
+          </select>
+        </div>
+        <select id="item-list" size="6" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:4px;font-size:8px;margin-bottom:6px;">
+        </select>
+
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-primary" style="flex:1" onclick="readItemSlot()">📖 읽기</button>
+          <button class="btn btn-accent" style="flex:1" onclick="writeItemSlot()">✏️ 적용</button>
+        </div>
+        <div style="margin-top:4px;font-size:7px;color:var(--muted);">
+          ※ 메모리에 직접 쓰기. 저장 후 새로 읽어야 반영됨
         </div>
       </div>
     </div>
 
-  </div><!-- editor-col -->
+    <div class="tab-panel card" id="panel-log">
+      <div class="card-hd">
+        <span class="card-ttl">📋 로그</span>
+        <button class="btn btn-ghost" style="font-size:6px;padding:3px 7px" onclick="clearLog()">지우기</button>
+      </div>
+      <div class="card-body" style="padding:10px;">
+        <div class="log-area" id="log-area">
+          <div class="ll info">// 치트 에디터 준비됨</div>
+          <div class="ll info">// 게임 시작 후 스캔하세요</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </main>
 
-<footer>
-  <div>Built with <a href="https://js-dos.com" target="_blank">js-dos 6.22</a> · DOSBox WebAssembly</div>
-  <div><a href="https://github.com/ssppmm/fd2" target="_blank">GitHub</a></div>
-</footer>
-
-<div id="save-toast"></div>
+<div id="toast"></div>
 
 <script>
-// ──────────────────────────────────────────────
-//  상태
-// ──────────────────────────────────────────────
-var gameStarted = false;
-var fsInstance = null;
-var DB_NAME = 'fd2-saves';
-var SAVE_FILE = 'FD2.SAV';
-var scanResults = [];
-var selectedAddr = null;
+// ─── 전역 상태 ───
+var fs0=null, gameStarted=false;
+var goldAddrs=[], charAddrs=[], scanResults=[], selectedAddr=null;
+var curStatType='HP';
+var DB='fd2-saves', SAV='FD2.SAV';
+var FILES=["FD2.EXE","FD2.DPP","FD2.SAV","FD2.TMP","ANI.DAT","BG.DAT","DATO.DAT","FDFIELD.DAT","FDICON.B24","FDMUS.DAT","FDOTHER.DAT","FDSHAP.DAT","FDTXT.DAT","FIGANI.DAT","TITLE.DAT","TAI.DAT","DIG.INI","MDI.INI","AILDRVR.LST","DPP.COM","ADLIB.MDI","ADLIBG.MDI","NULL.MDI","TANDY.MDI","PCSPKR.MDI","MPU401.MDI","MT32MPU.MDI","OPL3.MDI","PAS.MDI","PASPLUS.MDI","SBLASTER.MDI","SBPRO1.MDI","SBPRO2.MDI","SBAWE32.MDI","SNDSCAPE.MDI","ULTRA.MDI","RAP10.DIG","PROAUDIO.DIG","ADRV688.DIG","JAMMER.DIG","SBLASTER.DIG","SBPRO.DIG","SNDSCAPE.DIG","ULTRA.DIG","SB16.DIG","SAMPLE.AD","SAMPLE.BNK","SAMPLE.OPL"];
 
-var gameFiles = [
-  "FD2.EXE","FD2.DPP","FD2.SAV","FD2.TMP",
-  "ANI.DAT","BG.DAT","DATO.DAT","FDFIELD.DAT",
-  "FDICON.B24","FDMUS.DAT","FDOTHER.DAT","FDSHAP.DAT",
-  "FDTXT.DAT","FIGANI.DAT","TITLE.DAT","TAI.DAT",
-  "DIG.INI","MDI.INI","AILDRVR.LST","DPP.COM",
-  "ADLIB.MDI","ADLIBG.MDI","NULL.MDI","TANDY.MDI",
-  "PCSPKR.MDI","MPU401.MDI","MT32MPU.MDI",
-  "OPL3.MDI","PAS.MDI","PASPLUS.MDI",
-  "SBLASTER.MDI","SBPRO1.MDI","SBPRO2.MDI",
-  "SBAWE32.MDI","SNDSCAPE.MDI","ULTRA.MDI",
-  "RAP10.DIG","PROAUDIO.DIG","ADRV688.DIG",
-  "JAMMER.DIG","SBLASTER.DIG","SBPRO.DIG",
-  "SNDSCAPE.DIG","ULTRA.DIG","SB16.DIG",
-  "SAMPLE.AD","SAMPLE.BNK","SAMPLE.OPL"
-];
+// ─── 메모리 ───
+function heap(){ return (fs0&&fs0.em&&fs0.em.HEAPU8)?fs0.em.HEAPU8:null; }
+function mRead(a,b){ var h=heap();if(!h)return null;b=b||32;if(b===8)return h[a];if(b===16)return h[a]|(h[a+1]<<8);return(h[a]|(h[a+1]<<8)|(h[a+2]<<16)|(h[a+3]<<24))>>>0; }
+function mWrite(a,v,b){ var h=heap();if(!h)return false;b=b||32;v=v>>>0;if(b>=8)h[a]=v&0xFF;if(b>=16)h[a+1]=(v>>8)&0xFF;if(b>=32){h[a+2]=(v>>16)&0xFF;h[a+3]=(v>>24)&0xFF;}return true; }
+function pAddr(s){ s=(s||'').trim();return(s.startsWith('0x')||s.startsWith('0X'))?parseInt(s,16):parseInt(s,10); }
+function scanMem(v,b){ var h=heap();if(!h)return[];v=v>>>0;b=b||32;var lo=v&0xFF,hi=(v>>8)&0xFF,hi2=(v>>16)&0xFF,hi3=(v>>24)&0xFF,f=[];if(b===32){for(var i=0;i<h.length-4;i++){if(h[i]===lo&&h[i+1]===hi&&h[i+2]===hi2&&h[i+3]===hi3){f.push(i);if(f.length>=100)break;}}}else if(b===16){for(var i=0;i<h.length-2;i++){if(h[i]===lo&&h[i+1]===hi){f.push(i);if(f.length>=100)break;}}}else{for(var i=0;i<h.length;i++){if(h[i]===lo){f.push(i);if(f.length>=100)break;}}}return f; }
 
-// ──────────────────────────────────────────────
-//  헬퍼: 메모리 접근
-// ──────────────────────────────────────────────
-function getHeap() {
-  if (!fsInstance || !fsInstance.em || !fsInstance.em.HEAPU8) return null;
-  return fsInstance.em.HEAPU8;
+// ─── UI 헬퍼 ───
+function setSl(sid,lid,v){ document.getElementById(sid).value=v;document.getElementById(lid).textContent=v; }
+function log(m,t){ var a=document.getElementById('log-area'),l=document.createElement('div');l.className='ll '+(t||'info');var ts=new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit',second:'2-digit'});l.textContent='['+ts+'] '+m;a.appendChild(l);a.scrollTop=a.scrollHeight; }
+function clearLog(){ document.getElementById('log-area').innerHTML='';log('로그 초기화','info'); }
+function toast(m,t){ var el=document.getElementById('toast');el.textContent=m;el.className='show '+(t||'nfo');clearTimeout(el._t);el._t=setTimeout(function(){el.className='';},2500); }
+function updateStatus(){
+  var el=document.getElementById('gs'),gd=document.getElementById('gold-status');
+  if(gameStarted&&heap()){el.textContent='실행 중';el.className='game-status status-on';gd.textContent='활성화';gd.className='badge b-green';updateGoldDisp();}
+  else if(gameStarted){el.textContent='로딩 중';el.className='game-status status-load';gd.textContent='로딩 중';gd.className='badge b-blue';}
+  else{el.textContent='게임 꺼짐';el.className='game-status status-off';gd.textContent='게임 시작 필요';gd.className='badge b-red';}
 }
+function updateGoldDisp(){ var d=document.getElementById('gold-display');if(goldAddrs.length>0){var v=mRead(goldAddrs[0],32);d.textContent=v!==null?v.toLocaleString():'---';}else{d.textContent=heap()?'(스캔 필요)':'---';} }
 
-function memRead(addr, bits) {
-  var heap = getHeap();
-  if (!heap) return null;
-  bits = bits || 32;
-  if (bits === 8)  return heap[addr];
-  if (bits === 16) return heap[addr] | (heap[addr+1]<<8);
-  return (heap[addr] | (heap[addr+1]<<8) | (heap[addr+2]<<16) | (heap[addr+3]<<24)) >>> 0;
-}
-
-function memWrite(addr, value, bits) {
-  var heap = getHeap();
-  if (!heap) return false;
-  bits = bits || 32;
-  value = value >>> 0;
-  if (bits >= 8)  heap[addr]   = value & 0xFF;
-  if (bits >= 16) heap[addr+1] = (value>>8) & 0xFF;
-  if (bits >= 32) { heap[addr+2] = (value>>16) & 0xFF; heap[addr+3] = (value>>24) & 0xFF; }
-  return true;
-}
-
-function parseAddr(s) {
-  s = s.trim();
-  if (s.startsWith('0x') || s.startsWith('0X')) return parseInt(s, 16);
-  return parseInt(s, 10);
-}
-
-// ──────────────────────────────────────────────
-//  로그
-// ──────────────────────────────────────────────
-function log(msg, type) {
-  var area = document.getElementById('log-area');
-  var line = document.createElement('div');
-  line.className = 'log-line ' + (type || 'info');
-  var ts = new Date().toLocaleTimeString('ko', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  line.textContent = '[' + ts + '] ' + msg;
-  area.appendChild(line);
-  area.scrollTop = area.scrollHeight;
-}
-
-function clearLog() {
-  document.getElementById('log-area').innerHTML = '';
-  log('로그 지움', 'info');
-}
-
-// ──────────────────────────────────────────────
-//  에디터 상태 업데이트
-// ──────────────────────────────────────────────
-function updateEditorStatus() {
-  var badge = document.getElementById('editor-status');
-  if (gameStarted && fsInstance && getHeap()) {
-    badge.textContent = '활성화';
-    badge.className = 'editor-card-badge badge-green';
-  } else if (gameStarted) {
-    badge.textContent = '로딩 중';
-    badge.className = 'editor-card-badge badge-blue';
-  } else {
-    badge.textContent = '게임 시작 필요';
-    badge.className = 'editor-card-badge badge-red';
-  }
-}
-
-// ──────────────────────────────────────────────
-//  메모리 스캐너
-// ──────────────────────────────────────────────
-function doScan() {
-  var heap = getHeap();
-  if (!heap) { log('게임을 먼저 시작하세요', 'err'); showToast('⚠ 게임 시작 후 스캔하세요', 'error'); return; }
-
-  var val = parseInt(document.getElementById('scan-input').value);
-  var bits = parseInt(document.getElementById('scan-type').value);
-  if (isNaN(val)) { log('값을 입력하세요', 'warn'); return; }
-
-  var lo = val & 0xFF;
-  var hi = (val >> 8) & 0xFF;
-  var hi2 = (val >> 16) & 0xFF;
-  var hi3 = (val >> 24) & 0xFF;
-
-  var found = [];
-  log('스캔 시작: ' + val + ' (' + bits + '비트)', 'info');
-
-  if (bits === 32) {
-    for (var i = 0; i < heap.length - 4; i++) {
-      if (heap[i]===lo && heap[i+1]===hi && heap[i+2]===hi2 && heap[i+3]===hi3) {
-        found.push(i);
-        if (found.length >= 50) break;
-      }
-    }
-  } else {
-    for (var i = 0; i < heap.length - 2; i++) {
-      if (heap[i]===lo && heap[i+1]===hi) {
-        found.push(i);
-        if (found.length >= 50) break;
-      }
-    }
-  }
-
-  scanResults = found;
-  document.getElementById('scan-count').textContent = found.length + '개';
-  log('스캔 완료: ' + found.length + '개 발견', found.length > 0 ? 'ok' : 'warn');
-  renderScanResults(bits);
-}
-
-function renderScanResults(bits) {
-  var container = document.getElementById('scan-results');
-  var heap = getHeap();
-  if (scanResults.length === 0) {
-    container.innerHTML = '<div class="scan-empty">검색 결과 없음</div>';
-    return;
-  }
-  var html = '';
-  for (var i = 0; i < Math.min(scanResults.length, 30); i++) {
-    var addr = scanResults[i];
-    var val = heap ? memRead(addr, bits || 32) : '?';
-    var isSelected = (addr === selectedAddr);
-    html += '<div class="scan-result-item' + (isSelected ? ' selected' : '') + '" onclick="selectAddr(' + addr + ',' + (bits||32) + ')">' +
-      '<span class="scan-addr">0x' + addr.toString(16) + '</span>' +
-      '<span class="scan-val">' + val + '</span>' +
-      '</div>';
-  }
-  if (scanResults.length > 30) {
-    html += '<div class="scan-empty">... 외 ' + (scanResults.length-30) + '개</div>';
-  }
-  container.innerHTML = html;
-}
-
-function selectAddr(addr, bits) {
-  selectedAddr = addr;
-  document.getElementById('edit-addr').value = '0x' + addr.toString(16);
-  document.getElementById('edit-bits').value = bits || 32;
-  var val = memRead(addr, bits || 32);
-  document.getElementById('edit-val').value = val;
-  log('선택: 0x' + addr.toString(16) + ' = ' + val, 'info');
-  renderScanResults(bits);
-}
-
-function clearScan() {
-  scanResults = [];
-  selectedAddr = null;
-  document.getElementById('scan-results').innerHTML = '<div class="scan-empty">스캔 결과가 여기 표시됩니다</div>';
-  document.getElementById('scan-count').textContent = '0개';
-  log('스캔 초기화', 'info');
-}
-
-// ──────────────────────────────────────────────
-//  값 직접 수정
-// ──────────────────────────────────────────────
-function doWrite() {
-  var heap = getHeap();
-  if (!heap) { log('게임을 먼저 시작하세요', 'err'); return; }
-  var addrStr = document.getElementById('edit-addr').value;
-  var val = parseInt(document.getElementById('edit-val').value);
-  var bits = parseInt(document.getElementById('edit-bits').value);
-  if (!addrStr || isNaN(val)) { log('주소와 값을 입력하세요', 'warn'); return; }
-  var addr = parseAddr(addrStr);
-  if (isNaN(addr) || addr < 0 || addr >= heap.length) { log('잘못된 주소: ' + addrStr, 'err'); return; }
-  var ok = memWrite(addr, val, bits);
-  if (ok) {
-    log('✓ 0x' + addr.toString(16) + ' ← ' + val + ' (' + bits + 'bit)', 'ok');
-    showToast('✓ 값 변경 완료!', 'success');
-  } else {
-    log('✗ 쓰기 실패', 'err');
-  }
-}
-
-function doRead() {
-  var heap = getHeap();
-  if (!heap) { log('게임을 먼저 시작하세요', 'err'); return; }
-  var addrStr = document.getElementById('edit-addr').value;
-  var bits = parseInt(document.getElementById('edit-bits').value);
-  if (!addrStr) { log('주소를 입력하세요', 'warn'); return; }
-  var addr = parseAddr(addrStr);
-  if (isNaN(addr)) { log('잘못된 주소', 'err'); return; }
-  var val = memRead(addr, bits);
-  document.getElementById('edit-val').value = val;
-  log('읽기: 0x' + addr.toString(16) + ' = ' + val + ' (0x' + val.toString(16) + ')', 'info');
-}
-
-// ──────────────────────────────────────────────
-//  퀵 치트 (골드)
-//  스캔 없이 바로 적용 - 알려진 주소들에 일괄 적용
-// ──────────────────────────────────────────────
-function quickCheat(type) {
-  var heap = getHeap();
-  if (!heap) { log('게임을 먼저 시작하세요', 'err'); showToast('⚠ 게임 시작 후 사용하세요', 'error'); return; }
-
-  // 골드 스캔으로 현재값 찾기
-  var currentGold = null;
-  var goldAddr = null;
-
-  // 먼저 0x20b94d3 고정 주소 시도 (세션 내 알려진 주소)
-  var knownAddr = 0x20b94d3;
-  var knownVal = memRead(knownAddr, 32);
-
-  // 범위 스캔으로 골드 주소들 찾기 (1000~999999 범위의 32비트 값들)
-  log('골드 주소 탐색 중...', 'info');
-
-  // 현재 edit-addr에 주소가 있으면 그걸 사용
-  var addrStr = document.getElementById('edit-addr').value;
-  if (addrStr) {
-    goldAddr = parseAddr(addrStr);
-    currentGold = memRead(goldAddr, 32);
-    log('선택된 주소 사용: 0x' + goldAddr.toString(16) + ' = ' + currentGold, 'info');
-  } else {
-    // 스캔 결과에서 첫번째 주소 사용
-    if (scanResults.length > 0) {
-      goldAddr = scanResults[0];
-      currentGold = memRead(goldAddr, 32);
-      log('스캔 결과 첫번째 주소 사용: 0x' + goldAddr.toString(16) + ' = ' + currentGold, 'info');
-    } else {
-      log('⚠ 먼저 현재 골드값으로 스캔해주세요', 'warn');
-      showToast('⚠ 먼저 골드값을 스캔하세요', 'error');
-      return;
-    }
-  }
-
-  var newVal = currentGold;
-  if (type === 'gold_max')   newVal = 99999;
-  if (type === 'gold_reset') newVal = 0;
-  if (type === 'gold_x10')   newVal = Math.min(99999, currentGold * 10);
-  if (type === 'gold_add')   newVal = Math.min(99999, currentGold + 5000);
-
-  // 스캔된 모든 주소에 적용
-  var applied = 0;
-  var allAddrs = scanResults.length > 0 ? scanResults : [goldAddr];
-  for (var i = 0; i < allAddrs.length; i++) {
-    if (memWrite(allAddrs[i], newVal, 32)) applied++;
-    if (memWrite(allAddrs[i], newVal, 16)) {}  // 16비트도 적용
-  }
-
-  log('✓ 골드 ' + currentGold + ' → ' + newVal + ' (' + applied + '개 주소 적용)', 'ok');
-  showToast('💰 골드 ' + newVal + '!', 'success');
-  document.getElementById('edit-val').value = newVal;
-}
-
-// ──────────────────────────────────────────────
-//  IndexedDB
-// ──────────────────────────────────────────────
-function openDB() {
-  return new Promise(function(resolve, reject) {
-    var req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = function(e) { e.target.result.createObjectStore('saves'); };
-    req.onsuccess = function(e) { resolve(e.target.result); };
-    req.onerror = function() { reject(); };
+// ─── 탭 전환 ───
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.tab-panel').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
   });
+});
+
+// ─── 골드 ───
+function goldScan(){
+  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  var cur=parseInt(document.getElementById('gold-cur-sl').value);
+  if(isNaN(cur)){toast('⚠ 현재 골드값을 설정하세요','err');return;}
+  log('골드 스캔: '+cur,'info');
+  var f32=scanMem(cur,32);
+  var f16=scanMem(cur,16).filter(function(a){return!f32.includes(a);});
+  goldAddrs=f32.concat(f16);
+  log('골드 주소 '+goldAddrs.length+'개 발견','ok');
+  toast('🔍 '+goldAddrs.length+'개 발견','nfo');
+  updateGoldDisp();
+  if(goldAddrs.length===0){toast('⚠ 주소 없음 - 값을 다시 확인하세요','err');return;}
+  applyGold();
 }
-function dbGet(key) {
-  return openDB().then(function(db) {
-    return new Promise(function(resolve) {
-      var req = db.transaction('saves','readonly').objectStore('saves').get(key);
-      req.onsuccess = function(e) { resolve(e.target.result); };
-      req.onerror = function() { resolve(null); };
-    });
-  });
-}
-function dbSet(key, value) {
-  return openDB().then(function(db) {
-    return new Promise(function(resolve) {
-      var tx = db.transaction('saves','readwrite');
-      tx.objectStore('saves').put(value, key);
-      tx.oncomplete = resolve;
-    });
-  });
+function applyGold(){
+  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  if(goldAddrs.length===0){toast('⚠ 먼저 스캔+적용을 누르세요','err');return;}
+  var nv=parseInt(document.getElementById('gold-new-sl').value);
+  var cnt=0;
+  goldAddrs.forEach(function(a){if(mWrite(a,nv,32))cnt++;mWrite(a,nv,16);});
+  log('✓ 골드 → '+nv+' ('+cnt+'개 적용)','ok');
+  toast('💰 골드 '+nv.toLocaleString()+'!','ok');
+  updateGoldDisp();
 }
 
-// ──────────────────────────────────────────────
-//  세이브
-// ──────────────────────────────────────────────
-function doSave() {
-  if (!fsInstance) { showToast('⚠ 게임 실행 후 저장하세요', 'error'); return; }
-  try {
-    var data = fsInstance.fs.readFile('/' + SAVE_FILE);
-    if (data && data.length > 0) {
-      dbSet(SAVE_FILE, data).then(function() {
-        showToast('💾 저장 완료!', 'success');
-        log('세이브 저장 완료 (' + data.length + ' bytes)', 'ok');
-        document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
-      });
-    } else {
-      showToast('⚠ 게임 내에서 먼저 저장하세요', 'error');
-    }
-  } catch(e) {
-    showToast('⚠ 저장 실패', 'error');
-    log('저장 실패: ' + e.message, 'err');
-  }
+// ─── 캐릭터 스탯 ───
+var statCfg={HP:{max:9999,pre:[1,50,100,500,999,9999],lbl:'❤ HP 편집 중'},MP:{max:999,pre:[0,50,100,500,999],lbl:'💙 MP 편집 중'},EXP:{max:99999,pre:[0,1000,9999,50000,99999],lbl:'⭐ 경험치 편집 중'},LV:{max:50,pre:[1,5,10,20,30,50],lbl:'🆙 레벨 편집 중'}};
+function setStatType(t){
+  curStatType=t;var cfg=statCfg[t];
+  document.getElementById('stat-type-lbl').textContent=cfg.lbl;
+  document.getElementById('char-cur-sl').max=cfg.max;
+  document.getElementById('char-new-sl').max=cfg.max;
+  setSl('char-new-sl','char-new-lbl',cfg.max);
+  var pe=document.getElementById('char-presets');
+  pe.innerHTML=cfg.pre.map(function(v){return'<button class="preset-btn" onclick="setSl(\'char-cur-sl\',\'char-cur-lbl\','+v+')">'+v+'</button>';}).join('');
+  charAddrs=[];document.getElementById('char-list').innerHTML='<div class="scan-empty">스캔 후 주소 목록 표시</div>';
+  document.getElementById('char-cnt').textContent='스캔 결과: 0개';
+  log(cfg.lbl+' 선택','info');
 }
-
-function downloadBlob(data) {
-  var blob = new Blob([data], { type: 'application/octet-stream' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'FD2.SAV';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-  showToast('⬇ FD2.SAV 다운로드!', 'success');
+function charScan(){
+  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  var cur=parseInt(document.getElementById('char-cur-sl').value);
+  if(isNaN(cur)){toast('⚠ 현재값을 설정하세요','err');return;}
+  var b=(curStatType==='LV')?8:16;
+  var f=scanMem(cur,b);if(f.length===0)f=scanMem(cur,32);
+  charAddrs=f;
+  document.getElementById('char-cnt').textContent='스캔 결과: '+f.length+'개';
+  renderCharList(b);
+  log(curStatType+' 스캔: '+cur+' → '+f.length+'개','ok');
+  toast('🔍 '+f.length+'개 발견','nfo');
+  if(f.length>0)applyChar();
 }
-
-function doDownload() {
-  var data = null;
-  if (fsInstance) {
-    try { data = fsInstance.fs.readFile('/' + SAVE_FILE); } catch(e) {}
-  }
-  if (data && data.length > 0) { downloadBlob(data); return; }
-  dbGet(SAVE_FILE).then(function(saved) {
-    if (saved && saved.length > 0) { downloadBlob(saved); }
-    else { showToast('⚠ 먼저 💾 저장을 눌러주세요', 'error'); }
-  });
+function renderCharList(b){
+  var c=document.getElementById('char-list'),h=heap();
+  if(!charAddrs.length){c.innerHTML='<div class="scan-empty">검색 결과 없음</div>';return;}
+  var html='';
+  for(var i=0;i<Math.min(charAddrs.length,30);i++){var a=charAddrs[i],v=h?mRead(a,b||16):'?';html+='<div class="scan-item'+(a===selectedAddr?' sel':'')+'" onclick="selAddr('+a+','+b+')">'+'<span class="scan-addr">0x'+a.toString(16)+'</span><span class="scan-v">'+v+'</span></div>';}
+  if(charAddrs.length>30)html+='<div class="scan-empty">... 외 '+(charAddrs.length-30)+'개</div>';
+  c.innerHTML=html;
 }
-
-function doUpload(file) {
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var data = new Uint8Array(e.target.result);
-    dbSet(SAVE_FILE, data).then(function() {
-      if (fsInstance) {
-        try { fsInstance.fs.writeFile('/' + SAVE_FILE, data); } catch(err) {}
-      }
-      showToast('⬆ 불러오기 완료!', 'success');
-      log('세이브 불러오기 완료 (' + data.length + ' bytes)', 'ok');
-      document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
-    });
-  };
-  reader.readAsArrayBuffer(file);
+function applyChar(){
+  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  if(!charAddrs.length){toast('⚠ 먼저 스캔하세요','err');return;}
+  var nv=parseInt(document.getElementById('char-new-sl').value);
+  var b=(curStatType==='LV')?8:16,cnt=0;
+  charAddrs.forEach(function(a){if(mWrite(a,nv,b))cnt++;});
+  log('✓ '+curStatType+' → '+nv+' ('+cnt+'개 적용)','ok');
+  toast('✓ '+curStatType+' '+nv+'!','ok');
 }
+function selAddr(a,b){selectedAddr=a;var v=mRead(a,b||16);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setSl('edit-sl','edit-lbl',v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');}
 
-// 토스트
-function showToast(msg, type) {
-  var t = document.getElementById('save-toast');
-  t.textContent = msg;
-  t.className = 'show ' + (type || 'info');
-  setTimeout(function() { t.className = ''; }, 2500);
+// ─── 범용 스캔 ───
+function doScan(){
+  if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  var v=parseInt(document.getElementById('scan-val').value),b=parseInt(document.getElementById('scan-bits').value);
+  if(isNaN(v)){toast('⚠ 값을 입력하세요','err');return;}
+  var f=scanMem(v,b);scanResults=f;
+  document.getElementById('scan-cnt').textContent=f.length+'개';
+  log('스캔: '+v+' ('+b+'bit) → '+f.length+'개','ok');
+  renderScanList(b);
 }
+function renderScanList(b){
+  var c=document.getElementById('scan-list'),h=heap();
+  if(!scanResults.length){c.innerHTML='<div class="scan-empty">검색 결과 없음</div>';return;}
+  var html='';
+  for(var i=0;i<Math.min(scanResults.length,30);i++){var a=scanResults[i],v=h?mRead(a,b||32):'?';html+='<div class="scan-item'+(a===selectedAddr?' sel':'')+'" onclick="pickAddr('+a+','+b+')">'+'<span class="scan-addr">0x'+a.toString(16)+'</span><span class="scan-v">'+v+'</span></div>';}
+  if(scanResults.length>30)html+='<div class="scan-empty">... 외 '+(scanResults.length-30)+'개</div>';
+  c.innerHTML=html;
+}
+function pickAddr(a,b){selectedAddr=a;var v=mRead(a,b||32);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setSl('edit-sl','edit-lbl',v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');renderScanList(b);}
+function clearScan(){scanResults=[];selectedAddr=null;document.getElementById('scan-list').innerHTML='<div class="scan-empty">스캔 결과가 여기 표시됩니다</div>';document.getElementById('scan-cnt').textContent='0개';log('스캔 초기화','info');}
+function doWrite(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,v=parseInt(document.getElementById('edit-sl').value),b=parseInt(document.getElementById('edit-bits').value);if(!aStr){toast('⚠ 주소를 입력하세요','err');return;}var a=pAddr(aStr);if(isNaN(a)||a<0){toast('⚠ 잘못된 주소','err');return;}if(mWrite(a,v,b)){log('✓ 0x'+a.toString(16)+' ← '+v+' ('+b+'bit)','ok');toast('✓ 값 변경 완료!','ok');}}
+function doRead(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,b=parseInt(document.getElementById('edit-bits').value);if(!aStr)return;var a=pAddr(aStr),v=mRead(a,b);setSl('edit-sl','edit-lbl',v||0);log('읽기: 0x'+a.toString(16)+' = '+v,'info');}
 
-// ──────────────────────────────────────────────
-//  게임 시작
-// ──────────────────────────────────────────────
-function startGame() {
-  if (gameStarted) return;
-  gameStarted = true;
+// ─── IndexedDB ───
+function openDB(){return new Promise(function(r,j){var q=indexedDB.open(DB,1);q.onupgradeneeded=function(e){e.target.result.createObjectStore('saves');};q.onsuccess=function(e){r(e.target.result);};q.onerror=j;});}
+function dbGet(k){return openDB().then(function(db){return new Promise(function(r){var q=db.transaction('saves','readonly').objectStore('saves').get(k);q.onsuccess=function(e){r(e.target.result);};q.onerror=function(){r(null);};});});}
+function dbSet(k,v){return openDB().then(function(db){return new Promise(function(r){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(v,k);tx.oncomplete=r;});});}
+
+// ─── 세이브 ───
+function doSave(){if(!fs0){toast('⚠ 게임 실행 후 저장하세요','err');return;}try{var d=fs0.fs.readFile('/'+SAV);if(d&&d.length>0){dbSet(SAV,d).then(function(){toast('💾 저장 완료!','ok');log('세이브 저장 ('+d.length+' bytes)','ok');document.getElementById('save-notice').textContent='💾 저장된 세이브 있음';});}else{toast('⚠ 게임에서 먼저 저장하세요','err');}}catch(e){toast('⚠ 저장 실패','err');log('저장 실패: '+e.message,'err');}}
+function doDl(){var d=null;if(fs0){try{d=fs0.fs.readFile('/'+SAV);}catch(e){}}if(d&&d.length>0){dlBlob(d);return;}dbGet(SAV).then(function(s){if(s&&s.length>0)dlBlob(s);else toast('⚠ 먼저 💾 저장을 누르세요','err');});}
+function dlBlob(d){var b=new Blob([d],{type:'application/octet-stream'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='FD2.SAV';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);toast('⬇ FD2.SAV 다운로드!','ok');}
+function doUpload(file){var r=new FileReader();r.onload=function(e){var d=new Uint8Array(e.target.result);dbSet(SAV,d).then(function(){if(fs0){try{fs0.fs.writeFile('/'+SAV,d);}catch(err){}}toast('⬆ 불러오기 완료!','ok');log('세이브 불러오기 ('+d.length+' bytes)','ok');document.getElementById('save-notice').textContent='💾 저장된 세이브 있음';});};r.readAsArrayBuffer(file);}
+
+// ─── 게임 시작 ───
+function startGame(){
+  if(gameStarted)return;
+  gameStarted=true;
   document.getElementById('splash').classList.add('hidden');
   document.getElementById('loading').classList.add('show');
-  updateEditorStatus();
-  var bar = document.getElementById('progress-bar');
-  var loaded = 0;
-
-  Dos(document.getElementById('canvas'), {
-    wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
-  }).ready(function(fs, main) {
-    fsInstance = fs;
-    updateEditorStatus();
-    log('DOSBox 준비 완료', 'ok');
-    dbGet(SAVE_FILE).then(function(savedData) {
-      var promises = gameFiles.map(function(filename) {
-        return fetch("./" + filename)
-          .then(function(r) { return r.arrayBuffer(); })
-          .then(function(buf) {
-            if (filename === SAVE_FILE && savedData && savedData.length > 0) {
-              fs.createFile(filename, savedData);
-            } else {
-              fs.createFile(filename, new Uint8Array(buf));
-            }
-            loaded++;
-            bar.style.width = Math.round((loaded / gameFiles.length) * 100) + '%';
-          });
+  updateStatus();
+  var prog=document.getElementById('prog'),lbl=document.getElementById('prog-label'),loaded=0,total=FILES.length;
+  Dos(document.getElementById('canvas'),{wdosboxUrl:"https://js-dos.com/6.22/current/wdosbox.js"}).ready(function(f,main){
+    fs0=f;updateStatus();log('DOSBox 준비 완료','ok');
+    dbGet(SAV).then(function(sv){
+      var promises=FILES.map(function(fn){
+        return fetch("./"+fn).then(function(r){return r.arrayBuffer();}).then(function(buf){
+          if(fn===SAV&&sv&&sv.length>0)f.createFile(fn,sv);else f.createFile(fn,new Uint8Array(buf));
+          loaded++;prog.style.width=Math.round(loaded/total*100)+'%';lbl.textContent=loaded+' / '+total;
+        }).catch(function(){loaded++;});
       });
-      Promise.all(promises).then(function() {
-        bar.style.width = '100%';
+      Promise.all(promises).then(function(){
+        prog.style.width='100%';
         document.getElementById('loading').classList.remove('show');
-        log('게임 파일 로드 완료 (' + gameFiles.length + '개)', 'ok');
-        log('메모리 준비 완료 — 스캔 가능', 'ok');
-        updateEditorStatus();
-        main(["-c", "FD2.EXE"]);
+        log('게임 파일 로드 완료 ('+total+'개)','ok');
+        log('메모리 준비 완료 — 스캔 가능','ok');
+        updateStatus();
+        main(["-c","FD2.EXE"]);
+        setInterval(function(){if(gameStarted&&heap()){updateGoldDisp();}},2000);
       });
     });
   });
 }
+function fullscreen(){var w=document.querySelector('.player-wrapper');if(!document.fullscreenElement){if(w.requestFullscreen)w.requestFullscreen();}else{if(document.exitFullscreen)document.exitFullscreen();}}
 
-function toggleFullscreen() {
-  var w = document.querySelector('.player-wrapper');
-  if (!document.fullscreenElement) { if (w.requestFullscreen) w.requestFullscreen(); }
-  else { if (document.exitFullscreen) document.exitFullscreen(); }
+
+// ─── 아이템 데이터 ───
+var ITEMS = [
+  // 검류 (sword)
+  {code:0,name:'단검',cat:'sword'},{code:1,name:'활검',cat:'sword'},{code:2,name:'장검',cat:'sword'},
+  {code:3,name:'대검',cat:'sword'},{code:4,name:'암흑검',cat:'sword'},{code:5,name:'전사검',cat:'sword'},
+  {code:6,name:'거마검',cat:'sword'},{code:7,name:'참철검',cat:'sword'},{code:8,name:'유수검',cat:'sword'},
+  {code:9,name:'대지의검',cat:'sword'},{code:10,name:'용신검',cat:'sword'},{code:11,name:'염룡검',cat:'sword'},
+  {code:76,name:'광속검',cat:'sword'},
+  // 단검/도류 (dagger)
+  {code:12,name:'소도',cat:'dagger'},{code:13,name:'비수',cat:'dagger'},{code:14,name:'최독도',cat:'dagger'},
+  {code:15,name:'도적비수',cat:'dagger'},{code:16,name:'암살도',cat:'dagger'},{code:17,name:'호수도',cat:'dagger'},
+  {code:18,name:'닌자도',cat:'dagger'},{code:19,name:'지옥도',cat:'dagger'},
+  // 창/재류 (spear)
+  {code:20,name:'자창',cat:'spear'},{code:21,name:'기창',cat:'spear'},{code:22,name:'장재',cat:'spear'},
+  {code:23,name:'선봉창',cat:'spear'},{code:24,name:'참마도',cat:'spear'},{code:25,name:'악마의창',cat:'spear'},
+  {code:26,name:'황금의재',cat:'spear'},{code:27,name:'용의창',cat:'spear'},{code:28,name:'파마창',cat:'spear'},
+  {code:29,name:'전신재',cat:'spear'},{code:30,name:'성의창',cat:'spear'},{code:31,name:'거신재',cat:'spear'},
+  {code:77,name:'저격창',cat:'spear'},{code:78,name:'광속창',cat:'spear'},
+  // 도끼/추류 (axe)
+  {code:32,name:'수부',cat:'axe'},{code:33,name:'회선부',cat:'axe'},{code:34,name:'전부',cat:'axe'},
+  {code:35,name:'전추',cat:'axe'},{code:36,name:'거부',cat:'axe'},{code:37,name:'혈도끼',cat:'axe'},
+  {code:38,name:'번개추',cat:'axe'},{code:39,name:'광폭도끼',cat:'axe'},{code:40,name:'광도끼',cat:'axe'},
+  {code:41,name:'역량도끼',cat:'axe'},{code:42,name:'대지도끼',cat:'axe'},{code:43,name:'마신부',cat:'axe'},
+  // 궁류 (bow)
+  {code:44,name:'단궁',cat:'bow'},{code:45,name:'장궁',cat:'bow'},{code:46,name:'흑마궁',cat:'bow'},
+  {code:47,name:'거궁',cat:'bow'},{code:48,name:'천사궁',cat:'bow'},{code:49,name:'저격궁',cat:'bow'},
+  {code:50,name:'봉쇄궁',cat:'bow'},{code:51,name:'바람궁',cat:'bow'},
+  {code:97,name:'십자궁',cat:'bow'},{code:98,name:'수정궁',cat:'bow'},{code:104,name:'화신궁',cat:'bow'},
+  // 장/곤류 (staff)
+  {code:52,name:'장곤',cat:'staff'},{code:53,name:'정두추',cat:'staff'},{code:54,name:'거추',cat:'staff'},
+  {code:55,name:'연',cat:'staff'},{code:56,name:'마법장',cat:'staff'},{code:57,name:'봉쇄장',cat:'staff'},
+  {code:58,name:'역지장',cat:'staff'},{code:59,name:'암흑장',cat:'staff'},
+  {code:60,name:'용장대',cat:'staff'},{code:61,name:'광장대',cat:'staff'},{code:62,name:'철골무',cat:'staff'},
+  {code:99,name:'뇌신편',cat:'staff'},{code:101,name:'전송법장',cat:'staff'},
+  // 조류/팔뚝 (claw)
+  {code:63,name:'철조',cat:'claw'},{code:64,name:'황제반지',cat:'claw'},{code:65,name:'독조',cat:'claw'},
+  {code:66,name:'강시조',cat:'claw'},{code:67,name:'파암조',cat:'claw'},{code:68,name:'금강반지',cat:'claw'},
+  {code:69,name:'열인조',cat:'claw'},{code:70,name:'거신반지',cat:'claw'},{code:71,name:'마룡조',cat:'claw'},
+  {code:72,name:'위력팔뚝',cat:'claw'},{code:73,name:'금강팔뚝',cat:'claw'},{code:74,name:'뇌신팔뚝',cat:'claw'},
+  {code:75,name:'충격팔뚝',cat:'claw'},{code:83,name:'암석팔뚝',cat:'claw'},
+  // 특수무기 (special)
+  {code:79,name:'광속포',cat:'special'},{code:80,name:'주먹',cat:'special'},{code:81,name:'이조',cat:'special'},
+  {code:82,name:'촉수',cat:'special'},{code:84,name:'물대포',cat:'special'},{code:85,name:'풍아첨',cat:'special'},
+  {code:86,name:'마염파',cat:'special'},{code:87,name:'공뇌전',cat:'special'},
+  {code:100,name:'공중바퀴',cat:'special'},{code:102,name:'수리의복',cat:'special'},
+  {code:103,name:'화염',cat:'special'},{code:106,name:'빙염',cat:'special'},{code:107,name:'암흑파',cat:'special'},
+  // 훈장/특수장비
+  {code:88,name:'성자반지',cat:'etc'},{code:89,name:'용자훈장',cat:'etc'},{code:90,name:'천사낙인',cat:'etc'},
+  {code:91,name:'이해서적',cat:'etc'},{code:92,name:'심안서적',cat:'etc'},{code:93,name:'백금훈장',cat:'etc'},
+  {code:94,name:'생명열매',cat:'etc'},{code:95,name:'마력수정',cat:'etc'},{code:96,name:'바람날개',cat:'etc'},
+  {code:105,name:'투신반지',cat:'etc'},
+  // 갑옷류 (armor) - 코드는 무기 다음 순서
+  {code:128,name:'피갑',cat:'armor'},{code:129,name:'견갑옷',cat:'armor'},{code:130,name:'야간복',cat:'armor'},
+  {code:132,name:'도적의복',cat:'armor'},{code:133,name:'닌자복',cat:'armor'},{code:134,name:'잠수복',cat:'armor'},
+  {code:135,name:'신비복',cat:'armor'},{code:136,name:'암살복',cat:'armor'},{code:137,name:'암흑의복',cat:'armor'},
+  {code:138,name:'악마갑옷',cat:'armor'},{code:139,name:'뇌신복',cat:'armor'},
+  {code:140,name:'고리갑',cat:'armor'},{code:141,name:'쇄자갑',cat:'armor'},{code:142,name:'연갑',cat:'armor'},
+  {code:143,name:'강석갑옷',cat:'armor'},{code:144,name:'합금갑옷',cat:'armor'},{code:145,name:'마법연갑',cat:'armor'},
+  {code:146,name:'혈환갑',cat:'armor'},{code:147,name:'금강갑옷',cat:'armor'},{code:148,name:'암흑연갑',cat:'armor'},
+  {code:149,name:'역량갑옷',cat:'armor'},{code:150,name:'용연갑',cat:'armor'},
+  {code:152,name:'개갑',cat:'armor'},{code:153,name:'은갑옷',cat:'armor'},{code:154,name:'중갑옷',cat:'armor'},
+  {code:155,name:'지옥갑옷',cat:'armor'},{code:156,name:'성갑옷',cat:'armor'},{code:157,name:'대지갑옷',cat:'armor'},
+  {code:158,name:'용신연갑',cat:'armor'},{code:159,name:'돌갑옷',cat:'armor'},{code:160,name:'마신갑',cat:'armor'},
+  // 포/복류 (robe)
+  {code:161,name:'장포',cat:'robe'},{code:162,name:'법사포',cat:'robe'},{code:163,name:'승려포',cat:'robe'},
+  {code:164,name:'제사포',cat:'robe'},{code:165,name:'성자포',cat:'robe'},{code:166,name:'안개포',cat:'robe'},
+  {code:167,name:'암흑지포',cat:'robe'},{code:168,name:'천지포',cat:'robe'},
+  {code:169,name:'무도복',cat:'robe'},{code:170,name:'전투복',cat:'robe'},{code:171,name:'투사복',cat:'robe'},
+  {code:172,name:'무사갑옷',cat:'robe'},{code:173,name:'요괴투복',cat:'robe'},{code:174,name:'무신갑옷',cat:'robe'},
+  {code:175,name:'전투갑옷',cat:'robe'},{code:176,name:'돌격갑옷',cat:'robe'},{code:177,name:'특수갑옷',cat:'robe'},
+  {code:178,name:'견피',cat:'robe'},{code:179,name:'청색견피',cat:'robe'},{code:180,name:'용연',cat:'robe'},
+  {code:181,name:'근피',cat:'robe'},{code:182,name:'허무갑옷',cat:'robe'},{code:183,name:'왕포',cat:'robe'},
+  {code:184,name:'투사갑옷',cat:'robe'},{code:185,name:'천사바람',cat:'robe'},{code:186,name:'원소보호',cat:'robe'},
+  // 소비아이템 (consume)
+  {code:192,name:'약초',cat:'consume'},{code:193,name:'회복제',cat:'consume'},{code:194,name:'재생제',cat:'consume'},
+  {code:195,name:'신성지수',cat:'consume'},{code:196,name:'해독제',cat:'consume'},{code:197,name:'퇴마제',cat:'consume'},
+  {code:198,name:'역량약수',cat:'consume'},{code:199,name:'내력약수',cat:'consume'},{code:200,name:'속도약수',cat:'consume'},
+  {code:201,name:'녹보석',cat:'consume'},{code:202,name:'홍보석',cat:'consume'},{code:203,name:'남보석',cat:'consume'},
+  {code:204,name:'강석',cat:'consume'},{code:205,name:'비룡알',cat:'consume'},{code:206,name:'마법수',cat:'consume'},
+  {code:207,name:'신성알',cat:'consume'},{code:208,name:'제어중추',cat:'consume'},
+  {code:209,name:'황금훈장',cat:'consume'},{code:210,name:'별의눈',cat:'consume'},{code:211,name:'빛의눈',cat:'consume'},
+  {code:212,name:'암흑눈',cat:'consume'},{code:213,name:'얼음눈',cat:'consume'},{code:214,name:'불의눈',cat:'consume'},
+];
+
+var selCharIdx=0, selSlotIdx=0;
+
+// FD2 캐릭터 구조체 크기 (메모리상 캐릭터별 오프셋)
+// 아이템 슬롯은 SAV 분석 미완이므로 메모리 스캔으로 찾아야 함
+// 캐릭터 데이터는 game data area에서 구조체 배열로 존재
+// 임시: 알려진 주소 기반 오프셋 추정
+var CHAR_ITEM_ADDRS = null; // 스캔으로 발견 후 채워짐
+
+function selChar(n){
+  selCharIdx=n;
+  document.querySelectorAll('.char-btn').forEach(function(b){b.classList.toggle('active-char',parseInt(b.dataset.ch)===n);});
+  document.getElementById('sel-char-lbl').textContent=(n+1)+'P ('+n+')';
+  document.getElementById('cur-item-code').textContent='스캔 필요';
+  document.getElementById('cur-item-name').textContent='-';
+}
+function selSlot(n){
+  selSlotIdx=n;
+  document.querySelectorAll('.item-slot-btn').forEach(function(b){b.classList.toggle('b-yellow',parseInt(b.dataset.slot)===n);});
+  document.getElementById('sel-slot-lbl').textContent=n;
 }
 
-// ──────────────────────────────────────────────
-//  버튼 연결
-// ──────────────────────────────────────────────
-['btn-save','btn-save2'].forEach(function(id) { document.getElementById(id).addEventListener('click', doSave); });
-['btn-download','btn-download2'].forEach(function(id) { document.getElementById(id).addEventListener('click', doDownload); });
-['btn-upload-trigger','btn-upload-trigger2'].forEach(function(id) {
-  document.getElementById(id).addEventListener('click', function() { document.getElementById('btn-upload').click(); });
-});
-document.getElementById('btn-upload').addEventListener('change', function(e) { if (e.target.files[0]) doUpload(e.target.files[0]); e.target.value = ''; });
-document.getElementById('btn-start').addEventListener('click', startGame);
-document.getElementById('btn-play').addEventListener('click', startGame);
-document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
-document.addEventListener('keydown', function(e) { if (e.code === 'Space' && !gameStarted) { e.preventDefault(); startGame(); } });
+function filterItems(){
+  var cat=document.getElementById('item-cat').value;
+  var sel=document.getElementById('item-list');
+  sel.innerHTML='';
+  var list=cat==='all'?ITEMS:ITEMS.filter(function(x){return x.cat===cat;});
+  list.forEach(function(item){
+    var opt=document.createElement('option');
+    opt.value=item.code;
+    opt.textContent='['+item.code+'] '+item.name;
+    sel.appendChild(opt);
+  });
+}
 
-// Enter키로 스캔
-document.getElementById('scan-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') doScan(); });
+// 아이템 슬롯 읽기 - 메모리에서 직접 스캔
+// FD2 캐릭터 구조는 연속된 메모리 블록
+// 장비 슬롯 오프셋: 게임 데이터 영역(~0x1DAF000~) 에서 캐릭터별 구조체 탐색
+function readItemSlot(){
+  var h=heap();
+  if(!h){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  log('캐릭터'+selCharIdx+'P 슬롯'+selSlotIdx+' 읽기 시도...','info');
+  
+  // 캐릭터 구조체 찾기: HP 스캔 결과 활용
+  // goldAddrs[0] 근처 영역에서 패턴 탐색
+  if(goldAddrs.length===0){
+    toast('⚠ 먼저 골드 스캔을 실행하세요','err');
+    log('골드 주소 없음 - 골드 탭에서 스캔 먼저 실행','err');
+    return;
+  }
+  
+  // 골드 주소 근처에서 아이템 배열 탐색
+  var base=goldAddrs[0];
+  log('골드 기준주소: 0x'+base.toString(16),'info');
+  log('주변 메모리 덤프 (±256바이트):','info');
+  
+  var dump='';
+  for(var i=base-64;i<base+192;i+=16){
+    var row=i.toString(16)+': ';
+    for(var j=0;j<16&&i+j<h.length;j++) row+=('0'+h[i+j].toString(16)).slice(-2)+' ';
+    dump+=row;
+  }
+  log(dump.substring(0,500)+'...','info');
+  
+  // 아이템 데이터 추정 영역 표시
+  toast('메모리 덤프 로그 확인','ok');
+  log('※ FD2 아이템 메모리 주소 탐색 중. 로그 탭 확인 후 수동 입력 필요','warn');
+}
+
+function writeItemSlot(){
+  var h=heap();
+  if(!h){toast('⚠ 게임을 먼저 시작하세요','err');return;}
+  var sel=document.getElementById('item-list');
+  if(!sel.value){toast('⚠ 아이템을 선택하세요','err');return;}
+  var code=parseInt(sel.value);
+  var itemName=ITEMS.find(function(x){return x.code===code;});
+  
+  log('아이템 쓰기: 코드='+code+' ('+(itemName?itemName.name:'?')+')', 'info');
+  log('※ 정확한 아이템 슬롯 주소가 필요합니다. 스캔 탭에서 직접 주소 확인 후 입력하세요.','warn');
+  toast('스캔 탭에서 주소 확인 필요','warn');
+}
+
+// 아이템 목록 초기화
+filterItems();
+
+// 슬롯 버튼 초기 상태
+document.querySelectorAll('.item-slot-btn').forEach(function(b,i){
+  if(i===0) b.classList.add('b-yellow');
+});
+
+// ─── 버튼 연결 ───
+document.getElementById('btn-start').addEventListener('click',startGame);
+document.getElementById('btn-play').addEventListener('click',startGame);
+document.getElementById('btn-save').addEventListener('click',doSave);
+document.getElementById('btn-dl').addEventListener('click',doDl);
+document.getElementById('btn-ul-t').addEventListener('click',function(){document.getElementById('btn-ul').click();});
+document.getElementById('btn-ul').addEventListener('change',function(e){if(e.target.files[0])doUpload(e.target.files[0]);e.target.value='';});
+document.getElementById('btn-full').addEventListener('click',fullscreen);
+document.addEventListener('keydown',function(e){if(e.code==='Space'&&!gameStarted){e.preventDefault();startGame();}});
 
 // 터치 버튼
-function sendKey(key, type) {
-  var codes = { 'ArrowUp':38,'ArrowDown':40,'ArrowLeft':37,'ArrowRight':39,'Enter':13,'Escape':27 };
-  var ev = new KeyboardEvent(type, { key:key, code:key, keyCode:codes[key]||0, bubbles:true, cancelable:true });
-  document.getElementById('canvas').dispatchEvent(ev);
-  document.dispatchEvent(ev);
-}
-document.querySelectorAll('.touch-btn[data-key]').forEach(function(btn) {
-  var key = btn.getAttribute('data-key');
-  btn.addEventListener('touchstart', function(e) { e.preventDefault(); btn.classList.add('pressed'); sendKey(key,'keydown'); }, {passive:false});
-  btn.addEventListener('touchend',   function(e) { e.preventDefault(); btn.classList.remove('pressed'); sendKey(key,'keyup'); }, {passive:false});
-  btn.addEventListener('mousedown', function() { btn.classList.add('pressed'); sendKey(key,'keydown'); });
-  btn.addEventListener('mouseup',   function() { btn.classList.remove('pressed'); sendKey(key,'keyup'); });
-});
+function sendKey(k,t){var c={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};var ev=new KeyboardEvent(t,{key:k,code:k,keyCode:c[k]||0,bubbles:true,cancelable:true});var cv=document.getElementById('canvas');cv.dispatchEvent(ev);document.dispatchEvent(ev);}
+document.querySelectorAll('.touch-btn[data-key]').forEach(function(b){var k=b.getAttribute('data-key');b.addEventListener('touchstart',function(e){e.preventDefault();b.classList.add('pressed');sendKey(k,'keydown');},{passive:false});b.addEventListener('touchend',function(e){e.preventDefault();b.classList.remove('pressed');sendKey(k,'keyup');},{passive:false});b.addEventListener('mousedown',function(){b.classList.add('pressed');sendKey(k,'keydown');});b.addEventListener('mouseup',function(){b.classList.remove('pressed');sendKey(k,'keyup');});});
 
-// 시작화면 세이브 상태
-dbGet(SAVE_FILE).then(function(data) {
-  document.getElementById('save-status').textContent = data ? '💾 저장된 세이브 있음' : '';
-});
+// 초기화
+dbGet(SAV).then(function(d){document.getElementById('save-notice').textContent=d?'💾 저장된 세이브 있음':'';});
 </script>
 </body>
 </html>
