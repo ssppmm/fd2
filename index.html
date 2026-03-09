@@ -41,7 +41,6 @@
     .btn-blue:hover { background: #4a9eff; color: #000; }
     .btn-green { background: transparent; border-color: #4aff8a; color: #4aff8a; }
     .btn-green:hover { background: #4aff8a; color: #000; }
-
     .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
     #canvas { width: 100%; aspect-ratio: 4/3; max-height: 60vh; display: block; }
     #splash {
@@ -72,8 +71,8 @@
       background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     }
-    .save-panel-title { font-family: var(--font-pixel); font-size: 8px; color: #4a9eff; }
-    .save-panel-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .save-panel-left .title { font-family: var(--font-pixel); font-size: 8px; color: #4a9eff; margin-bottom: 6px; }
+    .save-panel-left .desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
     .save-panel-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* 토스트 */
@@ -163,15 +162,19 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  <!-- 세이브 안내 패널 -->
+  <!-- 세이브 패널 -->
   <div class="save-panel">
-    <div>
-      <div class="save-panel-title">💾 세이브 가이드</div>
-      <div class="save-panel-desc">저장 = 브라우저에 보관 · 다운로드 = 파일로 저장 · 불러오기 = 파일에서 복원</div>
+    <div class="save-panel-left">
+      <div class="title">💾 세이브 관리</div>
+      <div class="desc">
+        저장 → 이 브라우저에 보관 (재접속해도 유지)<br>
+        다운로드 → FD2.SAV 파일로 저장 (기기 간 이동)<br>
+        불러오기 → FD2.SAV 파일 업로드 후 게임 재시작
+      </div>
     </div>
     <div class="save-panel-btns">
-      <button class="btn btn-blue" id="btn-save2">💾 저장</button>
-      <button class="btn btn-blue" id="btn-download2">⬇ 다운로드</button>
+      <button class="btn btn-blue"  id="btn-save2">💾 저장</button>
+      <button class="btn btn-blue"  id="btn-download2">⬇ 다운로드</button>
       <button class="btn btn-green" id="btn-upload-trigger2">⬆ 불러오기</button>
     </div>
   </div>
@@ -219,7 +222,8 @@
 
 <script>
   var gameStarted = false;
-  var dosFs = null;
+  var dosInstance = null;  // dos 인스턴스 저장
+  var fsInstance = null;   // fs 인스턴스 저장
   var DB_NAME = 'fd2-saves';
   var SAVE_FILE = 'FD2.SAV';
 
@@ -281,59 +285,104 @@
     document.getElementById('save-status').textContent = data ? '💾 저장된 세이브 있음' : '';
   });
 
-  // 💾 저장 (IndexedDB)
+  // 💾 저장 — IndexedDB에 현재 세이브 저장
   function doSave() {
-    if (!dosFs) { showToast('⚠ 게임 실행 후 저장하세요', 'error'); return; }
+    if (!fsInstance) { showToast('⚠ 게임 실행 후 저장하세요', 'error'); return; }
+    // js-dos 6.22 FS에서 파일 읽기
+    var FS = window.Module && window.Module.FS;
+    if (!FS) { showToast('⚠ FS를 찾을 수 없어요', 'error'); return; }
     try {
-      var data = dosFs.readFile(SAVE_FILE);
+      var data = FS.readFile('/' + SAVE_FILE);
       if (data && data.length > 0) {
         dbSet(SAVE_FILE, data).then(function() {
-          showToast('💾 브라우저에 저장 완료!', 'success');
+          showToast('💾 저장 완료!', 'success');
+          document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
         });
       } else {
         showToast('⚠ 저장할 데이터가 없어요', 'error');
       }
-    } catch(e) { showToast('⚠ 저장 실패: ' + e.message, 'error'); }
-  }
-
-  // ⬇ 다운로드 (파일로)
-  function doDownload() {
-    if (!dosFs) { showToast('⚠ 게임 실행 후 다운로드하세요', 'error'); return; }
-    try {
-      var data = dosFs.readFile(SAVE_FILE);
-      if (data && data.length > 0) {
-        var blob = new Blob([data], { type: 'application/octet-stream' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'FD2.SAV';
-        a.click();
-        URL.revokeObjectURL(a.href);
-        showToast('⬇ FD2.SAV 다운로드 완료!', 'success');
-      } else {
-        showToast('⚠ 저장할 데이터가 없어요', 'error');
+    } catch(e) {
+      // 경로 다시 시도
+      try {
+        var data2 = FS.readFile('/home/web_user/' + SAVE_FILE);
+        if (data2 && data2.length > 0) {
+          dbSet(SAVE_FILE, data2).then(function() {
+            showToast('💾 저장 완료!', 'success');
+          });
+        }
+      } catch(e2) {
+        showToast('⚠ 저장 실패 - 게임 내에서 먼저 저장하세요', 'error');
       }
-    } catch(e) { showToast('⚠ 다운로드 실패', 'error'); }
+    }
   }
 
-  // ⬆ 불러오기 (파일에서)
+  // ⬇ 다운로드
+  function doDownload() {
+    if (!fsInstance) { showToast('⚠ 게임 실행 후 다운로드하세요', 'error'); return; }
+    var FS = window.Module && window.Module.FS;
+    if (!FS) { showToast('⚠ FS를 찾을 수 없어요', 'error'); return; }
+
+    var paths = ['/' + SAVE_FILE, '/home/web_user/' + SAVE_FILE, '/c/' + SAVE_FILE];
+    var data = null;
+
+    for (var i = 0; i < paths.length; i++) {
+      try {
+        data = FS.readFile(paths[i]);
+        if (data && data.length > 0) break;
+      } catch(e) {}
+    }
+
+    if (data && data.length > 0) {
+      var blob = new Blob([data], { type: 'application/octet-stream' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'FD2.SAV';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      showToast('⬇ FD2.SAV 다운로드 완료!', 'success');
+    } else {
+      // IndexedDB에서라도 다운로드
+      dbGet(SAVE_FILE).then(function(saved) {
+        if (saved && saved.length > 0) {
+          var blob = new Blob([saved], { type: 'application/octet-stream' });
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'FD2.SAV';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          showToast('⬇ 저장된 세이브 다운로드 완료!', 'success');
+        } else {
+          showToast('⚠ 저장된 세이브가 없어요. 먼저 💾 저장을 눌러주세요', 'error');
+        }
+      });
+    }
+  }
+
+  // ⬆ 불러오기
   function doUpload(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
       var data = new Uint8Array(e.target.result);
-      // IndexedDB에 저장
       dbSet(SAVE_FILE, data).then(function() {
-        // 게임 실행 중이면 fs에도 적용
-        if (dosFs) {
-          try { dosFs.createFile(SAVE_FILE, data); } catch(err) {}
+        if (fsInstance) {
+          var FS = window.Module && window.Module.FS;
+          if (FS) {
+            try { FS.writeFile('/' + SAVE_FILE, data); } catch(err) {}
+            try { FS.writeFile('/home/web_user/' + SAVE_FILE, data); } catch(err) {}
+          }
         }
-        showToast('⬆ 세이브 불러오기 완료! 게임을 재시작하세요', 'success');
+        showToast('⬆ 불러오기 완료! 게임을 재시작하세요', 'success');
         document.getElementById('save-status').textContent = '💾 저장된 세이브 있음';
       });
     };
     reader.readAsArrayBuffer(file);
   }
 
-  // 버튼 이벤트
+  // 버튼 연결
   ['btn-save','btn-save2'].forEach(function(id) {
     document.getElementById(id).addEventListener('click', doSave);
   });
@@ -359,10 +408,10 @@
     var bar = document.getElementById('progress-bar');
     var loaded = 0;
 
-    Dos(document.getElementById('canvas'), {
+    dosInstance = Dos(document.getElementById('canvas'), {
       wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js"
     }).ready(function(fs, main) {
-      dosFs = fs;
+      fsInstance = fs;
       dbGet(SAVE_FILE).then(function(savedData) {
         var promises = gameFiles.map(function(filename) {
           return fetch("./" + filename)
