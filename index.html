@@ -345,10 +345,22 @@
         </select>
 
         <!-- 읽기 버튼 -->
-        <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
           <button class="btn btn-primary" style="flex:1;padding:9px;" onclick="statReadAll()">📖 현재값 읽기</button>
-          <button class="btn btn-ghost"   style="flex:1;padding:9px;font-size:9px;" onclick="statFindBase()" title="사울 HP를 입력 후 눌러서 정확한 메모리 위치 탐색">🔎 베이스 탐색</button>
         </div>
+
+        <!-- 베이스 탐색 (전투 중 주소 달라질 때) -->
+        <details style="margin-bottom:12px;">
+          <summary style="font-size:8px;color:var(--muted);cursor:pointer;padding:4px 0;">⚙ 베이스 탐색 (전투 중 주소가 틀릴 때)</summary>
+          <div style="padding:8px;background:var(--surface2);border-radius:3px;margin-top:4px;">
+            <div style="font-size:8px;color:var(--muted);margin-bottom:4px;">게임에서 사울의 현재 HP를 확인 후 입력</div>
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="stat-base-hp" min="1" max="9999" placeholder="사울 현재 HP"
+                style="flex:1;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:5px;font-size:11px;text-align:center;">
+              <button class="btn btn-ghost" style="padding:6px 10px;font-size:9px;" onclick="statFindBase()">🔎 탐색</button>
+            </div>
+          </div>
+        </details>
 
         <!-- 스탯 그리드 -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
@@ -455,18 +467,21 @@
             <option value="8">8bit</option>
           </select>
         </div>
-        <div class="lbl" style="margin-bottom:4px;">새 값</div>
-        <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
-          <button class="nudge-btn" onclick="nudgeEditVal(-1000)">−1000</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(-10)">−10</button>
+        <div class="lbl" style="margin-bottom:6px;">새 값</div>
+        <!-- 숫자 직접 입력 (크게) -->
+        <input type="number" id="edit-val" min="0" max="9999999" value="0"
+          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--yellow);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;font-family:var(--font-pixel);margin-bottom:6px;">
+        <!-- 미세조정 버튼 -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:8px;">
+          <button class="nudge-btn" onclick="nudgeEditVal(-1000)">−1K</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(-100)">−100</button>
           <button class="nudge-btn" onclick="nudgeEditVal(-1)">−1</button>
-          <input type="number" id="edit-val" min="0" max="9999999" value="0"
-            style="flex:1;background:var(--bg);color:var(--yellow);border:2px solid var(--yellow);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);">
           <button class="nudge-btn" onclick="nudgeEditVal(1)">+1</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(10)">+10</button>
-          <button class="nudge-btn" onclick="nudgeEditVal(1000)">+1000</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(100)">+100</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(1000)">+1K</button>
         </div>
-        <div class="stat-presets" style="margin-bottom:8px;">
+        <!-- 프리셋 버튼 -->
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">
           <button class="preset-btn" onclick="setEditVal(0)">0</button>
           <button class="preset-btn" onclick="setEditVal(999)">999</button>
           <button class="preset-btn" onclick="setEditVal(9999)">9999</button>
@@ -776,8 +791,8 @@ function statReadAll(){
 // 베이스 주소 수동 교정 (사울 HP로 탐색)
 function statFindBase(){
   var h = heap(); if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var knownHP = parseInt(document.getElementById('sv-chp').value) || 0;
-  if(knownHP === 0){ toast('⚠ 사울의 현재 HP를 먼저 입력하세요','err'); return; }
+  var knownHP = parseInt(document.getElementById('stat-base-hp').value) || 0;
+  if(knownHP === 0){ toast('⚠ 사울의 현재 HP를 베이스 탐색 칸에 입력하세요','err'); return; }
   log('베이스 탐색: 사울 HP='+knownHP+' 으로 검색 중...','info');
   var cands = findCharBaseByHP(knownHP);
   if(cands.length === 0){
