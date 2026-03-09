@@ -252,8 +252,7 @@
 
         <div class="lbl" style="margin-bottom:6px;">현재 골드 (게임 화면 확인)</div>
         <input type="number" id="gold-cur-in" min="0" max="9999999" value="0"
-          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px;"
-          oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
+          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px;">
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:11px;" onclick="goldScan()">🔍 스캔 + MAX 적용</button>
         <div style="font-size:9px;color:var(--muted);margin-top:8px;text-align:center;">✦ 상점 재진입 시 화면에 반영됩니다</div>
       </div>
@@ -731,26 +730,39 @@ function applyItem(){
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
   if(itemAddrs.length === 0){ toast('⚠ 먼저 스캔하세요','err'); return; }
   if(itemAddrs.length > 100){
-    toast('⚠ 후보가 너무 많음('+itemAddrs.length+'개) — 재스캔으로 더 좁히세요','err');
-    return;
+    toast('⚠ 후보가 너무 많음 — 재스캔으로 더 좁히세요','err'); return;
   }
 
   var newCode = parseInt(document.getElementById('item-new-sel').value);
   var newObj  = ITEMS.find(function(x){ return x.code === newCode; });
   var newName = newObj ? newObj.name : '0x'+newCode.toString(16).toUpperCase();
 
-  var cnt = 0;
+  // 각 주소 주변 ±4바이트 덤프 + 오프셋 0,+1,-1 모두 16bit 쓰기
+  var lines = [];
   itemAddrs.forEach(function(a){
-    if(mWrite(a, newCode, 16)) cnt++;  // 16bit로 쓰기
+    // 주변 바이트 덤프 (-4 ~ +6)
+    var dump = '';
+    for(var i = -4; i <= 6; i++){
+      var idx = a + i;
+      if(idx >= 0 && idx < h.length){
+        dump += (i===0?'[':i===1?'':' ') + h[idx].toString(16).padStart(2,'0') + (i===0?']':'');
+      }
+    }
+    lines.push('0x'+a.toString(16)+': '+dump);
+
+    // 오프셋 0, -1, +1 세 곳에 모두 16bit 쓰기 (어느 오프셋이 실제인지 모르므로)
+    mWrite(a,    newCode, 16);
+    mWrite(a-1,  newCode, 16);
+    mWrite(a+1,  newCode, 16);
   });
 
-  // 결과 표시
-  document.getElementById('item-addr-list').textContent =
-    '적용: ' + itemAddrs.map(function(a){
-      return '0x'+a.toString(16)+'→'+( h[a]|(h[a+1]<<8) );
-    }).join(', ');
+  document.getElementById('item-scan-status').style.display = 'block';
+  document.getElementById('item-addr-list').textContent = lines.join('\n');
+  document.getElementById('item-scan-hint').style.color = 'var(--yellow)';
+  document.getElementById('item-scan-hint').textContent =
+    '위 덤프에서 [ ] 안 값이 원래 아이템 코드인지 확인하세요';
 
-  toast('🎒 '+newName+' 적용! ('+cnt+'개)','ok');
+  toast('🎒 '+newName+' 적용 시도!','ok');
   document.getElementById('item-cur-sel').value = newCode;
   itemAddrs = [];
 }
