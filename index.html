@@ -398,62 +398,55 @@
         <span class="badge b-blue" id="item-status">게임 시작 필요</span>
       </div>
       <div class="card-body" style="padding:10px;">
-        <div style="font-size:7px;color:var(--muted);margin-bottom:8px;">
-          ① 캐릭터 선택 → ② 슬롯 번호 입력 → ③ 아이템 선택 → ④ 적용
-        </div>
 
-        <!-- 캐릭터 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">캐릭터 슬롯 (0~5)</div>
-        <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
-          <button class="btn btn-ghost char-btn active-char" data-ch="0" onclick="selChar(0)">1P</button>
-          <button class="btn btn-ghost char-btn" data-ch="1" onclick="selChar(1)">2P</button>
-          <button class="btn btn-ghost char-btn" data-ch="2" onclick="selChar(2)">3P</button>
-          <button class="btn btn-ghost char-btn" data-ch="3" onclick="selChar(3)">4P</button>
-          <button class="btn btn-ghost char-btn" data-ch="4" onclick="selChar(4)">5P</button>
-          <button class="btn btn-ghost char-btn" data-ch="5" onclick="selChar(5)">6P</button>
-        </div>
-
-        <!-- 아이템 슬롯 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">아이템 슬롯 (0~15)</div>
-        <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap;">
-          <script>for(var _i=0;_i<16;_i++) document.write('<button class="btn btn-ghost item-slot-btn" data-slot="'+_i+'" onclick="selSlot('+_i+')" style="min-width:28px;padding:4px 6px;font-size:8px;">'+_i+'</button>');</script>
-        </div>
-
-        <!-- 현재 선택 정보 -->
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:8px;font-size:8px;">
-          <div>캐릭터: <span id="sel-char-lbl" style="color:var(--accent);font-weight:bold;">1P (0)</span> &nbsp; 슬롯: <span id="sel-slot-lbl" style="color:var(--yellow);font-weight:bold;">0</span></div>
-          <div style="margin-top:4px;">현재 아이템 코드: <span id="cur-item-code" style="color:var(--muted);">스캔 필요</span></div>
-          <div>현재 아이템명: <span id="cur-item-name" style="color:var(--muted);">-</span></div>
-        </div>
-
-        <!-- 아이템 검색 필터 -->
-        <div class="lbl" style="margin-bottom:4px;">아이템 선택</div>
-        <div style="display:flex;gap:4px;margin-bottom:4px;">
-          <select id="item-cat" onchange="filterItems()" style="flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:4px;font-size:8px;">
-            <option value="all">전체</option>
-            <option value="sword">검류</option>
-            <option value="dagger">단검/도류</option>
-            <option value="spear">창/재류</option>
-            <option value="axe">도끼/추류</option>
-            <option value="bow">궁류</option>
-            <option value="staff">장/곤류</option>
-            <option value="claw">조류/팔뚝</option>
-            <option value="special">특수무기</option>
-            <option value="armor">갑옷류</option>
-            <option value="robe">포/복류</option>
-            <option value="consume">소비아이템</option>
-            <option value="etc">기타</option>
-          </select>
-        </div>
-        <select id="item-list" size="6" style="width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:4px;font-size:8px;margin-bottom:6px;">
+        <!-- ① 캐릭터 선택 드롭다운 -->
+        <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
+        <select id="item-char-sel" onchange="onItemCharChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
+          <option value="0">1번 캐릭터</option>
+          <option value="1">2번 캐릭터</option>
+          <option value="2">3번 캐릭터</option>
+          <option value="3">4번 캐릭터</option>
+          <option value="4">5번 캐릭터</option>
+          <option value="5">6번 캐릭터</option>
         </select>
 
-        <div style="display:flex;gap:4px;">
-          <button class="btn btn-primary" style="flex:1" onclick="readItemSlot()">📖 읽기</button>
-          <button class="btn btn-accent" style="flex:1" onclick="writeItemSlot()">✏️ 적용</button>
+        <!-- ② 슬롯 선택 드롭다운 -->
+        <div class="lbl" style="margin-bottom:4px;">② 슬롯 (장비 위치)</div>
+        <select id="item-slot-sel" onchange="onItemSlotChange()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
+          <option value="0">슬롯 0 — 무기</option>
+          <option value="1">슬롯 1 — 갑옷</option>
+          <option value="2">슬롯 2 — 보조1</option>
+          <option value="3">슬롯 3 — 보조2</option>
+          <option value="4">슬롯 4</option>
+          <option value="5">슬롯 5</option>
+          <option value="6">슬롯 6</option>
+          <option value="7">슬롯 7</option>
+          <option value="8">슬롯 8</option>
+          <option value="9">슬롯 9</option>
+          <option value="10">슬롯 10</option>
+          <option value="11">슬롯 11</option>
+          <option value="12">슬롯 12</option>
+          <option value="13">슬롯 13</option>
+          <option value="14">슬롯 14</option>
+          <option value="15">슬롯 15</option>
+        </select>
+
+        <!-- ③ 아이템 선택 드롭다운 (카테고리 그룹) -->
+        <div class="lbl" style="margin-bottom:4px;">③ 바꿀 아이템</div>
+        <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:10px;">
+          <!-- JS로 채워짐 -->
+        </select>
+
+        <!-- 현재 슬롯 상태 표시 -->
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:7px 10px;margin-bottom:10px;font-size:8px;line-height:1.7;">
+          <span style="color:var(--muted);">현재 슬롯:</span>
+          <span id="cur-slot-info" style="color:var(--yellow);margin-left:4px;">—</span>
         </div>
-        <div style="margin-top:4px;font-size:7px;color:var(--muted);">
-          ※ 메모리에 직접 쓰기. 저장 후 새로 읽어야 반영됨
+
+        <!-- 버튼 -->
+        <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="applyItem()">✅ 적용</button>
+        <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">
+          저장(세이브) 후 다음 전투/화면전환 시 반영됩니다
         </div>
       </div>
     </div>
@@ -652,178 +645,139 @@ function startGame(){
 function fullscreen(){var w=document.querySelector('.player-wrapper');if(!document.fullscreenElement){if(w.requestFullscreen)w.requestFullscreen();}else{if(document.exitFullscreen)document.exitFullscreen();}}
 
 
-// ─── 아이템 데이터 ───
+// ─── 아이템 데이터 (코드 = txt 파일 기준 정확한 16진수) ───
 var ITEMS = [
-  // 검류 (sword)
-  {code:0,name:'단검',cat:'sword'},{code:1,name:'활검',cat:'sword'},{code:2,name:'장검',cat:'sword'},
-  {code:3,name:'대검',cat:'sword'},{code:4,name:'암흑검',cat:'sword'},{code:5,name:'전사검',cat:'sword'},
-  {code:6,name:'거마검',cat:'sword'},{code:7,name:'참철검',cat:'sword'},{code:8,name:'유수검',cat:'sword'},
-  {code:9,name:'대지의검',cat:'sword'},{code:10,name:'용신검',cat:'sword'},{code:11,name:'염룡검',cat:'sword'},
-  {code:76,name:'광속검',cat:'sword'},
-  // 단검/도류 (dagger)
-  {code:12,name:'소도',cat:'dagger'},{code:13,name:'비수',cat:'dagger'},{code:14,name:'최독도',cat:'dagger'},
-  {code:15,name:'도적비수',cat:'dagger'},{code:16,name:'암살도',cat:'dagger'},{code:17,name:'호수도',cat:'dagger'},
-  {code:18,name:'닌자도',cat:'dagger'},{code:19,name:'지옥도',cat:'dagger'},
-  // 창/재류 (spear)
-  {code:20,name:'자창',cat:'spear'},{code:21,name:'기창',cat:'spear'},{code:22,name:'장재',cat:'spear'},
-  {code:23,name:'선봉창',cat:'spear'},{code:24,name:'참마도',cat:'spear'},{code:25,name:'악마의창',cat:'spear'},
-  {code:26,name:'황금의재',cat:'spear'},{code:27,name:'용의창',cat:'spear'},{code:28,name:'파마창',cat:'spear'},
-  {code:29,name:'전신재',cat:'spear'},{code:30,name:'성의창',cat:'spear'},{code:31,name:'거신재',cat:'spear'},
-  {code:77,name:'저격창',cat:'spear'},{code:78,name:'광속창',cat:'spear'},
-  // 도끼/추류 (axe)
-  {code:32,name:'수부',cat:'axe'},{code:33,name:'회선부',cat:'axe'},{code:34,name:'전부',cat:'axe'},
-  {code:35,name:'전추',cat:'axe'},{code:36,name:'거부',cat:'axe'},{code:37,name:'혈도끼',cat:'axe'},
-  {code:38,name:'번개추',cat:'axe'},{code:39,name:'광폭도끼',cat:'axe'},{code:40,name:'광도끼',cat:'axe'},
-  {code:41,name:'역량도끼',cat:'axe'},{code:42,name:'대지도끼',cat:'axe'},{code:43,name:'마신부',cat:'axe'},
-  // 궁류 (bow)
-  {code:44,name:'단궁',cat:'bow'},{code:45,name:'장궁',cat:'bow'},{code:46,name:'흑마궁',cat:'bow'},
-  {code:47,name:'거궁',cat:'bow'},{code:48,name:'천사궁',cat:'bow'},{code:49,name:'저격궁',cat:'bow'},
-  {code:50,name:'봉쇄궁',cat:'bow'},{code:51,name:'바람궁',cat:'bow'},
-  {code:97,name:'십자궁',cat:'bow'},{code:98,name:'수정궁',cat:'bow'},{code:104,name:'화신궁',cat:'bow'},
-  // 장/곤류 (staff)
-  {code:52,name:'장곤',cat:'staff'},{code:53,name:'정두추',cat:'staff'},{code:54,name:'거추',cat:'staff'},
-  {code:55,name:'연',cat:'staff'},{code:56,name:'마법장',cat:'staff'},{code:57,name:'봉쇄장',cat:'staff'},
-  {code:58,name:'역지장',cat:'staff'},{code:59,name:'암흑장',cat:'staff'},
-  {code:60,name:'용장대',cat:'staff'},{code:61,name:'광장대',cat:'staff'},{code:62,name:'철골무',cat:'staff'},
-  {code:99,name:'뇌신편',cat:'staff'},{code:101,name:'전송법장',cat:'staff'},
-  // 조류/팔뚝 (claw)
-  {code:63,name:'철조',cat:'claw'},{code:64,name:'황제반지',cat:'claw'},{code:65,name:'독조',cat:'claw'},
-  {code:66,name:'강시조',cat:'claw'},{code:67,name:'파암조',cat:'claw'},{code:68,name:'금강반지',cat:'claw'},
-  {code:69,name:'열인조',cat:'claw'},{code:70,name:'거신반지',cat:'claw'},{code:71,name:'마룡조',cat:'claw'},
-  {code:72,name:'위력팔뚝',cat:'claw'},{code:73,name:'금강팔뚝',cat:'claw'},{code:74,name:'뇌신팔뚝',cat:'claw'},
-  {code:75,name:'충격팔뚝',cat:'claw'},{code:83,name:'암석팔뚝',cat:'claw'},
-  // 특수무기 (special)
-  {code:79,name:'광속포',cat:'special'},{code:80,name:'주먹',cat:'special'},{code:81,name:'이조',cat:'special'},
-  {code:82,name:'촉수',cat:'special'},{code:84,name:'물대포',cat:'special'},{code:85,name:'풍아첨',cat:'special'},
-  {code:86,name:'마염파',cat:'special'},{code:87,name:'공뇌전',cat:'special'},
-  {code:100,name:'공중바퀴',cat:'special'},{code:102,name:'수리의복',cat:'special'},
-  {code:103,name:'화염',cat:'special'},{code:106,name:'빙염',cat:'special'},{code:107,name:'암흑파',cat:'special'},
-  // 훈장/특수장비
-  {code:88,name:'성자반지',cat:'etc'},{code:89,name:'용자훈장',cat:'etc'},{code:90,name:'천사낙인',cat:'etc'},
-  {code:91,name:'이해서적',cat:'etc'},{code:92,name:'심안서적',cat:'etc'},{code:93,name:'백금훈장',cat:'etc'},
-  {code:94,name:'생명열매',cat:'etc'},{code:95,name:'마력수정',cat:'etc'},{code:96,name:'바람날개',cat:'etc'},
-  {code:105,name:'투신반지',cat:'etc'},
-  // 갑옷류 (armor) - 코드는 무기 다음 순서
-  {code:128,name:'피갑',cat:'armor'},{code:129,name:'견갑옷',cat:'armor'},{code:130,name:'야간복',cat:'armor'},
-  {code:132,name:'도적의복',cat:'armor'},{code:133,name:'닌자복',cat:'armor'},{code:134,name:'잠수복',cat:'armor'},
-  {code:135,name:'신비복',cat:'armor'},{code:136,name:'암살복',cat:'armor'},{code:137,name:'암흑의복',cat:'armor'},
-  {code:138,name:'악마갑옷',cat:'armor'},{code:139,name:'뇌신복',cat:'armor'},
-  {code:140,name:'고리갑',cat:'armor'},{code:141,name:'쇄자갑',cat:'armor'},{code:142,name:'연갑',cat:'armor'},
-  {code:143,name:'강석갑옷',cat:'armor'},{code:144,name:'합금갑옷',cat:'armor'},{code:145,name:'마법연갑',cat:'armor'},
-  {code:146,name:'혈환갑',cat:'armor'},{code:147,name:'금강갑옷',cat:'armor'},{code:148,name:'암흑연갑',cat:'armor'},
-  {code:149,name:'역량갑옷',cat:'armor'},{code:150,name:'용연갑',cat:'armor'},
-  {code:152,name:'개갑',cat:'armor'},{code:153,name:'은갑옷',cat:'armor'},{code:154,name:'중갑옷',cat:'armor'},
-  {code:155,name:'지옥갑옷',cat:'armor'},{code:156,name:'성갑옷',cat:'armor'},{code:157,name:'대지갑옷',cat:'armor'},
-  {code:158,name:'용신연갑',cat:'armor'},{code:159,name:'돌갑옷',cat:'armor'},{code:160,name:'마신갑',cat:'armor'},
-  // 포/복류 (robe)
-  {code:161,name:'장포',cat:'robe'},{code:162,name:'법사포',cat:'robe'},{code:163,name:'승려포',cat:'robe'},
-  {code:164,name:'제사포',cat:'robe'},{code:165,name:'성자포',cat:'robe'},{code:166,name:'안개포',cat:'robe'},
-  {code:167,name:'암흑지포',cat:'robe'},{code:168,name:'천지포',cat:'robe'},
-  {code:169,name:'무도복',cat:'robe'},{code:170,name:'전투복',cat:'robe'},{code:171,name:'투사복',cat:'robe'},
-  {code:172,name:'무사갑옷',cat:'robe'},{code:173,name:'요괴투복',cat:'robe'},{code:174,name:'무신갑옷',cat:'robe'},
-  {code:175,name:'전투갑옷',cat:'robe'},{code:176,name:'돌격갑옷',cat:'robe'},{code:177,name:'특수갑옷',cat:'robe'},
-  {code:178,name:'견피',cat:'robe'},{code:179,name:'청색견피',cat:'robe'},{code:180,name:'용연',cat:'robe'},
-  {code:181,name:'근피',cat:'robe'},{code:182,name:'허무갑옷',cat:'robe'},{code:183,name:'왕포',cat:'robe'},
-  {code:184,name:'투사갑옷',cat:'robe'},{code:185,name:'천사바람',cat:'robe'},{code:186,name:'원소보호',cat:'robe'},
-  // 소비아이템 (consume)
-  {code:192,name:'약초',cat:'consume'},{code:193,name:'회복제',cat:'consume'},{code:194,name:'재생제',cat:'consume'},
-  {code:195,name:'신성지수',cat:'consume'},{code:196,name:'해독제',cat:'consume'},{code:197,name:'퇴마제',cat:'consume'},
-  {code:198,name:'역량약수',cat:'consume'},{code:199,name:'내력약수',cat:'consume'},{code:200,name:'속도약수',cat:'consume'},
-  {code:201,name:'녹보석',cat:'consume'},{code:202,name:'홍보석',cat:'consume'},{code:203,name:'남보석',cat:'consume'},
-  {code:204,name:'강석',cat:'consume'},{code:205,name:'비룡알',cat:'consume'},{code:206,name:'마법수',cat:'consume'},
-  {code:207,name:'신성알',cat:'consume'},{code:208,name:'제어중추',cat:'consume'},
-  {code:209,name:'황금훈장',cat:'consume'},{code:210,name:'별의눈',cat:'consume'},{code:211,name:'빛의눈',cat:'consume'},
-  {code:212,name:'암흑눈',cat:'consume'},{code:213,name:'얼음눈',cat:'consume'},{code:214,name:'불의눈',cat:'consume'},
+  // ⚔ 검/도류
+  {code:0x00,name:'단검'},{code:0x01,name:'활검'},{code:0x02,name:'장검'},{code:0x03,name:'대검'},
+  {code:0x04,name:'암흑검'},{code:0x05,name:'전사검'},{code:0x06,name:'거마검'},{code:0x07,name:'참철검'},
+  {code:0x08,name:'유수검'},{code:0x09,name:'대지의검'},{code:0x0A,name:'용신검'},{code:0x0B,name:'염룡검'},
+  {code:0x0C,name:'소도'},{code:0x0D,name:'비수'},{code:0x0E,name:'최독도'},{code:0x0F,name:'도적비수'},
+  {code:0x10,name:'암살도'},{code:0x11,name:'혼수도'},{code:0x12,name:'닌자도'},{code:0x13,name:'지옥도'},
+  {code:0x4C,name:'광속검'},{code:0x6B,name:'암흑파(검)'},
+  // 🔱 창/재류
+  {code:0x14,name:'자창'},{code:0x15,name:'기창'},{code:0x16,name:'장재'},{code:0x17,name:'선봉창'},
+  {code:0x18,name:'참마도'},{code:0x19,name:'악마의창'},{code:0x1A,name:'황금의재'},{code:0x1B,name:'용의창'},
+  {code:0x1C,name:'악마창'},{code:0x1D,name:'전신재'},{code:0x1E,name:'성의창'},{code:0x1F,name:'거신재'},
+  {code:0x4D,name:'저격창'},{code:0x4E,name:'광속창'},
+  // 🪓 도끼/추류
+  {code:0x20,name:'수부'},{code:0x21,name:'회선부'},{code:0x22,name:'전부'},{code:0x23,name:'전추'},
+  {code:0x24,name:'거부'},{code:0x25,name:'혈도끼'},{code:0x26,name:'번개추'},{code:0x27,name:'광폭도끼'},
+  {code:0x28,name:'광도끼'},{code:0x29,name:'역량도끼'},{code:0x2A,name:'대지도끼'},{code:0x2B,name:'마신부'},
+  // 🏹 궁류
+  {code:0x2C,name:'단궁'},{code:0x2D,name:'장궁'},{code:0x2E,name:'흑마궁'},{code:0x2F,name:'거궁'},
+  {code:0x30,name:'천사궁'},{code:0x31,name:'저격궁'},{code:0x32,name:'봉쇄궁'},{code:0x33,name:'바람궁'},
+  {code:0x61,name:'십자궁'},{code:0x62,name:'수정궁'},{code:0x68,name:'화신궁'},
+  // 🪄 장/곤류
+  {code:0x34,name:'장곤'},{code:0x35,name:'정두추'},{code:0x36,name:'거추'},{code:0x37,name:'연'},
+  {code:0x38,name:'마법장'},{code:0x39,name:'봉쇄장'},{code:0x3A,name:'역지장'},{code:0x3B,name:'암흑장'},
+  {code:0x3C,name:'용장대'},{code:0x3D,name:'광장대'},{code:0x65,name:'전송법장'},{code:0x63,name:'뇌신편'},
+  // 🦀 조류/팔뚝류
+  {code:0x3E,name:'철골무'},{code:0x3F,name:'철조'},{code:0x40,name:'황제반지'},{code:0x41,name:'독조'},
+  {code:0x42,name:'강시조'},{code:0x43,name:'파암조'},{code:0x44,name:'금강반지'},{code:0x45,name:'열인조'},
+  {code:0x46,name:'거신반지'},{code:0x47,name:'마룡조'},{code:0x51,name:'이조'},{code:0x69,name:'투신반지'},
+  {code:0x48,name:'위력팔뚝'},{code:0x49,name:'금강팔뚝'},{code:0x4A,name:'뇌신팔뚝'},{code:0x4B,name:'충격팔뚝'},
+  {code:0x53,name:'암석팔뚝'},
+  // ⚡ 특수무기
+  {code:0x4F,name:'광속포'},{code:0x50,name:'주먹'},{code:0x52,name:'촉수'},
+  {code:0x54,name:'물대포'},{code:0x55,name:'풍아첨'},{code:0x56,name:'마염파'},
+  {code:0x57,name:'공뇌전'},{code:0x64,name:'공중바퀴'},{code:0x67,name:'화염'},{code:0x6A,name:'빙염'},
+  // 🎖 직업변환/특수장비
+  {code:0x58,name:'성자반지'},{code:0x59,name:'용자훈장'},{code:0x5A,name:'천사낙인'},
+  {code:0x5B,name:'이해서적'},{code:0x5C,name:'심안서적'},{code:0x5D,name:'백금훈장'},
+  {code:0x5E,name:'생명열매'},{code:0x5F,name:'마력수정'},{code:0x60,name:'바람날개'},
+  {code:0x66,name:'수리의복(HP+500)'},
+  // 🛡 갑옷류
+  {code:0x7B,name:'돌갑옷'},{code:0x7C,name:'마신갑'},{code:0x7F,name:'마갑옷'},
+  {code:0x80,name:'포의'},{code:0x81,name:'여행복'},{code:0x82,name:'천사바람'},{code:0x83,name:'원소보호'},
+  {code:0x84,name:'피갑'},{code:0x85,name:'견갑옷'},{code:0x86,name:'야간복'},{code:0x87,name:'마법갑옷(경)'},
+  {code:0x88,name:'도적의복'},{code:0x89,name:'닌자복'},{code:0x8A,name:'잠수복'},{code:0x8B,name:'신비복'},
+  {code:0x8C,name:'암살복'},{code:0x8D,name:'암흑의복'},{code:0x8E,name:'악마갑옷'},{code:0x8F,name:'뇌신복'},
+  {code:0x90,name:'고리갑'},{code:0x91,name:'쇄자갑'},{code:0x92,name:'연갑'},{code:0x93,name:'강석갑옷'},
+  {code:0x94,name:'합금갑옷'},{code:0x95,name:'마법연갑'},{code:0x96,name:'혈환갑'},{code:0x97,name:'금강갑옷'},
+  {code:0x98,name:'암흑연갑'},{code:0x99,name:'역량갑옷'},{code:0x9A,name:'악마갑옷(중)'},{code:0x9B,name:'용연갑'},
+  {code:0x9D,name:'은갑옷'},{code:0x9E,name:'마법갑옷(중)'},{code:0x9F,name:'중갑옷'},{code:0xA0,name:'지옥갑옷'},
+  {code:0xA1,name:'성갑옷'},{code:0xA2,name:'대지갑옷'},{code:0xA3,name:'용신갑옷'},
+  // 👘 포/복류
+  {code:0xA4,name:'장포'},{code:0xA5,name:'법사포'},{code:0xA6,name:'승려포'},{code:0xA7,name:'제사포'},
+  {code:0xA8,name:'성자포'},{code:0xA9,name:'개갑'},{code:0xAA,name:'암흑지포'},{code:0xAB,name:'천지포'},
+  {code:0xAC,name:'무도복'},{code:0xAD,name:'전투복'},{code:0xAE,name:'투사복'},{code:0xAF,name:'무사갑옷'},
+  {code:0xB0,name:'요괴투복'},{code:0xB1,name:'무신갑옷'},{code:0xB2,name:'전투갑옷'},{code:0xB3,name:'돌격갑옷'},
+  {code:0xB4,name:'중갑옷(전)'},{code:0xB5,name:'특수갑옷'},{code:0xB6,name:'견피'},{code:0xB7,name:'청색견피'},
+  {code:0xB8,name:'용연'},{code:0xB9,name:'근피'},{code:0xBA,name:'허무갑옷'},{code:0xBB,name:'왕포'},
+  {code:0xBC,name:'투사갑옷'},{code:0xBD,name:'지지포'},{code:0xBE,name:'수지포'},{code:0xBF,name:'대지갑옷(전)'},
+  // 🧪 소비/회복
+  {code:0xC0,name:'약초(HP+40)'},{code:0xC1,name:'회복제(HP+120)'},{code:0xC2,name:'재생제(HP+300)'},
+  {code:0xC3,name:'신성지수(HP+999)'},{code:0xC4,name:'해독제'},{code:0xC5,name:'퇴마제'},
+  {code:0xC6,name:'역량약수'},{code:0xC7,name:'내력약수'},{code:0xC8,name:'속도약수'},
+  {code:0xCE,name:'마법수(MP+80)'},{code:0xCF,name:'신성알(MP+200)'},
+  // 💎 재료/눈/보석
+  {code:0xC9,name:'녹보석'},{code:0xCA,name:'홍보석'},{code:0xCB,name:'남보석'},{code:0xCC,name:'강석'},
+  {code:0xCD,name:'비룡알'},{code:0xD0,name:'제어중추'},
+  {code:0xD1,name:'황금훈장'},{code:0xD2,name:'별의눈'},{code:0xD3,name:'빛의눈'},
+  {code:0xD4,name:'암흑눈'},{code:0xD5,name:'얼음눈'},{code:0xD6,name:'불의눈'},
 ];
 
-var selCharIdx=0, selSlotIdx=0;
+// optgroup별 카테고리 범위 정의
+var ITEM_GROUPS = [
+  {label:'⚔ 검/도류', range:[0x00,0x13,0x4C,0x6B]},
+  {label:'🔱 창/재류', range:[0x14,0x1F,0x4D,0x4E]},
+  {label:'🪓 도끼/추류', range:[0x20,0x2B]},
+  {label:'🏹 궁류', range:[0x2C,0x33,0x61,0x62,0x68]},
+  {label:'🪄 장/곤류', range:[0x34,0x3D,0x65,0x63]},
+  {label:'🦀 조류/팔뚝', range:[0x3E,0x4B,0x51,0x53,0x69]},
+  {label:'⚡ 특수무기', range:[0x4F,0x57,0x64,0x67,0x6A]},
+  {label:'🎖 특수장비', range:[0x58,0x66]},
+  {label:'🛡 갑옷류', range:[0x7B,0xA3]},
+  {label:'👘 포/복류', range:[0xA4,0xBF]},
+  {label:'🧪 소비/회복', range:[0xC0,0xCF]},
+  {label:'💎 재료/눈', range:[0xC9,0xD6]},
+];
 
-// FD2 캐릭터 구조체 크기 (메모리상 캐릭터별 오프셋)
-// 아이템 슬롯은 SAV 분석 미완이므로 메모리 스캔으로 찾아야 함
-// 캐릭터 데이터는 game data area에서 구조체 배열로 존재
-// 임시: 알려진 주소 기반 오프셋 추정
-var CHAR_ITEM_ADDRS = null; // 스캔으로 발견 후 채워짐
-
-function selChar(n){
-  selCharIdx=n;
-  document.querySelectorAll('.char-btn').forEach(function(b){b.classList.toggle('active-char',parseInt(b.dataset.ch)===n);});
-  document.getElementById('sel-char-lbl').textContent=(n+1)+'P ('+n+')';
-  document.getElementById('cur-item-code').textContent='스캔 필요';
-  document.getElementById('cur-item-name').textContent='-';
-}
-function selSlot(n){
-  selSlotIdx=n;
-  document.querySelectorAll('.item-slot-btn').forEach(function(b){b.classList.toggle('b-yellow',parseInt(b.dataset.slot)===n);});
-  document.getElementById('sel-slot-lbl').textContent=n;
-}
-
-function filterItems(){
-  var cat=document.getElementById('item-cat').value;
-  var sel=document.getElementById('item-list');
-  sel.innerHTML='';
-  var list=cat==='all'?ITEMS:ITEMS.filter(function(x){return x.cat===cat;});
-  list.forEach(function(item){
-    var opt=document.createElement('option');
-    opt.value=item.code;
-    opt.textContent='['+item.code+'] '+item.name;
+// 아이템 선택 드롭다운 초기화 (optgroup 방식)
+(function initItemSelect(){
+  var sel = document.getElementById('item-new-sel');
+  sel.innerHTML = '';
+  ITEMS.forEach(function(item){
+    var opt = document.createElement('option');
+    opt.value = item.code;
+    opt.textContent = '[0x' + ('0'+item.code.toString(16).toUpperCase()).slice(-2) + '] ' + item.name;
     sel.appendChild(opt);
   });
+})();
+
+function onItemCharChange(){ updateCurSlotInfo(); }
+function onItemSlotChange(){ updateCurSlotInfo(); }
+
+function updateCurSlotInfo(){
+  var el = document.getElementById('cur-slot-info');
+  var charIdx = parseInt(document.getElementById('item-char-sel').value);
+  var slotIdx = parseInt(document.getElementById('item-slot-sel').value);
+  el.textContent = (charIdx+1)+'번 캐릭터 / 슬롯 '+slotIdx+' — 메모리 주소 탐색 필요';
 }
 
-// 아이템 슬롯 읽기 - 메모리에서 직접 스캔
-// FD2 캐릭터 구조는 연속된 메모리 블록
-// 장비 슬롯 오프셋: 게임 데이터 영역(~0x1DAF000~) 에서 캐릭터별 구조체 탐색
-function readItemSlot(){
-  var h=heap();
-  if(!h){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  log('캐릭터'+selCharIdx+'P 슬롯'+selSlotIdx+' 읽기 시도...','info');
-  
-  // 캐릭터 구조체 찾기: HP 스캔 결과 활용
-  // goldAddrs[0] 근처 영역에서 패턴 탐색
-  if(goldAddrs.length===0){
-    toast('⚠ 먼저 골드 스캔을 실행하세요','err');
-    log('골드 주소 없음 - 골드 탭에서 스캔 먼저 실행','err');
+function applyItem(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  var charIdx = parseInt(document.getElementById('item-char-sel').value);
+  var slotIdx = parseInt(document.getElementById('item-slot-sel').value);
+  var code    = parseInt(document.getElementById('item-new-sel').value);
+  var itemObj = ITEMS.find(function(x){ return x.code === code; });
+  var itemName = itemObj ? itemObj.name : '알 수 없음';
+
+  log('아이템 적용 시도: '+(charIdx+1)+'번 캐릭터 슬롯'+slotIdx+' → [0x'+code.toString(16).toUpperCase()+'] '+itemName, 'info');
+
+  // 골드 주소 기준으로 아이템 메모리 탐색
+  if(goldAddrs.length === 0){
+    toast('⚠ 골드 탭에서 스캔 먼저 실행!','err');
+    log('골드 주소 필요 — 골드 탭 → 스캔+적용 실행 후 재시도','err');
     return;
   }
-  
-  // 골드 주소 근처에서 아이템 배열 탐색
-  var base=goldAddrs[0];
-  log('골드 기준주소: 0x'+base.toString(16),'info');
-  log('주변 메모리 덤프 (±256바이트):','info');
-  
-  var dump='';
-  for(var i=base-64;i<base+192;i+=16){
-    var row=i.toString(16)+': ';
-    for(var j=0;j<16&&i+j<h.length;j++) row+=('0'+h[i+j].toString(16)).slice(-2)+' ';
-    dump+=row;
-  }
-  log(dump.substring(0,500)+'...','info');
-  
-  // 아이템 데이터 추정 영역 표시
-  toast('메모리 덤프 로그 확인','ok');
-  log('※ FD2 아이템 메모리 주소 탐색 중. 로그 탭 확인 후 수동 입력 필요','warn');
+
+  // 스캔 탭 안내: 현재 장착 아이템 코드값으로 직접 스캔
+  toast('스캔 탭 → 값 입력해서 주소 탐색 가능','warn');
+  log('TIP: 스캔 탭에서 현재 무기 코드(0x00~0xD6)로 8비트 스캔 → 주소 찾기 → 직접 쓰기','warn');
+  log('예) 단검=0, 장검=2, 피갑=0x84, 약초=0xC0','info');
 }
-
-function writeItemSlot(){
-  var h=heap();
-  if(!h){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var sel=document.getElementById('item-list');
-  if(!sel.value){toast('⚠ 아이템을 선택하세요','err');return;}
-  var code=parseInt(sel.value);
-  var itemName=ITEMS.find(function(x){return x.code===code;});
-  
-  log('아이템 쓰기: 코드='+code+' ('+(itemName?itemName.name:'?')+')', 'info');
-  log('※ 정확한 아이템 슬롯 주소가 필요합니다. 스캔 탭에서 직접 주소 확인 후 입력하세요.','warn');
-  toast('스캔 탭에서 주소 확인 필요','warn');
-}
-
-// 아이템 목록 초기화
-filterItems();
-
-// 슬롯 버튼 초기 상태
-document.querySelectorAll('.item-slot-btn').forEach(function(b,i){
-  if(i===0) b.classList.add('b-yellow');
-});
 
 // ─── 버튼 연결 ───
 document.getElementById('btn-start').addEventListener('click',startGame);
