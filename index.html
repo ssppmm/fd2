@@ -238,15 +238,15 @@
             <span class="stat-name">① 현재 골드값 (게임 화면 확인)</span>
           </div>
           <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeGoldCur(-10000)">−1만</button>
             <button class="nudge-btn" onclick="nudgeGoldCur(-1000)">−1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(-100)">−100</button>
             <button class="nudge-btn" onclick="nudgeGoldCur(-1)">−1</button>
-            <input type="number" id="gold-cur-in" min="0" max="99999" value="0"
+            <input type="number" id="gold-cur-in" min="0" max="9999999" value="0"
               style="flex:1;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="this.value=Math.max(0,Math.min(99999,parseInt(this.value)||0))">
+              oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
             <button class="nudge-btn" onclick="nudgeGoldCur(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeGoldCur(100)">+100</button>
             <button class="nudge-btn" onclick="nudgeGoldCur(1000)">+1000</button>
+            <button class="nudge-btn" onclick="nudgeGoldCur(10000)">+1만</button>
           </div>
           <div class="stat-presets" style="margin-bottom:8px;">
             <button class="preset-btn" onclick="setGoldCur(100)">100</button>
@@ -268,21 +268,21 @@
             <span class="stat-name">② 바꿀 골드값</span>
           </div>
           <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+            <button class="nudge-btn" onclick="nudgeGoldNew(-10000)">−1만</button>
             <button class="nudge-btn" onclick="nudgeGoldNew(-1000)">−1000</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(-100)">−100</button>
             <button class="nudge-btn" onclick="nudgeGoldNew(-1)">−1</button>
-            <input type="number" id="gold-new-in" min="0" max="99999" value="99999"
+            <input type="number" id="gold-new-in" min="0" max="9999999" value="9999999"
               style="flex:1;background:var(--bg);color:var(--green);border:2px solid var(--green);border-radius:4px;padding:8px;font-size:16px;font-weight:bold;text-align:center;font-family:var(--font-pixel);"
-              oninput="this.value=Math.max(0,Math.min(99999,parseInt(this.value)||0))">
+              oninput="this.value=Math.max(0,Math.min(9999999,parseInt(this.value)||0))">
             <button class="nudge-btn" onclick="nudgeGoldNew(1)">+1</button>
-            <button class="nudge-btn" onclick="nudgeGoldNew(100)">+100</button>
             <button class="nudge-btn" onclick="nudgeGoldNew(1000)">+1000</button>
+            <button class="nudge-btn" onclick="nudgeGoldNew(10000)">+1만</button>
           </div>
           <div class="stat-presets" style="margin-bottom:8px;">
             <button class="preset-btn" onclick="setGoldNew(0)">0</button>
             <button class="preset-btn" onclick="setGoldNew(9999)">9999</button>
             <button class="preset-btn" onclick="setGoldNew(50000)">50000</button>
-            <button class="preset-btn" onclick="setGoldNew(99999)">MAX</button>
+            <button class="preset-btn" onclick="setGoldNew(9999999)">MAX</button>
           </div>
           <button class="btn btn-accent" style="width:100%;padding:9px;" onclick="applyGold()">✅ 적용</button>
         </div>
@@ -374,48 +374,63 @@
         <span class="badge b-blue" id="scan-cnt">0개</span>
       </div>
       <div class="card-body">
-        <div class="scan-row">
-          <input class="scan-in" id="scan-val" type="number" placeholder="현재값 입력 (예: 9000)" />
-          <select class="scan-sel" id="scan-bits">
-            <option value="32">32bit</option>
-            <option value="16">16bit</option>
-            <option value="8">8bit</option>
-          </select>
+
+        <!-- 스캔 값 입력 -->
+        <div class="lbl" style="margin-bottom:4px;">① 찾을 값 입력</div>
+        <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+          <button class="nudge-btn" onclick="nudgeScanVal(-100)">−100</button>
+          <button class="nudge-btn" onclick="nudgeScanVal(-10)">−10</button>
+          <button class="nudge-btn" onclick="nudgeScanVal(-1)">−1</button>
+          <input type="number" id="scan-val" min="0" max="9999999" value="0"
+            style="flex:1;background:var(--bg);color:var(--accent);border:2px solid var(--accent);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);">
+          <button class="nudge-btn" onclick="nudgeScanVal(1)">+1</button>
+          <button class="nudge-btn" onclick="nudgeScanVal(10)">+10</button>
+          <button class="nudge-btn" onclick="nudgeScanVal(100)">+100</button>
         </div>
-        <div class="scan-row">
+        <div style="display:flex;gap:5px;align-items:center;margin-bottom:8px;">
+          <select class="scan-sel" id="scan-bits" style="flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;">
+            <option value="32">32bit (골드/경험치)</option>
+            <option value="16">16bit (HP/MP)</option>
+            <option value="8">8bit (레벨/아이템)</option>
+          </select>
           <button class="btn btn-start" style="flex:1" onclick="doScan()">🔍 스캔</button>
           <button class="btn btn-ghost" onclick="clearScan()">초기화</button>
         </div>
         <div class="scan-results" id="scan-list">
           <div class="scan-empty">스캔 결과가 여기 표시됩니다</div>
         </div>
+
         <hr class="divider">
-        <div style="font-family:var(--font-pixel);font-size:7px;color:var(--accent);margin-bottom:8px;">✏ 직접 수정</div>
-        <div class="scan-row">
+
+        <!-- 직접 수정 -->
+        <div style="font-family:var(--font-pixel);font-size:7px;color:var(--accent);margin-bottom:8px;">✏ 주소 직접 수정</div>
+        <div style="display:flex;gap:5px;margin-bottom:6px;">
           <input class="scan-in" id="edit-addr" placeholder="주소 (예: 0x20b94d3)" style="flex:1" />
-          <select class="scan-sel" id="edit-bits">
+          <select class="scan-sel" id="edit-bits" style="background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-size:8px;">
             <option value="32">32bit</option>
             <option value="16">16bit</option>
             <option value="8">8bit</option>
           </select>
         </div>
-        <div class="stat-block">
-          <div class="stat-hd">
-            <span class="stat-name">새 값</span>
-            <span class="stat-val-display" id="edit-lbl">0</span>
-          </div>
-          <div class="stat-row">
-            <input type="range" class="stat-slider" id="edit-sl" min="0" max="99999" value="0"
-              oninput="document.getElementById('edit-lbl').textContent=this.value">
-          </div>
-          <div class="stat-presets">
-            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',0)">0</button>
-            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',999)">999</button>
-            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',9999)">9999</button>
-            <button class="preset-btn" onclick="setSl('edit-sl','edit-lbl',99999)">99999</button>
-          </div>
+        <div class="lbl" style="margin-bottom:4px;">새 값</div>
+        <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+          <button class="nudge-btn" onclick="nudgeEditVal(-1000)">−1000</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(-10)">−10</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(-1)">−1</button>
+          <input type="number" id="edit-val" min="0" max="9999999" value="0"
+            style="flex:1;background:var(--bg);color:var(--yellow);border:2px solid var(--yellow);border-radius:4px;padding:7px;font-size:15px;font-weight:bold;text-align:center;font-family:var(--font-pixel);">
+          <button class="nudge-btn" onclick="nudgeEditVal(1)">+1</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(10)">+10</button>
+          <button class="nudge-btn" onclick="nudgeEditVal(1000)">+1000</button>
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;">
+        <div class="stat-presets" style="margin-bottom:8px;">
+          <button class="preset-btn" onclick="setEditVal(0)">0</button>
+          <button class="preset-btn" onclick="setEditVal(999)">999</button>
+          <button class="preset-btn" onclick="setEditVal(9999)">9999</button>
+          <button class="preset-btn" onclick="setEditVal(99999)">99999</button>
+          <button class="preset-btn" onclick="setEditVal(9999999)">MAX</button>
+        </div>
+        <div style="display:flex;gap:6px;">
           <button class="btn btn-ul" style="flex:1" onclick="doWrite()">✏ 적용</button>
           <button class="btn btn-ghost" onclick="doRead()">📖 읽기</button>
         </div>
@@ -440,6 +455,30 @@
           <option value="3">4번 캐릭터</option>
           <option value="4">5번 캐릭터</option>
           <option value="5">6번 캐릭터</option>
+          <option value="6">7번 캐릭터</option>
+          <option value="7">8번 캐릭터</option>
+          <option value="8">9번 캐릭터</option>
+          <option value="9">10번 캐릭터</option>
+          <option value="10">11번 캐릭터</option>
+          <option value="11">12번 캐릭터</option>
+          <option value="12">13번 캐릭터</option>
+          <option value="13">14번 캐릭터</option>
+          <option value="14">15번 캐릭터</option>
+          <option value="15">16번 캐릭터</option>
+          <option value="16">17번 캐릭터</option>
+          <option value="17">18번 캐릭터</option>
+          <option value="18">19번 캐릭터</option>
+          <option value="19">20번 캐릭터</option>
+          <option value="20">21번 캐릭터</option>
+          <option value="21">22번 캐릭터</option>
+          <option value="22">23번 캐릭터</option>
+          <option value="23">24번 캐릭터</option>
+          <option value="24">25번 캐릭터</option>
+          <option value="25">26번 캐릭터</option>
+          <option value="26">27번 캐릭터</option>
+          <option value="27">28번 캐릭터</option>
+          <option value="28">29번 캐릭터</option>
+          <option value="29">30번 캐릭터</option>
         </select>
 
         <!-- ② 슬롯 선택 드롭다운 -->
@@ -465,6 +504,9 @@
 
         <!-- ③ 아이템 선택 드롭다운 (카테고리 그룹) -->
         <div class="lbl" style="margin-bottom:4px;">③ 바꿀 아이템</div>
+        <div style="font-size:8px;margin-bottom:5px;background:var(--surface2);padding:5px 8px;border-radius:3px;">
+          🔥 <span style="color:#ff9900;font-weight:bold;">주황색</span> = 최강 OB 아이템 &nbsp;|&nbsp; 일반 = 흰색
+        </div>
         <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:10px;">
           <!-- JS로 채워짐 -->
         </select>
@@ -540,12 +582,12 @@ document.querySelectorAll('.tab').forEach(function(t){
 });
 
 // ─── 골드 헬퍼 ───
-function getGoldCur(){ return Math.max(0,Math.min(99999,parseInt(document.getElementById('gold-cur-in').value)||0)); }
-function getGoldNew(){ return Math.max(0,Math.min(99999,parseInt(document.getElementById('gold-new-in').value)||0)); }
+function getGoldCur(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('gold-cur-in').value)||0)); }
+function getGoldNew(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('gold-new-in').value)||0)); }
 function setGoldCur(v){ document.getElementById('gold-cur-in').value=v; }
 function setGoldNew(v){ document.getElementById('gold-new-in').value=v; }
-function nudgeGoldCur(d){ setGoldCur(Math.max(0,Math.min(99999,getGoldCur()+d))); }
-function nudgeGoldNew(d){ setGoldNew(Math.max(0,Math.min(99999,getGoldNew()+d))); }
+function nudgeGoldCur(d){ setGoldCur(Math.max(0,Math.min(9999999,getGoldCur()+d))); }
+function nudgeGoldNew(d){ setGoldNew(Math.max(0,Math.min(9999999,getGoldNew()+d))); }
 
 // ─── 골드 ───
 function goldScan(){
@@ -631,12 +673,19 @@ function applyChar(){
   log('✓ '+curStatType+' → '+nv+' ('+cnt+'개 적용)','ok');
   toast('✓ '+curStatType+' '+nv+'!','ok');
 }
-function selAddr(a,b){selectedAddr=a;var v=mRead(a,b||16);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setSl('edit-sl','edit-lbl',v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');}
+function selAddr(a,b){selectedAddr=a;var v=mRead(a,b||16);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setEditVal(v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');}
+
+// ─── 스캔/에디트 헬퍼 ───
+function getScanVal(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('scan-val').value)||0)); }
+function nudgeScanVal(d){ var el=document.getElementById('scan-val'); el.value=Math.max(0,Math.min(9999999,(parseInt(el.value)||0)+d)); }
+function getEditVal(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('edit-val').value)||0)); }
+function setEditVal(v){ document.getElementById('edit-val').value=v; }
+function nudgeEditVal(d){ setEditVal(Math.max(0,Math.min(9999999,getEditVal()+d))); }
 
 // ─── 범용 스캔 ───
 function doScan(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
-  var v=parseInt(document.getElementById('scan-val').value),b=parseInt(document.getElementById('scan-bits').value);
+  var v=getScanVal(),b=parseInt(document.getElementById('scan-bits').value);
   if(isNaN(v)){toast('⚠ 값을 입력하세요','err');return;}
   var f=scanMem(v,b);scanResults=f;
   document.getElementById('scan-cnt').textContent=f.length+'개';
@@ -651,10 +700,10 @@ function renderScanList(b){
   if(scanResults.length>30)html+='<div class="scan-empty">... 외 '+(scanResults.length-30)+'개</div>';
   c.innerHTML=html;
 }
-function pickAddr(a,b){selectedAddr=a;var v=mRead(a,b||32);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setSl('edit-sl','edit-lbl',v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');renderScanList(b);}
+function pickAddr(a,b){selectedAddr=a;var v=mRead(a,b||32);document.getElementById('edit-addr').value='0x'+a.toString(16);document.getElementById('edit-bits').value=b||32;setEditVal(v||0);log('선택: 0x'+a.toString(16)+' = '+v,'info');renderScanList(b);}
 function clearScan(){scanResults=[];selectedAddr=null;document.getElementById('scan-list').innerHTML='<div class="scan-empty">스캔 결과가 여기 표시됩니다</div>';document.getElementById('scan-cnt').textContent='0개';log('스캔 초기화','info');}
-function doWrite(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,v=parseInt(document.getElementById('edit-sl').value),b=parseInt(document.getElementById('edit-bits').value);if(!aStr){toast('⚠ 주소를 입력하세요','err');return;}var a=pAddr(aStr);if(isNaN(a)||a<0){toast('⚠ 잘못된 주소','err');return;}if(mWrite(a,v,b)){log('✓ 0x'+a.toString(16)+' ← '+v+' ('+b+'bit)','ok');toast('✓ 값 변경 완료!','ok');}}
-function doRead(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,b=parseInt(document.getElementById('edit-bits').value);if(!aStr)return;var a=pAddr(aStr),v=mRead(a,b);setSl('edit-sl','edit-lbl',v||0);log('읽기: 0x'+a.toString(16)+' = '+v,'info');}
+function doWrite(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,v=getEditVal(),b=parseInt(document.getElementById('edit-bits').value);if(!aStr){toast('⚠ 주소를 입력하세요','err');return;}var a=pAddr(aStr);if(isNaN(a)||a<0){toast('⚠ 잘못된 주소','err');return;}if(mWrite(a,v,b)){log('✓ 0x'+a.toString(16)+' ← '+v+' ('+b+'bit)','ok');toast('✓ 값 변경 완료!','ok');}}
+function doRead(){if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}var aStr=document.getElementById('edit-addr').value,b=parseInt(document.getElementById('edit-bits').value);if(!aStr)return;var a=pAddr(aStr),v=mRead(a,b);setEditVal(v||0);log('읽기: 0x'+a.toString(16)+' = '+v,'info');}
 
 // ─── IndexedDB ───
 function openDB(){return new Promise(function(r,j){var q=indexedDB.open(DB,1);q.onupgradeneeded=function(e){e.target.result.createObjectStore('saves');};q.onsuccess=function(e){r(e.target.result);};q.onerror=j;});}
@@ -704,35 +753,47 @@ var ITEMS = [
   // ⚔ 검/도류
   {code:0x00,name:'단검'},{code:0x01,name:'활검'},{code:0x02,name:'장검'},{code:0x03,name:'대검'},
   {code:0x04,name:'암흑검'},{code:0x05,name:'전사검'},{code:0x06,name:'거마검'},{code:0x07,name:'참철검'},
-  {code:0x08,name:'유수검'},{code:0x09,name:'대지의검'},{code:0x0A,name:'용신검'},{code:0x0B,name:'염룡검'},
+  {code:0x08,name:'유수검'},{code:0x09,name:'대지의검'},{code:0x0A,name:'용신검'},
+  {code:0x0B,name:'염룡검 ★AP+400',vip:true},
   {code:0x0C,name:'소도'},{code:0x0D,name:'비수'},{code:0x0E,name:'최독도'},{code:0x0F,name:'도적비수'},
   {code:0x10,name:'암살도'},{code:0x11,name:'혼수도'},{code:0x12,name:'닌자도'},{code:0x13,name:'지옥도'},
-  {code:0x4C,name:'광속검'},{code:0x6B,name:'암흑파(검)'},
+  {code:0x4C,name:'광속검'},
+  {code:0x6B,name:'암흑파 ★AP+400',vip:true},
   // 🔱 창/재류
   {code:0x14,name:'자창'},{code:0x15,name:'기창'},{code:0x16,name:'장재'},{code:0x17,name:'선봉창'},
   {code:0x18,name:'참마도'},{code:0x19,name:'악마의창'},{code:0x1A,name:'황금의재'},{code:0x1B,name:'용의창'},
-  {code:0x1C,name:'악마창'},{code:0x1D,name:'전신재'},{code:0x1E,name:'성의창'},{code:0x1F,name:'거신재'},
+  {code:0x1C,name:'악마창'},
+  {code:0x1D,name:'전신재 ★AP+400',vip:true},
+  {code:0x1E,name:'성의창'},{code:0x1F,name:'거신재'},
   {code:0x4D,name:'저격창'},{code:0x4E,name:'광속창'},
   // 🪓 도끼/추류
   {code:0x20,name:'수부'},{code:0x21,name:'회선부'},{code:0x22,name:'전부'},{code:0x23,name:'전추'},
   {code:0x24,name:'거부'},{code:0x25,name:'혈도끼'},{code:0x26,name:'번개추'},{code:0x27,name:'광폭도끼'},
-  {code:0x28,name:'광도끼'},{code:0x29,name:'역량도끼'},{code:0x2A,name:'대지도끼'},{code:0x2B,name:'마신부'},
+  {code:0x28,name:'광도끼'},{code:0x29,name:'역량도끼'},{code:0x2A,name:'대지도끼'},
+  {code:0x2B,name:'마신부 ★AP+400',vip:true},
   // 🏹 궁류
   {code:0x2C,name:'단궁'},{code:0x2D,name:'장궁'},{code:0x2E,name:'흑마궁'},{code:0x2F,name:'거궁'},
-  {code:0x30,name:'천사궁'},{code:0x31,name:'저격궁'},{code:0x32,name:'봉쇄궁'},{code:0x33,name:'바람궁'},
+  {code:0x30,name:'천사궁'},{code:0x31,name:'저격궁'},{code:0x32,name:'봉쇄궁'},
+  {code:0x33,name:'바람궁 ★AP+400',vip:true},
   {code:0x61,name:'십자궁'},{code:0x62,name:'수정궁'},{code:0x68,name:'화신궁'},
   // 🪄 장/곤류
   {code:0x34,name:'장곤'},{code:0x35,name:'정두추'},{code:0x36,name:'거추'},{code:0x37,name:'연'},
   {code:0x38,name:'마법장'},{code:0x39,name:'봉쇄장'},{code:0x3A,name:'역지장'},{code:0x3B,name:'암흑장'},
-  {code:0x3C,name:'용장대'},{code:0x3D,name:'광장대'},{code:0x65,name:'전송법장'},{code:0x63,name:'뇌신편'},
+  {code:0x3C,name:'용장대'},
+  {code:0x3D,name:'광장대 ★AP+400',vip:true},
+  {code:0x65,name:'전송법장'},{code:0x63,name:'뇌신편'},
   // 🦀 조류/팔뚝류
   {code:0x3E,name:'철골무'},{code:0x3F,name:'철조'},{code:0x40,name:'황제반지'},{code:0x41,name:'독조'},
   {code:0x42,name:'강시조'},{code:0x43,name:'파암조'},{code:0x44,name:'금강반지'},{code:0x45,name:'열인조'},
-  {code:0x46,name:'거신반지'},{code:0x47,name:'마룡조'},{code:0x51,name:'이조'},{code:0x69,name:'투신반지'},
-  {code:0x48,name:'위력팔뚝'},{code:0x49,name:'금강팔뚝'},{code:0x4A,name:'뇌신팔뚝'},{code:0x4B,name:'충격팔뚝'},
+  {code:0x46,name:'거신반지'},
+  {code:0x47,name:'마룡조 ★AP+400',vip:true},
+  {code:0x51,name:'이조'},{code:0x69,name:'투신반지'},
+  {code:0x48,name:'위력팔뚝'},{code:0x49,name:'금강팔뚝'},{code:0x4A,name:'뇌신팔뚝'},
+  {code:0x4B,name:'충격팔뚝 ★AP+360',vip:true},
   {code:0x53,name:'암석팔뚝'},
   // ⚡ 특수무기
-  {code:0x4F,name:'광속포'},{code:0x50,name:'주먹'},{code:0x52,name:'촉수'},
+  {code:0x4F,name:'광속포 ★AP+450',vip:true},
+  {code:0x50,name:'주먹'},{code:0x52,name:'촉수'},
   {code:0x54,name:'물대포'},{code:0x55,name:'풍아첨'},{code:0x56,name:'마염파'},
   {code:0x57,name:'공뇌전'},{code:0x64,name:'공중바퀴'},{code:0x67,name:'화염'},{code:0x6A,name:'빙염'},
   // 🎖 직업변환/특수장비
@@ -741,7 +802,8 @@ var ITEMS = [
   {code:0x5E,name:'생명열매'},{code:0x5F,name:'마력수정'},{code:0x60,name:'바람날개'},
   {code:0x66,name:'수리의복(HP+500)'},
   // 🛡 갑옷류
-  {code:0x7B,name:'돌갑옷'},{code:0x7C,name:'마신갑'},{code:0x7F,name:'마갑옷'},
+  {code:0x7B,name:'돌갑옷 ★DP+300',vip:true},
+  {code:0x7C,name:'마신갑'},{code:0x7F,name:'마갑옷'},
   {code:0x80,name:'포의'},{code:0x81,name:'여행복'},{code:0x82,name:'천사바람'},{code:0x83,name:'원소보호'},
   {code:0x84,name:'피갑'},{code:0x85,name:'견갑옷'},{code:0x86,name:'야간복'},{code:0x87,name:'마법갑옷(경)'},
   {code:0x88,name:'도적의복'},{code:0x89,name:'닌자복'},{code:0x8A,name:'잠수복'},{code:0x8B,name:'신비복'},
@@ -750,14 +812,17 @@ var ITEMS = [
   {code:0x94,name:'합금갑옷'},{code:0x95,name:'마법연갑'},{code:0x96,name:'혈환갑'},{code:0x97,name:'금강갑옷'},
   {code:0x98,name:'암흑연갑'},{code:0x99,name:'역량갑옷'},{code:0x9A,name:'악마갑옷(중)'},{code:0x9B,name:'용연갑'},
   {code:0x9D,name:'은갑옷'},{code:0x9E,name:'마법갑옷(중)'},{code:0x9F,name:'중갑옷'},{code:0xA0,name:'지옥갑옷'},
-  {code:0xA1,name:'성갑옷'},{code:0xA2,name:'대지갑옷'},{code:0xA3,name:'용신갑옷'},
+  {code:0xA1,name:'성갑옷'},{code:0xA2,name:'대지갑옷'},
+  {code:0xA3,name:'용신갑옷 ★DP+300',vip:true},
   // 👘 포/복류
   {code:0xA4,name:'장포'},{code:0xA5,name:'법사포'},{code:0xA6,name:'승려포'},{code:0xA7,name:'제사포'},
   {code:0xA8,name:'성자포'},{code:0xA9,name:'개갑'},{code:0xAA,name:'암흑지포'},{code:0xAB,name:'천지포'},
   {code:0xAC,name:'무도복'},{code:0xAD,name:'전투복'},{code:0xAE,name:'투사복'},{code:0xAF,name:'무사갑옷'},
   {code:0xB0,name:'요괴투복'},{code:0xB1,name:'무신갑옷'},{code:0xB2,name:'전투갑옷'},{code:0xB3,name:'돌격갑옷'},
   {code:0xB4,name:'중갑옷(전)'},{code:0xB5,name:'특수갑옷'},{code:0xB6,name:'견피'},{code:0xB7,name:'청색견피'},
-  {code:0xB8,name:'용연'},{code:0xB9,name:'근피'},{code:0xBA,name:'허무갑옷'},{code:0xBB,name:'왕포'},
+  {code:0xB8,name:'용연'},{code:0xB9,name:'근피'},
+  {code:0xBA,name:'허무갑옷 ★DP+300',vip:true},
+  {code:0xBB,name:'왕포'},
   {code:0xBC,name:'투사갑옷'},{code:0xBD,name:'지지포'},{code:0xBE,name:'수지포'},{code:0xBF,name:'대지갑옷(전)'},
   // 🧪 소비/회복
   {code:0xC0,name:'약초(HP+40)'},{code:0xC1,name:'회복제(HP+120)'},{code:0xC2,name:'재생제(HP+300)'},
@@ -787,14 +852,20 @@ var ITEM_GROUPS = [
   {label:'💎 재료/눈', range:[0xC9,0xD6]},
 ];
 
-// 아이템 선택 드롭다운 초기화 (optgroup 방식)
+// 아이템 선택 드롭다운 초기화 (vip 아이템은 색상 강조)
 (function initItemSelect(){
   var sel = document.getElementById('item-new-sel');
   sel.innerHTML = '';
   ITEMS.forEach(function(item){
     var opt = document.createElement('option');
     opt.value = item.code;
-    opt.textContent = '[0x' + ('0'+item.code.toString(16).toUpperCase()).slice(-2) + '] ' + item.name;
+    var prefix = item.vip ? '🔥' : '   ';
+    opt.textContent = prefix + '[0x' + ('0'+item.code.toString(16).toUpperCase()).slice(-2) + '] ' + item.name;
+    if(item.vip){
+      opt.style.color = '#ff9900';
+      opt.style.fontWeight = 'bold';
+      opt.style.background = '#1a1200';
+    }
     sel.appendChild(opt);
   });
 })();
