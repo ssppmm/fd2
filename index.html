@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.21</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.22</span>
   </div>
 </header>
 
@@ -401,7 +401,16 @@
           <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
         </select>
 
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="statRead()">📖 읽기</button>
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
+          <button class="btn btn-primary" style="flex:2;padding:8px;" onclick="statRead()">📖 읽기</button>
+          <button class="btn btn-ghost" style="flex:1;padding:8px;font-size:7px;" onclick="statDump()">🔬 덤프</button>
+        </div>
+
+        <!-- 덤프 결과 -->
+        <div id="stat-dump-box" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;">
+          <div style="font-size:7px;color:var(--accent);margin-bottom:4px;font-family:var(--font-pixel);">🔬 RAW DUMP (offset 00~4F)</div>
+          <div id="stat-dump-hex" style="font-family:monospace;font-size:7px;color:var(--muted);white-space:pre;line-height:1.8;overflow-x:auto;"></div>
+        </div>
 
         <!-- 스탯 필드들 -->
         <div id="stat-fields" style="display:none;">
@@ -824,6 +833,34 @@ var STAT_FIELDS = [
 ];
 
 var statPadTarget = null;
+
+// 스탯 덤프 (오프셋 찾기용)
+function statDump(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  if(!itemPatternAddr){ toast('⚠ 🎒 아이템 탐색 먼저 하세요','err'); return; }
+  var charIdx = parseInt(document.getElementById('stat-char-sel').value);
+  var base = statBase(charIdx);
+
+  var lines = [];
+  // 헤더
+  lines.push('     +0 +1 +2 +3 +4 +5 +6 +7  +8 +9 +A +B +C +D +E +F');
+  for(var row = 0; row < 5; row++){
+    var hex = ('0'+row.toString(16).toUpperCase())+'0  ';
+    var dec = '  │ ';
+    for(var col = 0; col < 16; col++){
+      var off = row*16 + col;
+      var v = h[base + off];
+      hex += ('0'+v.toString(16).toUpperCase()).slice(-2) + (col===7?' ':' ');
+      dec += v.toString().padStart(3,' ')+(col===7?' │ ':' ');
+    }
+    lines.push(hex);
+    lines.push(dec);
+  }
+  document.getElementById('stat-dump-hex').textContent = lines.join('\n');
+  document.getElementById('stat-dump-box').style.display = 'block';
+  toast('🔬 덤프 완료 — base:0x'+base.toString(16),'ok');
+}
 
 // 스탯 읽기
 function statRead(){
