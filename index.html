@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.34</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.37</span>
   </div>
 </header>
 
@@ -294,21 +294,21 @@
         <!-- 슬롯 1~8 현재 아이템 입력 -->
         <div class="lbl" style="margin-bottom:4px;">① 탐색 기준 캐릭터</div>
         <select id="item-scan-char" style="width:100%;background:var(--surface);color:var(--yellow);border:2px solid var(--accent);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;font-weight:bold;">
-          <option value="0">01. 사울</option><option value="1">02. 아래스</option>
-          <option value="2">03. 유니</option><option value="3">04. 카일</option>
-          <option value="4">05. 마린</option><option value="5">06. 하노</option>
-          <option value="6">07. 시리아</option><option value="7">08. 티노</option>
-          <option value="8">09. 소피아</option><option value="9">10. 페이커</option>
-          <option value="10">11. 하와터</option><option value="11">12. 위나</option>
-          <option value="12">13. 케리</option><option value="13">14. 샨</option>
-          <option value="14">15. 사이클린</option><option value="15">16. 미티</option>
-          <option value="16">17. 파나로시아</option><option value="17">18. 샤도</option>
-          <option value="18">19. 카리스</option><option value="19">20. 래터</option>
-          <option value="20">21. 로나</option><option value="21">22. 히올프</option>
-          <option value="22">23. 란스로타</option><option value="23">24. 다커스</option>
-          <option value="24">25. 미아스튜더</option><option value="25">26. 카라스</option>
-          <option value="26">27. 워터</option><option value="27">28. 아치메치</option>
-          <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
+          <option value="0">01번째 캐릭</option><option value="1">02번째 캐릭</option>
+          <option value="2">03번째 캐릭</option><option value="3">04번째 캐릭</option>
+          <option value="4">05번째 캐릭</option><option value="5">06번째 캐릭</option>
+          <option value="6">07번째 캐릭</option><option value="7">08번째 캐릭</option>
+          <option value="8">09번째 캐릭</option><option value="9">10번째 캐릭</option>
+          <option value="10">11번째 캐릭</option><option value="11">12번째 캐릭</option>
+          <option value="12">13번째 캐릭</option><option value="13">14번째 캐릭</option>
+          <option value="14">15번째 캐릭</option><option value="15">16번째 캐릭</option>
+          <option value="16">17번째 캐릭</option><option value="17">18번째 캐릭</option>
+          <option value="18">19번째 캐릭</option><option value="19">20번째 캐릭</option>
+          <option value="20">21번째 캐릭</option><option value="21">22번째 캐릭</option>
+          <option value="22">23번째 캐릭</option><option value="23">24번째 캐릭</option>
+          <option value="24">25번째 캐릭</option><option value="25">26번째 캐릭</option>
+          <option value="26">27번째 캐릭</option><option value="27">28번째 캐릭</option>
+          <option value="28">29번째 캐릭</option><option value="29">30번째 캐릭</option>
         </select>
         <div class="lbl" style="margin-bottom:6px;">② 해당 캐릭터의 현재 장착 아이템</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="slot-grid">
@@ -378,31 +378,30 @@
       <div class="card-body" style="padding:10px;">
         <div style="font-size:9px;line-height:1.8;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
           <b style="color:var(--accent);">📌 사용법</b><br>
-          🎒 아이템 탐색 완료 후 사용 가능<br>
-          ① 캐릭터 선택 → <b>📖 읽기</b> → 수정 → <b>✅ 적용</b>
+          🎒 아이템 탐색 완료 시 자동 로딩<br>
+          ① 캐릭터 선택 시 자동 갱신 → 수정 → <b>✅ 적용</b>
         </div>
 
         <!-- 캐릭터 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
-        <select id="stat-char-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
-          <option value="0">01. 사울</option><option value="1">02. 아래스</option>
-          <option value="2">03. 유니</option><option value="3">04. 카일</option>
-          <option value="4">05. 마린</option><option value="5">06. 하노</option>
-          <option value="6">07. 시리아</option><option value="7">08. 티노</option>
-          <option value="8">09. 소피아</option><option value="9">10. 페이커</option>
-          <option value="10">11. 하와터</option><option value="11">12. 위나</option>
-          <option value="12">13. 케리</option><option value="13">14. 샨</option>
-          <option value="14">15. 사이클린</option><option value="15">16. 미티</option>
-          <option value="16">17. 파나로시아</option><option value="17">18. 샤도</option>
-          <option value="18">19. 카리스</option><option value="19">20. 래터</option>
-          <option value="20">21. 로나</option><option value="21">22. 히올프</option>
-          <option value="22">23. 란스로타</option><option value="23">24. 다커스</option>
-          <option value="24">25. 미아스튜더</option><option value="25">26. 카라스</option>
-          <option value="26">27. 워터</option><option value="27">28. 아치메치</option>
-          <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
+        <div class="lbl" style="margin-bottom:4px;">① 캐릭터 선택 (자동 로딩)</div>
+        <select id="stat-char-sel" onchange="statRead()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:10px;">
+          <option value="0">01번째 캐릭</option><option value="1">02번째 캐릭</option>
+          <option value="2">03번째 캐릭</option><option value="3">04번째 캐릭</option>
+          <option value="4">05번째 캐릭</option><option value="5">06번째 캐릭</option>
+          <option value="6">07번째 캐릭</option><option value="7">08번째 캐릭</option>
+          <option value="8">09번째 캐릭</option><option value="9">10번째 캐릭</option>
+          <option value="10">11번째 캐릭</option><option value="11">12번째 캐릭</option>
+          <option value="12">13번째 캐릭</option><option value="13">14번째 캐릭</option>
+          <option value="14">15번째 캐릭</option><option value="15">16번째 캐릭</option>
+          <option value="16">17번째 캐릭</option><option value="17">18번째 캐릭</option>
+          <option value="18">19번째 캐릭</option><option value="19">20번째 캐릭</option>
+          <option value="20">21번째 캐릭</option><option value="21">22번째 캐릭</option>
+          <option value="22">23번째 캐릭</option><option value="23">24번째 캐릭</option>
+          <option value="24">25번째 캐릭</option><option value="25">26번째 캐릭</option>
+          <option value="26">27번째 캐릭</option><option value="27">28번째 캐릭</option>
+          <option value="28">29번째 캐릭</option><option value="29">30번째 캐릭</option>
         </select>
 
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="statRead()">📖 읽기</button>
 
         <!-- 스탯 필드들 -->
         <div id="stat-fields" style="display:none;">
@@ -457,31 +456,30 @@
 
         <div style="font-size:9px;line-height:1.8;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
           <b style="color:var(--accent);">📌 사용법</b><br>
-          🎒 아이템 탐색 완료 후 사용 가능<br>
-          ① 캐릭터 선택 → <b>📖 읽기</b> → 마법 ON/OFF → <b>✅ 적용</b>
+          🎒 아이템 탐색 완료 시 자동 로딩<br>
+          ① 캐릭터 선택 시 자동 갱신 → 마법 ON/OFF → <b>✅ 적용</b>
         </div>
 
         <!-- 캐릭터 선택 -->
         <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
-        <select id="magic-char-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
-          <option value="0">01. 사울</option><option value="1">02. 아래스</option>
-          <option value="2">03. 유니</option><option value="3">04. 카일</option>
-          <option value="4">05. 마린</option><option value="5">06. 하노</option>
-          <option value="6">07. 시리아</option><option value="7">08. 티노</option>
-          <option value="8">09. 소피아</option><option value="9">10. 페이커</option>
-          <option value="10">11. 하와터</option><option value="11">12. 위나</option>
-          <option value="12">13. 케리</option><option value="13">14. 샨</option>
-          <option value="14">15. 사이클린</option><option value="15">16. 미티</option>
-          <option value="16">17. 파나로시아</option><option value="17">18. 샤도</option>
-          <option value="18">19. 카리스</option><option value="19">20. 래터</option>
-          <option value="20">21. 로나</option><option value="21">22. 히올프</option>
-          <option value="22">23. 란스로타</option><option value="23">24. 다커스</option>
-          <option value="24">25. 미아스튜더</option><option value="25">26. 카라스</option>
-          <option value="26">27. 워터</option><option value="27">28. 아치메치</option>
-          <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
+        <select id="magic-char-sel" onchange="magicRead()" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:10px;">
+          <option value="0">01번째 캐릭</option><option value="1">02번째 캐릭</option>
+          <option value="2">03번째 캐릭</option><option value="3">04번째 캐릭</option>
+          <option value="4">05번째 캐릭</option><option value="5">06번째 캐릭</option>
+          <option value="6">07번째 캐릭</option><option value="7">08번째 캐릭</option>
+          <option value="8">09번째 캐릭</option><option value="9">10번째 캐릭</option>
+          <option value="10">11번째 캐릭</option><option value="11">12번째 캐릭</option>
+          <option value="12">13번째 캐릭</option><option value="13">14번째 캐릭</option>
+          <option value="14">15번째 캐릭</option><option value="15">16번째 캐릭</option>
+          <option value="16">17번째 캐릭</option><option value="17">18번째 캐릭</option>
+          <option value="18">19번째 캐릭</option><option value="19">20번째 캐릭</option>
+          <option value="20">21번째 캐릭</option><option value="21">22번째 캐릭</option>
+          <option value="22">23번째 캐릭</option><option value="23">24번째 캐릭</option>
+          <option value="24">25번째 캐릭</option><option value="25">26번째 캐릭</option>
+          <option value="26">27번째 캐릭</option><option value="27">28번째 캐릭</option>
+          <option value="28">29번째 캐릭</option><option value="29">30번째 캐릭</option>
         </select>
 
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="magicRead()">📖 읽기</button>
 
         <!-- 마법 체크박스 -->
         <div id="magic-fields" style="display:none;">
@@ -1103,7 +1101,13 @@ function itemPatternScan(){
     slotSel.appendChild(opt);
   }
 
-  toast('✅ '+results.length+'개 발견!','ok');
+  toast('✅ '+results.length+'개 발견! 스탯/마법 자동 로딩','ok');
+
+  // 아이템 탐색 완료 → 스탯/마법 자동 읽기 (첫 캐릭 기준)
+  document.getElementById('stat-char-sel').value  = '0';
+  document.getElementById('magic-char-sel').value = '0';
+  statRead();
+  magicRead();
 }
 
 // 적용
