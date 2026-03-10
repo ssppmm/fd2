@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.29</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.30</span>
   </div>
 </header>
 
@@ -1030,29 +1030,27 @@ function itemPatternScan(){
 
   var results = [];
 
-  // 1단계: FF 포함 8슬롯 완전 매칭 (가장 정확)
-  [1,2].forEach(function(step){
-    if(results.length > 0) return;
-    outer: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
-      for(var j = 0; j < 8; j++){
-        if(h[i + j*step] !== slots[j]) continue outer;
-      }
-      results.push({addr:i, step:step});
-    }
-  });
+  // step=1 고정: 슬롯은 1바이트 연속 배열
+  // (step=2는 0x00 같은 코드로 인해 오탐 발생)
+  var step = 1;
 
-  // 2단계: 완전매칭 실패 시 아이템 있는 슬롯만 매칭 (FF 슬롯 위치는 step 기준 고정)
+  // 1단계: FF 포함 8슬롯 완전 매칭
+  outer: for(var i = SCAN_START; i < SCAN_END - 8; i++){
+    for(var j = 0; j < 8; j++){
+      if(h[i + j] !== slots[j]) continue outer;
+    }
+    results.push({addr:i, step:1});
+  }
+
+  // 2단계: 완전매칭 실패 시 아이템 있는 슬롯만 매칭
   if(results.length === 0){
-    [1,2].forEach(function(step){
-      if(results.length > 0) return;
-      outer2: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
-        for(var k = 0; k < filled.length; k++){
-          var j = filled[k];
-          if(h[i + j*step] !== slots[j]) continue outer2;
-        }
-        results.push({addr:i, step:step});
+    outer2: for(var i = SCAN_START; i < SCAN_END - 8; i++){
+      for(var k = 0; k < filled.length; k++){
+        var j = filled[k];
+        if(h[i + j] !== slots[j]) continue outer2;
       }
-    });
+      results.push({addr:i, step:1});
+    }
   }
 
   var box    = document.getElementById('item-scan-result');
