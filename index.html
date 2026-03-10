@@ -150,15 +150,6 @@
     .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
     .stat-disp { background:var(--bg); color:var(--yellow); border:1px solid var(--border2); border-radius:3px; padding:4px 6px; font-size:13px; font-weight:bold; font-family:monospace; text-align:center; cursor:pointer; min-height:28px; }
     .stat-disp:hover { border-color:var(--accent); }
-    .item-search-wrap { position:relative; }
-    .item-search-inp { width:100%; background:var(--bg); color:var(--yellow); border:1px solid var(--accent); border-radius:3px; padding:4px 5px; font-size:8px; box-sizing:border-box; }
-    .item-search-inp::placeholder { color:var(--muted); }
-    .item-search-drop { display:none; position:absolute; z-index:200; left:0; right:0; top:100%; background:var(--surface); border:1px solid var(--accent); border-top:none; border-radius:0 0 3px 3px; max-height:140px; overflow-y:auto; }
-    .item-search-drop.open { display:block; }
-    .item-search-opt { padding:4px 6px; font-size:8px; cursor:pointer; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .item-search-opt:hover { background:var(--accent); color:#000; }
-    .item-search-opt.vip { color:#ff9900; }
-    .item-search-opt.selected { background:var(--surface2); }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
@@ -174,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.14</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.15</span>
   </div>
 </header>
 
@@ -320,14 +311,14 @@
         </select>
         <div class="lbl" style="margin-bottom:6px;">② 해당 캐릭터의 현재 장착 아이템</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;" id="slot-grid">
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 1</div><div class="item-search-wrap" data-slot="1"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 2</div><div class="item-search-wrap" data-slot="2"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 3</div><div class="item-search-wrap" data-slot="3"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 4</div><div class="item-search-wrap" data-slot="4"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 5</div><div class="item-search-wrap" data-slot="5"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 6</div><div class="item-search-wrap" data-slot="6"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 7</div><div class="item-search-wrap" data-slot="7"></div></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 8</div><div class="item-search-wrap" data-slot="8"></div></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 1</div><select id="slot1-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 2</div><select id="slot2-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 3</div><select id="slot3-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 4</div><select id="slot4-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 5</div><select id="slot5-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 6</div><select id="slot6-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 7</div><select id="slot7-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 8</div><select id="slot8-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
         </div>
 
         <!-- 탐색 버튼 -->
@@ -1086,73 +1077,28 @@ var itemPatternAddr   = null;  // 찾은 슬롯1 코드 주소
 var itemSlotStep      = 1;     // 슬롯 간격 (1 or 2바이트)
 var itemScanCharIdx   = 0;     // 탐색 기준 캐릭터 번호
 
-// ─── 검색형 아이템 셀렉트 ───
-var slotValues = {}; // {1: code, 2: code, ...} 선택된 값 저장
-
-function buildItemSearch(wrapEl, slotNum){
-  var inp = document.createElement('input');
-  inp.type = 'text';
-  inp.className = 'item-search-inp';
-  inp.placeholder = '없음 / 아이템 검색...';
-  inp.setAttribute('autocomplete','off');
-  inp.setAttribute('readonly', true); // 직접 입력 막고 클릭으로만
-
-  var drop = document.createElement('div');
-  drop.className = 'item-search-drop';
-
-  wrapEl.appendChild(inp);
-  wrapEl.appendChild(drop);
-
-  // 없음 포함 전체 목록
-  var allItems = [{code:0xFF, name:'없음 (빈 슬롯)', vip:false}].concat(ITEMS);
-  slotValues[slotNum] = 0xFF;
-
-  function renderDrop(q){
-    drop.innerHTML = '';
-    var filtered = q ? allItems.filter(function(it){
-      return it.name.indexOf(q) >= 0 || it.code.toString(16).toUpperCase().indexOf(q.toUpperCase()) >= 0;
-    }) : allItems;
-    filtered.slice(0, 60).forEach(function(it){
-      var opt = document.createElement('div');
-      opt.className = 'item-search-opt' + (it.vip?' vip':'') + (slotValues[slotNum]===it.code?' selected':'');
-      opt.textContent = it.code===0xFF ? '없음' : (it.vip?'🔥':'')+it.name;
-      opt.dataset.code = it.code;
-      opt.addEventListener('mousedown', function(e){
-        e.preventDefault();
-        slotValues[slotNum] = it.code;
-        inp.value = it.code===0xFF ? '' : (it.vip?'🔥':'')+it.name;
-        inp.placeholder = it.code===0xFF ? '없음 / 아이템 검색...' : '';
-        drop.classList.remove('open');
-        // 검색창 비우기
-        searchInp.value = '';
-      });
-      drop.appendChild(opt);
-    });
-  }
-
-  // 검색 입력창 (드롭다운 안)
-  var searchInp = document.createElement('input');
-  searchInp.type = 'text';
-  searchInp.placeholder = '🔍 검색...';
-  searchInp.style.cssText = 'width:100%;background:var(--bg);color:var(--text);border:none;border-bottom:1px solid var(--border);padding:4px 6px;font-size:8px;box-sizing:border-box;position:sticky;top:0;';
-  searchInp.addEventListener('input', function(){ renderDrop(searchInp.value); });
-  drop.appendChild(searchInp);
-  renderDrop('');
-
-  inp.addEventListener('click', function(){
-    drop.classList.toggle('open');
-    if(drop.classList.contains('open')){
-      renderDrop(searchInp.value);
-      searchInp.focus();
-    }
-  });
-
-  document.addEventListener('click', function(e){
-    if(!wrapEl.contains(e.target)) drop.classList.remove('open');
+// ─── 슬롯 셀렉트 ───
+function buildSlotSelect(selId){
+  var sel = document.getElementById(selId);
+  if(!sel) return;
+  sel.innerHTML = '';
+  var optNone = document.createElement('option');
+  optNone.value = 0xFF;
+  optNone.textContent = '없음 (빈 슬롯)';
+  sel.appendChild(optNone);
+  ITEMS.forEach(function(item){
+    var opt = document.createElement('option');
+    opt.value = item.code;
+    opt.textContent = (item.vip?'🔥':'')+'['+('0'+item.code.toString(16).toUpperCase()).slice(-2)+'] '+item.name;
+    if(item.vip) opt.style.color = '#ff9900';
+    sel.appendChild(opt);
   });
 }
 
-function getSlotValue(n){ return slotValues[n] !== undefined ? slotValues[n] : 0xFF; }
+function getSlotValue(n){
+  var sel = document.getElementById('slot'+n+'-sel');
+  return sel ? parseInt(sel.value) : 0xFF;
+}
 
 // 4슬롯 패턴으로 메모리 탐색 (앞 4개 일치하면 ok, step 1/2 모두 시도)
 function itemPatternScan(){
@@ -1258,9 +1204,7 @@ document.querySelectorAll('.touch-btn[data-key]').forEach(function(b){var k=b.ge
 // 초기화
 dbGet(SAV).then(function(d){document.getElementById('save-notice').textContent=d?'💾 저장된 세이브 있음':'';});
 buildItemSelect('item-new-sel', 0x0B);
-document.querySelectorAll('.item-search-wrap').forEach(function(wrap){
-  buildItemSearch(wrap, parseInt(wrap.dataset.slot));
-});
+for(var _i=1;_i<=8;_i++) buildSlotSelect('slot'+_i+'-sel');
 </script>
 </body>
 </html>
