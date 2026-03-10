@@ -163,7 +163,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.3</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.4</span>
   </div>
 </header>
 
@@ -248,8 +248,23 @@
         </div>
 
         <div class="lbl" style="margin-bottom:6px;">현재 골드 (게임 화면 확인)</div>
-        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="gold-cur-in" placeholder="0"
-          style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px;">
+        <!-- 숫자 표시창 -->
+        <div id="gold-cur-in" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:2px solid var(--accent);border-radius:6px;padding:10px;font-size:22px;font-weight:bold;text-align:center;margin-bottom:8px;min-height:48px;letter-spacing:2px;">0</div>
+        <!-- 인라인 키패드 -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:10px;">
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('7')">7</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('8')">8</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('9')">9</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('4')">4</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('5')">5</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('6')">6</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('1')">1</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('2')">2</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('3')">3</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;color:var(--red);" onclick="goldPad('C')">C</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;" onclick="goldPad('0')">0</button>
+          <button class="btn btn-ghost" style="padding:11px;font-size:16px;color:var(--muted);" onclick="goldPad('⌫')">⌫</button>
+        </div>
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:11px;" onclick="goldScan()">🔍 스캔 + MAX 적용</button>
         <div style="font-size:9px;color:var(--muted);margin-top:8px;text-align:center;">✦ 상점 재진입 시 화면에 반영됩니다</div>
       </div>
@@ -403,7 +418,19 @@ document.querySelectorAll('.tab').forEach(function(t){
 });
 
 // ─── 골드 헬퍼 ───
-function getGoldCur(){ return Math.max(0,Math.min(9999999,parseInt(document.getElementById('gold-cur-in').value)||0)); }
+function getGoldCur(){
+  var v = parseInt(document.getElementById('gold-cur-in').textContent) || 0;
+  return Math.max(0, Math.min(9999999, v));
+}
+function goldPad(k){
+  var el = document.getElementById('gold-cur-in');
+  var cur = el.textContent === '0' ? '' : el.textContent;
+  if(k === 'C'){ el.textContent = '0'; return; }
+  if(k === '⌫'){ el.textContent = cur.length > 1 ? cur.slice(0,-1) : '0'; return; }
+  var next = cur + k;
+  if(parseInt(next) > 9999999) return;
+  el.textContent = next || '0';
+}
 
 // ─── 골드 ───
 function goldScan(){
@@ -660,28 +687,6 @@ document.getElementById('btn-ul-t').addEventListener('click',function(){document
 document.getElementById('btn-ul').addEventListener('change',function(e){if(e.target.files[0])doUpload(e.target.files[0]);e.target.value='';});
 document.getElementById('btn-full').addEventListener('click',fullscreen);
 document.addEventListener('keydown',function(e){if(e.code==='Space'&&!gameStarted){e.preventDefault();startGame();}});
-
-// 캔버스가 포커스를 가져가려 할 때 에디터 입력 중이면 차단
-(function(){
-  var canvas = document.getElementById('canvas');
-  var inputs = 'input, select, textarea';
-  canvas.addEventListener('focus', function(){
-    var active = document.activeElement;
-    // 에디터 입력 필드가 활성화 중이면 즉시 포커스 돌려줌
-    if(active && active !== canvas && active.matches && active.matches(inputs)){
-      setTimeout(function(){ active.focus(); }, 0);
-    }
-  }, true);
-
-  // 에디터 입력 필드 클릭 시 캔버스 blur + 포커스 고정
-  document.querySelector('.editor-col').addEventListener('click', function(e){
-    if(e.target.matches && e.target.matches(inputs)){
-      var cv = document.getElementById('canvas');
-      if(cv) cv.blur();
-      e.target.focus();
-    }
-  });
-})();
 
 // 터치 버튼
 function sendKey(k,t){var c={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};var ev=new KeyboardEvent(t,{key:k,code:k,keyCode:c[k]||0,bubbles:true,cancelable:true});var cv=document.getElementById('canvas');cv.dispatchEvent(ev);document.dispatchEvent(ev);}
