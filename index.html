@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.28</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.29</span>
   </div>
 </header>
 
@@ -1111,27 +1111,34 @@ function applyItem(){
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
   if(!itemPatternAddr){ toast('⚠ 먼저 🔍 패턴 탐색을 하세요','err'); return; }
 
-  var slotIdx = parseInt(document.getElementById('item-slot-sel').value); // 0~3
+  var slotIdx = parseInt(document.getElementById('item-slot-sel').value);
   var addr    = itemPatternAddr + slotIdx * itemSlotStep;
   var newCode = parseInt(document.getElementById('item-new-sel').value);
   var newObj  = ITEMS.find(function(x){ return x.code===newCode; });
   var newName = newObj ? newObj.name : '0x'+newCode.toString(16);
 
+  var before = h[addr];
   mWrite(addr, newCode, 8);
   var written = h[addr];
-  if(written === (newCode & 0xFF)){
-    toast('🎒 '+newName+' 적용!','ok');
-    document.getElementById('item-cur-display').style.display = 'block';
-    document.getElementById('item-cur-name').textContent = newObj?(newObj.vip?'🔥'+newName:newName):newName;
-    document.getElementById('item-cur-addr').textContent = ' @0x'+addr.toString(16);
-    // 덤프 갱신
-    var dumpEl = document.getElementById('item-result-dump');
-    var lines = dumpEl.textContent.split('\n');
-    lines[slotIdx] = '슬롯'+(slotIdx+1)+' @0x'+addr.toString(16)+' = 0x'+('0'+newCode.toString(16).toUpperCase()).slice(-2)+' '+(newObj?(newObj.vip?'🔥':'')+newName:'');
-    dumpEl.textContent = lines.join('\n');
-  } else {
-    toast('⚠ 쓰기 실패 (written:0x'+written.toString(16)+')','err');
-  }
+
+  toast('🎒 슬롯'+(slotIdx+1)+' @0x'+addr.toString(16)+
+        ' before:'+('0'+before.toString(16)).slice(-2).toUpperCase()+
+        ' → after:'+('0'+written.toString(16)).slice(-2).toUpperCase(), 'ok');
+
+  document.getElementById('item-cur-display').style.display = 'block';
+  document.getElementById('item-cur-name').textContent = newObj?(newObj.vip?'🔥'+newName:newName):newName;
+  document.getElementById('item-cur-addr').textContent = ' @0x'+addr.toString(16);
+
+  // 슬롯 드롭다운 해당 슬롯 텍스트 갱신
+  var slotSel = document.getElementById('item-slot-sel');
+  var opt = slotSel.options[slotIdx];
+  if(opt) opt.textContent = '슬롯'+(slotIdx+1)+' ['+(newObj?(newObj.vip?'🔥':'')+newName:'없음')+']';
+
+  // 덤프 갱신
+  var dumpEl = document.getElementById('item-result-dump');
+  var lines = dumpEl.textContent.split('\n');
+  lines[slotIdx] = '슬롯'+(slotIdx+1)+' @0x'+addr.toString(16)+' = '+('0'+written.toString(16).toUpperCase()).slice(-2)+' '+(newObj?(newObj.vip?'🔥':'')+newName:'없음');
+  dumpEl.textContent = lines.join('\n');
 }
 
 // ─── 버튼 연결 ───
