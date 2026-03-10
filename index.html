@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.25</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.26</span>
   </div>
 </header>
 
@@ -1059,10 +1059,10 @@ function itemPatternScan(){
 
   var slots = [1,2,3,4,5,6,7,8].map(function(n){ return getSlotValue(n); });
 
-  // 아이템 있는 슬롯 인덱스 (FF 제외), 최소 2개
+  // 아이템 있는 슬롯 인덱스 (FF 제외), 최소 1개
   var filled = [];
   slots.forEach(function(v,j){ if(v !== 0xFF) filled.push(j); });
-  if(filled.length < 2){ toast('⚠ 아이템 있는 슬롯을 2개 이상 선택하세요','err'); return; }
+  if(filled.length < 1){ toast('⚠ 아이템 있는 슬롯을 1개 이상 선택하세요','err'); return; }
 
   var results = [];
   [1,2].forEach(function(step){
@@ -1107,6 +1107,21 @@ function itemPatternScan(){
     lines.push('슬롯'+(s+1)+' @0x'+a.toString(16)+' = '+('0'+v.toString(16).toUpperCase()).slice(-2)+' '+name);
   }
   dumpEl.textContent = lines.join('\n');
+
+  // 슬롯 선택 드롭다운 갱신 (현재 아이템 표시)
+  var slotSel = document.getElementById('item-slot-sel');
+  slotSel.innerHTML = '';
+  for(var s = 0; s < 8; s++){
+    var a  = r.addr + s * r.step;
+    var v  = h[a];
+    var ob = ITEMS.find(function(x){ return x.code===v; });
+    var nm = ob ? (ob.vip?'🔥':'')+ob.name : (v===0xFF?'없음':'?'+('0'+v.toString(16)).slice(-2).toUpperCase());
+    var opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = '슬롯'+(s+1)+' ['+nm+']';
+    slotSel.appendChild(opt);
+  }
+
   toast('✅ '+results.length+'개 발견!','ok');
 }
 
