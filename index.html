@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.20</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.21</span>
   </div>
 </header>
 
@@ -1022,15 +1022,16 @@ function itemPatternScan(){
 
   var slots = [1,2,3,4,5,6,7,8].map(function(n){ return getSlotValue(n); });
 
-  // 아이템이 있는 슬롯이 최소 1개 필요
-  var nonEmpty = slots.filter(function(v){ return v !== 0xFF; });
-  if(nonEmpty.length < 1){ toast('⚠ 슬롯을 1개 이상 선택하세요','err'); return; }
+  // 아이템 있는 슬롯 인덱스 (FF 제외), 최소 2개
+  var filled = [];
+  slots.forEach(function(v,j){ if(v !== 0xFF) filled.push(j); });
+  if(filled.length < 2){ toast('⚠ 아이템 있는 슬롯을 2개 이상 선택하세요','err'); return; }
 
   var results = [];
   [1,2].forEach(function(step){
     outer: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
-      for(var j = 0; j < 8; j++){
-        // 없음(FF)도 포함해서 모든 슬롯 완전 일치
+      for(var k = 0; k < filled.length; k++){
+        var j = filled[k];
         if(h[i + j*step] !== slots[j]) continue outer;
       }
       results.push({addr:i, step:step});
