@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.33</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.34</span>
   </div>
 </header>
 
@@ -216,6 +216,7 @@
       <div class="ctrl-card">
         <h3>⌨ 기본 조작</h3>
         <div class="k-row"><span class="key">↑↓←→</span><span class="k-desc">이동</span></div>
+        <div class="k-row"><span class="key">WASD</span><span class="k-desc">이동 (방향키 동일)</span></div>
         <div class="k-row"><span class="key">Enter</span><span class="k-desc">확인</span></div>
         <div class="k-row"><span class="key">Esc</span><span class="k-desc">취소</span></div>
       </div>
@@ -1150,6 +1151,11 @@ document.getElementById('btn-ul-t').addEventListener('click',function(){document
 document.getElementById('btn-ul').addEventListener('change',function(e){if(e.target.files[0])doUpload(e.target.files[0]);e.target.value='';});
 document.getElementById('btn-full').addEventListener('click',fullscreen);
 document.addEventListener('keydown',function(e){if(e.code==='Space'&&!gameStarted){e.preventDefault();startGame();}});
+
+// WASD → 방향키 리매핑
+var wasdMap={w:'ArrowUp',a:'ArrowLeft',s:'ArrowDown',d:'ArrowRight',W:'ArrowUp',A:'ArrowLeft',S:'ArrowDown',D:'ArrowRight'};
+document.addEventListener('keydown',function(e){if(wasdMap[e.key]){e.preventDefault();sendKey(wasdMap[e.key],'keydown');}});
+document.addEventListener('keyup',  function(e){if(wasdMap[e.key]){sendKey(wasdMap[e.key],'keyup');}});
 
 // 터치 버튼
 function sendKey(k,t){var c={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};var ev=new KeyboardEvent(t,{key:k,code:k,keyCode:c[k]||0,bubbles:true,cancelable:true});var cv=document.getElementById('canvas');cv.dispatchEvent(ev);document.dispatchEvent(ev);}
