@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.26</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.28</span>
   </div>
 </header>
 
@@ -401,16 +401,7 @@
           <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
         </select>
 
-        <div style="display:flex;gap:5px;margin-bottom:10px;">
-          <button class="btn btn-primary" style="flex:2;padding:8px;" onclick="statRead()">📖 읽기</button>
-          <button class="btn btn-ghost" style="flex:1;padding:8px;font-size:7px;" onclick="statDump()">🔬 덤프</button>
-        </div>
-
-        <!-- 덤프 결과 -->
-        <div id="stat-dump-box" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;">
-          <div style="font-size:7px;color:var(--accent);margin-bottom:4px;font-family:var(--font-pixel);">🔬 RAW DUMP (offset 00~4F)</div>
-          <div id="stat-dump-hex" style="font-family:monospace;font-size:7px;color:var(--muted);white-space:pre;line-height:1.8;overflow-x:auto;"></div>
-        </div>
+        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="statRead()">📖 읽기</button>
 
         <!-- 스탯 필드들 -->
         <div id="stat-fields" style="display:none;">
@@ -835,32 +826,6 @@ var STAT_FIELDS = [
 var statPadTarget = null;
 
 // 스탯 덤프 (오프셋 찾기용)
-function statDump(){
-  var h = heap();
-  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  if(!itemPatternAddr){ toast('⚠ 🎒 아이템 탐색 먼저 하세요','err'); return; }
-  var charIdx = parseInt(document.getElementById('stat-char-sel').value);
-  var base = statBase(charIdx);
-
-  var lines = [];
-  // 헤더
-  lines.push('     +0 +1 +2 +3 +4 +5 +6 +7  +8 +9 +A +B +C +D +E +F');
-  for(var row = 0; row < 5; row++){
-    var hex = ('0'+row.toString(16).toUpperCase())+'0  ';
-    var dec = '  │ ';
-    for(var col = 0; col < 16; col++){
-      var off = row*16 + col;
-      var v = h[base + off];
-      hex += ('0'+v.toString(16).toUpperCase()).slice(-2) + (col===7?' ':' ');
-      dec += v.toString().padStart(3,' ')+(col===7?' │ ':' ');
-    }
-    lines.push(hex);
-    lines.push(dec);
-  }
-  document.getElementById('stat-dump-hex').textContent = lines.join('\n');
-  document.getElementById('stat-dump-box').style.display = 'block';
-  toast('🔬 덤프 완료 — base:0x'+base.toString(16),'ok');
-}
 
 // 스탯 읽기
 function statRead(){
@@ -1052,28 +1017,43 @@ function getSlotValue(n){
   return sel ? parseInt(sel.value) : 0xFF;
 }
 
-// 4슬롯 패턴으로 메모리 탐색 (앞 4개 일치하면 ok, step 1/2 모두 시도)
+// 아이템 탐색
 function itemPatternScan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
 
   var slots = [1,2,3,4,5,6,7,8].map(function(n){ return getSlotValue(n); });
 
-  // 아이템 있는 슬롯 인덱스 (FF 제외), 최소 1개
   var filled = [];
   slots.forEach(function(v,j){ if(v !== 0xFF) filled.push(j); });
   if(filled.length < 1){ toast('⚠ 아이템 있는 슬롯을 1개 이상 선택하세요','err'); return; }
 
   var results = [];
+
+  // 1단계: FF 포함 8슬롯 완전 매칭 (가장 정확)
   [1,2].forEach(function(step){
+    if(results.length > 0) return;
     outer: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
-      for(var k = 0; k < filled.length; k++){
-        var j = filled[k];
+      for(var j = 0; j < 8; j++){
         if(h[i + j*step] !== slots[j]) continue outer;
       }
       results.push({addr:i, step:step});
     }
   });
+
+  // 2단계: 완전매칭 실패 시 아이템 있는 슬롯만 매칭 (FF 슬롯 위치는 step 기준 고정)
+  if(results.length === 0){
+    [1,2].forEach(function(step){
+      if(results.length > 0) return;
+      outer2: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
+        for(var k = 0; k < filled.length; k++){
+          var j = filled[k];
+          if(h[i + j*step] !== slots[j]) continue outer2;
+        }
+        results.push({addr:i, step:step});
+      }
+    });
+  }
 
   var box    = document.getElementById('item-scan-result');
   var addrEl = document.getElementById('item-result-addr');
