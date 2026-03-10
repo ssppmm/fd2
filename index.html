@@ -163,7 +163,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.6</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.7</span>
   </div>
 </header>
 
@@ -281,56 +281,64 @@
         <!-- 안내 -->
         <div style="font-size:9px;line-height:1.8;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
           <b style="color:var(--accent);">📌 사용법</b><br>
-          💰 골드 스캔 먼저 → ① 캐릭터 선택 → <b>🔬 덤프</b>로 주변 바이트 확인<br>
-          게임 아이템 코드와 일치하는 오프셋 찾기 → ② 오프셋 입력 → <b>✅ 적용</b>
+          게임에서 캐릭터 장비 화면 확인 → 슬롯1~4 아이템 선택<br>
+          <b>🔍 패턴 탐색</b> → 주소 찾기 → 바꿀 슬롯/아이템 선택 → <b>✅ 적용</b><br>
+          <span style="color:var(--muted);">슬롯이 비어있으면 없음(FF) 선택</span>
         </div>
 
-        <!-- ① 캐릭터 선택 -->
-        <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
-        <select id="item-char-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
-          <option value="0">01. 사울 (검사)</option><option value="1">02. 아래스 (기사)</option>
-          <option value="2">03. 유니 (법사)</option><option value="3">04. 카일 (기계기병)</option>
-          <option value="4">05. 마린 (승려)</option><option value="5">06. 하노 (전사)</option>
-          <option value="6">07. 시리아 (궁병)</option><option value="7">08. 티노 (검사)</option>
-          <option value="8">09. 소피아 (승려)</option><option value="9">10. 페이커 (궁병)</option>
-          <option value="10">11. 하와터 (전사)</option><option value="11">12. 위나 (승려)</option>
-          <option value="12">13. 케리 (무사)</option><option value="13">14. 샨 (법사)</option>
-          <option value="14">15. 사이클린 (무사)</option><option value="15">16. 미티 (검사)</option>
-          <option value="16">17. 파나로시아 (용인)</option><option value="17">18. 샤도 (닌자)</option>
-          <option value="18">19. 카리스 (무사)</option><option value="19">20. 래터 (기사)</option>
-          <option value="20">21. 로나 (기사)</option><option value="21">22. 히올프 (승려)</option>
-          <option value="22">23. 란스로타 (기사)</option><option value="23">24. 다커스 (전사)</option>
-          <option value="24">25. 미아스튜더 (용인)</option><option value="25">26. 카라스 (용인)</option>
-          <option value="26">27. 워터 (기계기병)</option><option value="27">28. 아치메치 (법사)</option>
-          <option value="28">29. 롤렌 (궁병)</option><option value="29">30. 샌디라스 (용인)</option>
-        </select>
+        <!-- 슬롯 1~4 현재 아이템 입력 -->
+        <div class="lbl" style="margin-bottom:6px;">① 현재 장착 아이템 (게임 화면 확인)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 1</div>
+            <select id="slot1-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 2</div>
+            <select id="slot2-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 3</div>
+            <select id="slot3-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 4</div>
+            <select id="slot4-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select>
+          </div>
+        </div>
 
-        <!-- 덤프 버튼 -->
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:8px;" onclick="itemDump()">🔬 덤프 (베이스~+0x30 바이트 확인)</button>
+        <!-- 탐색 버튼 -->
+        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:8px;" onclick="itemPatternScan()">🔍 패턴 탐색</button>
 
-        <!-- 덤프 결과 -->
-        <div id="item-dump-box" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;font-size:8px;font-family:monospace;line-height:1.8;overflow-x:auto;white-space:pre;"></div>
+        <!-- 탐색 결과 -->
+        <div id="item-scan-result" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;font-size:8px;line-height:1.8;">
+          <div>📍 <span id="item-result-addr" style="color:var(--yellow);font-weight:bold;"></span></div>
+          <div id="item-result-dump" style="font-family:monospace;font-size:7px;color:var(--muted);margin-top:4px;white-space:pre;"></div>
+        </div>
 
         <hr class="divider">
 
-        <!-- ② 오프셋 + 바꿀 아이템 -->
-        <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+        <!-- ② 바꿀 슬롯 + 아이템 -->
+        <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:8px;">
           <div style="flex:1;">
-            <div class="lbl" style="margin-bottom:4px;">② 오프셋 (hex)</div>
-            <input type="text" id="item-offset-in" value="0x0B" placeholder="0x0B"
-              style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:4px;padding:6px;font-size:13px;text-align:center;">
+            <div class="lbl" style="margin-bottom:4px;">② 슬롯</div>
+            <select id="item-slot-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;">
+              <option value="0">슬롯 1</option>
+              <option value="1">슬롯 2</option>
+              <option value="2">슬롯 3</option>
+              <option value="3">슬롯 4</option>
+            </select>
           </div>
           <div style="flex:2;">
             <div class="lbl" style="margin-bottom:4px;">③ 바꿀 아이템 <span style="color:#ff9900;font-size:7px;">🔥OB</span></div>
             <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--green);border-radius:4px;padding:6px;font-size:9px;">
-              <!-- JS로 채워짐 -->
             </select>
           </div>
         </div>
 
-        <!-- 현재 아이템 표시 -->
+        <!-- 적용 결과 표시 -->
         <div id="item-cur-display" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px;margin-bottom:8px;font-size:9px;text-align:center;">
-          현재: <span id="item-cur-name" style="color:var(--yellow);font-weight:bold;"></span>
+          적용: <span id="item-cur-name" style="color:var(--yellow);font-weight:bold;"></span>
           <span style="color:var(--muted);font-size:7px;" id="item-cur-addr"></span>
         </div>
 
@@ -629,76 +637,116 @@ function buildItemSelect(selId, defaultCode){
 
 // 초기화: 현재아이템=단검(0), 바꿀아이템=염룡검(0x0B, 첫번째 OB)
 buildItemSelect('item-new-sel', 0x0B);
+buildSlotSelect('slot1-sel');
+buildSlotSelect('slot2-sel');
+buildSlotSelect('slot3-sel');
+buildSlotSelect('slot4-sel');
 
-// ─── 아이템 직접 편집 ───
-var ITEM_STEP = 0x50;
-var itemFoundBase = null;
+// ─── 아이템 패턴 탐색 ───
+var itemPatternAddr = null;  // 찾은 슬롯1 주소
+var itemSlotStep   = 1;      // 슬롯 간격 (1 or 2바이트, 탐색으로 결정)
 
-function itemFindBase(){
-  var h = heap();
-  if(!h) return null;
-  var ref   = goldAddrs.length > 0 ? goldAddrs[0] : 0x20b94d3;
-  var start = Math.max(0x10000,  ref - 0x1000000);
-  var end   = Math.min(h.length, ref + 0x1000000);
-  var cands = [];
-  for(var i = start; i < end - 0x50; i++){
-    if(h[i+0x02]===0 && h[i+0x06]===1){
-      var lv = h[i+0x11];
-      if(lv >= 1 && lv <= 80) cands.push(i);
-    }
-  }
-  return cands;
+// 슬롯 셀렉트 초기화 (없음=0xFF 포함)
+function buildSlotSelect(selId){
+  var sel = document.getElementById(selId);
+  if(!sel) return;
+  sel.innerHTML = '';
+  // 없음(FF) 먼저
+  var optNone = document.createElement('option');
+  optNone.value = 0xFF;
+  optNone.textContent = '없음 (빈 슬롯)';
+  sel.appendChild(optNone);
+  ITEMS.forEach(function(item){
+    var opt = document.createElement('option');
+    opt.value = item.code;
+    opt.textContent = (item.vip?'🔥':'') + '[0x'+('0'+item.code.toString(16).toUpperCase()).slice(-2)+'] '+item.name;
+    if(item.vip){ opt.style.color='#ff9900'; }
+    sel.appendChild(opt);
+  });
 }
 
-function itemGetOffset(){
-  var v = document.getElementById('item-offset-in').value.trim();
-  return parseInt(v, 16);
-}
-
-// 덤프: 베이스~+0x30 바이트를 hex+아이템명으로 표시
-function itemDump(){
+// 4슬롯 패턴으로 메모리 탐색
+// step=1: 연속 배치 [s1][s2][s3][s4]
+// step=2: 격자 배치 [s1][?][s2][?][s3][?][s4]
+function itemPatternScan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var cands = itemFindBase();
-  if(!cands || cands.length === 0){ toast('⚠ 캐릭터 블록 못 찾음 — 골드 스캔 먼저!','err'); return; }
-  itemFoundBase = cands[0];
-  var idx  = parseInt(document.getElementById('item-char-sel').value);
-  var base = itemFoundBase + idx * ITEM_STEP;
-  var lines = ['base:0x'+base.toString(16)+'  (후보'+cands.length+'개)\n'];
-  lines.push('off  hex  아이템명');
-  lines.push('───────────────────');
-  for(var off = 0; off <= 0x30; off++){
-    var val = h[base + off];
-    var obj = ITEMS.find(function(x){ return x.code === val; });
-    var name = obj ? (obj.vip?'🔥':'')+obj.name : '';
-    var hex = ('0'+val.toString(16).toUpperCase()).slice(-2);
-    lines.push('+0x'+('0'+off.toString(16)).slice(-2)+'  '+hex+'   '+name);
-  }
-  var box = document.getElementById('item-dump-box');
+
+  var s1 = parseInt(document.getElementById('slot1-sel').value);
+  var s2 = parseInt(document.getElementById('slot2-sel').value);
+  var s3 = parseInt(document.getElementById('slot3-sel').value);
+  var s4 = parseInt(document.getElementById('slot4-sel').value);
+
+  var results = [];
+  // step 1,2 둘 다 시도
+  [1,2].forEach(function(step){
+    for(var i = SCAN_START; i < SCAN_END - step*4; i++){
+      if(h[i]===s1 && h[i+step]===s2 && h[i+step*2]===s3 && h[i+step*3]===s4){
+        results.push({addr:i, step:step});
+      }
+    }
+  });
+
+  var box = document.getElementById('item-scan-result');
+  var addrEl = document.getElementById('item-result-addr');
+  var dumpEl = document.getElementById('item-result-dump');
   box.style.display = 'block';
-  box.textContent = lines.join('\n');
-  toast('🔬 덤프 완료 — 아이템 코드 오프셋 확인하세요','ok');
+
+  if(results.length === 0){
+    addrEl.textContent = '결과 없음 — 슬롯 아이템 다시 확인';
+    addrEl.style.color = 'var(--red)';
+    dumpEl.textContent = '';
+    itemPatternAddr = null;
+    toast('⚠ 패턴 없음','err');
+    return;
+  }
+
+  // 첫 번째 결과 사용
+  var r = results[0];
+  itemPatternAddr = r.addr;
+  itemSlotStep    = r.step;
+
+  addrEl.style.color = 'var(--yellow)';
+  addrEl.textContent = results.length+'개 발견 → 0x'+r.addr.toString(16)+' (step='+r.step+')';
+
+  // 슬롯 4개 덤프
+  var lines = [];
+  for(var s=0; s<4; s++){
+    var a = r.addr + s * r.step;
+    var v = h[a];
+    var obj = ITEMS.find(function(x){ return x.code===v; });
+    var name = obj ? (obj.vip?'🔥':'')+obj.name : (v===0xFF?'없음':'알수없음(0x'+v.toString(16)+')');
+    lines.push('슬롯'+(s+1)+' @0x'+a.toString(16)+' = 0x'+('0'+v.toString(16).toUpperCase()).slice(-2)+' '+name);
+  }
+  dumpEl.textContent = lines.join('\n');
+
+  toast('✅ '+results.length+'개 발견! 슬롯/아이템 선택 후 적용하세요','ok');
 }
 
 // 적용
 function applyItem(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  if(!itemFoundBase){ toast('⚠ 먼저 🔬 덤프를 눌러주세요','err'); return; }
-  var idx     = parseInt(document.getElementById('item-char-sel').value);
-  var off     = itemGetOffset();
-  if(isNaN(off)){ toast('⚠ 오프셋을 hex로 입력하세요 (예: 0x0B)','err'); return; }
-  var addr    = itemFoundBase + idx * ITEM_STEP + off;
+  if(!itemPatternAddr){ toast('⚠ 먼저 🔍 패턴 탐색을 하세요','err'); return; }
+
+  var slotIdx = parseInt(document.getElementById('item-slot-sel').value); // 0~3
+  var addr    = itemPatternAddr + slotIdx * itemSlotStep;
   var newCode = parseInt(document.getElementById('item-new-sel').value);
-  var newObj  = ITEMS.find(function(x){ return x.code === newCode; });
+  var newObj  = ITEMS.find(function(x){ return x.code===newCode; });
   var newName = newObj ? newObj.name : '0x'+newCode.toString(16);
+
   mWrite(addr, newCode, 8);
   var written = h[addr];
   if(written === (newCode & 0xFF)){
-    toast('🎒 '+newName+' 적용! @0x'+addr.toString(16),'ok');
+    toast('🎒 '+newName+' 적용!','ok');
     document.getElementById('item-cur-display').style.display = 'block';
     document.getElementById('item-cur-name').textContent = newObj?(newObj.vip?'🔥'+newName:newName):newName;
-    document.getElementById('item-cur-addr').textContent = '  @0x'+addr.toString(16);
+    document.getElementById('item-cur-addr').textContent = ' @0x'+addr.toString(16);
+    // 덤프 갱신
+    var dumpEl = document.getElementById('item-result-dump');
+    var lines = dumpEl.textContent.split('\n');
+    lines[slotIdx] = '슬롯'+(slotIdx+1)+' @0x'+addr.toString(16)+' = 0x'+('0'+newCode.toString(16).toUpperCase()).slice(-2)+' '+(newObj?(newObj.vip?'🔥':'')+newName:'');
+    dumpEl.textContent = lines.join('\n');
   } else {
     toast('⚠ 쓰기 실패 (written:0x'+written.toString(16)+')','err');
   }
