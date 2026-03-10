@@ -18,6 +18,8 @@
       --font-body: 'Noto Sans KR', sans-serif;
     }
     html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+    header { padding: 10px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
+    .header-links { margin-left: auto; font-size: 11px; color: var(--muted); }
         .logo { font-family: var(--font-pixel); font-size: 10px; color: var(--accent); }
         .game-status { font-family: var(--font-pixel); font-size: 7px; padding: 4px 8px; border-radius: 2px; }
     .status-off  { background: var(--red);   color: #fff; }
@@ -157,8 +159,13 @@
   </style>
 </head>
 <body>
-
-
+<header>
+  <div class="logo">🐉 FD2</div>
+  <span class="game-status status-off" id="gs">게임 꺼짐</span>
+  <div class="header-links">
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.2</span>
+  </div>
+</header>
 
 <main>
   <!-- 게임 화면 -->
@@ -229,7 +236,7 @@
     <div class="tab-panel active card" id="panel-gold">
       <div class="card-hd">
         <span class="card-ttl">💰 골드 편집</span>
-        <span style="font-size:7px;color:var(--muted);">v2026.03.10.2 &nbsp;<span id="gs" class="game-status status-off">게임 꺼짐</span></span>
+        <span class="badge b-red" id="gold-status">게임 시작 필요</span>
       </div>
       <div class="card-body">
         <div class="gold-big">
@@ -379,9 +386,9 @@ function clearLog(){ /* 로그 탭 제거됨 */ }
 function toast(m,t){ var el=document.getElementById('toast');el.textContent=m;el.className='show '+(t||'nfo');clearTimeout(el._t);el._t=setTimeout(function(){el.className='';},2500); }
 function updateStatus(){
   var el=document.getElementById('gs'),gd=document.getElementById('gold-status');
-  if(gameStarted&&heap()){el.textContent='실행 중';el.className='game-status status-on';if(gd)gd.textContent='활성화';if(gd)gd.className='badge b-green';updateGoldDisp();}
-  else if(gameStarted){el.textContent='로딩 중';el.className='game-status status-load';if(gd)gd.textContent='로딩 중';if(gd)gd.className='badge b-blue';}
-  else{el.textContent='게임 꺼짐';el.className='game-status status-off';if(gd)gd.textContent='게임 시작 필요';if(gd)gd.className='badge b-red';}
+  if(gameStarted&&heap()){el.textContent='실행 중';el.className='game-status status-on';gd.textContent='활성화';gd.className='badge b-green';updateGoldDisp();}
+  else if(gameStarted){el.textContent='로딩 중';el.className='game-status status-load';gd.textContent='로딩 중';gd.className='badge b-blue';}
+  else{el.textContent='게임 꺼짐';el.className='game-status status-off';gd.textContent='게임 시작 필요';gd.className='badge b-red';}
 }
 function updateGoldDisp(){ var d=document.getElementById('gold-display');if(goldAddrs.length>0){var v=mRead(goldAddrs[0],32);d.textContent=v!==null?v.toLocaleString():'---';}else{d.textContent=heap()?'(스캔 필요)':'---';} }
 
