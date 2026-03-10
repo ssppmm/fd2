@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.30</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.33</span>
   </div>
 </header>
 
@@ -580,7 +580,7 @@ document.querySelectorAll('.tab').forEach(function(t){
 // ─── 골드 헬퍼 ───
 function getGoldCur(){
   var v = parseInt(document.getElementById('gold-cur-in').textContent) || 0;
-  return Math.max(0, Math.min(9999999, v));
+  return Math.max(0, Math.min(9999900, v));
 }
 function goldPad(k){
   var el = document.getElementById('gold-cur-in');
@@ -588,7 +588,7 @@ function goldPad(k){
   if(k === 'C'){ el.textContent = '0'; return; }
   if(k === '⌫'){ el.textContent = cur.length > 1 ? cur.slice(0,-1) : '0'; return; }
   var next = cur + k;
-  if(parseInt(next) > 9999999) return;
+  if(parseInt(next) > 9999900) return;
   el.textContent = next || '0';
 }
 
@@ -609,7 +609,7 @@ function goldScan(){
 function applyGold(){
   if(!heap()){toast('⚠ 게임을 먼저 시작하세요','err');return;}
   if(goldAddrs.length===0){toast('⚠ 먼저 스캔+MAX 적용을 누르세요','err');return;}
-  var nv=9999999;
+  var nv=9999900;
   var cnt=0;
   goldAddrs.forEach(function(a){if(mWrite(a,nv,32))cnt++;mWrite(a,nv,16);});
   log('✓ 골드 MAX → '+nv+' ('+cnt+'개 적용)','ok');
@@ -1030,27 +1030,29 @@ function itemPatternScan(){
 
   var results = [];
 
-  // step=1 고정: 슬롯은 1바이트 연속 배열
-  // (step=2는 0x00 같은 코드로 인해 오탐 발생)
-  var step = 1;
-
   // 1단계: FF 포함 8슬롯 완전 매칭
-  outer: for(var i = SCAN_START; i < SCAN_END - 8; i++){
-    for(var j = 0; j < 8; j++){
-      if(h[i + j] !== slots[j]) continue outer;
+  [1,2].forEach(function(step){
+    if(results.length > 0) return;
+    outer: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
+      for(var j = 0; j < 8; j++){
+        if(h[i + j*step] !== slots[j]) continue outer;
+      }
+      results.push({addr:i, step:step});
     }
-    results.push({addr:i, step:1});
-  }
+  });
 
   // 2단계: 완전매칭 실패 시 아이템 있는 슬롯만 매칭
   if(results.length === 0){
-    outer2: for(var i = SCAN_START; i < SCAN_END - 8; i++){
-      for(var k = 0; k < filled.length; k++){
-        var j = filled[k];
-        if(h[i + j] !== slots[j]) continue outer2;
+    [1,2].forEach(function(step){
+      if(results.length > 0) return;
+      outer2: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
+        for(var k = 0; k < filled.length; k++){
+          var j = filled[k];
+          if(h[i + j*step] !== slots[j]) continue outer2;
+        }
+        results.push({addr:i, step:step});
       }
-      results.push({addr:i, step:1});
-    }
+    });
   }
 
   var box    = document.getElementById('item-scan-result');
