@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.15</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.18</span>
   </div>
 </header>
 
@@ -232,8 +232,8 @@
     <div class="tabs">
       <div class="tab active" data-tab="gold">💰 골드</div>
       <div class="tab" data-tab="items">🎒 아이템</div>
-      <div class="tab" data-tab="magic">✨ 마법</div>
       <div class="tab" data-tab="stat">⚔ 스탯</div>
+      <div class="tab" data-tab="magic">✨ 마법</div>
     </div>
 
     <!-- 골드 탭 -->
@@ -310,15 +310,15 @@
           <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
         </select>
         <div class="lbl" style="margin-bottom:6px;">② 해당 캐릭터의 현재 장착 아이템</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;" id="slot-grid">
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 1</div><select id="slot1-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 2</div><select id="slot2-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 3</div><select id="slot3-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 4</div><select id="slot4-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 5</div><select id="slot5-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 6</div><select id="slot6-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 7</div><select id="slot7-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
-          <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">슬롯 8</div><select id="slot8-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:8px;"></select></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="slot-grid">
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 1</div><select id="slot1-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 5</div><select id="slot5-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 2</div><select id="slot2-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 6</div><select id="slot6-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 3</div><select id="slot3-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 7</div><select id="slot7-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 4</div><select id="slot4-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 8</div><select id="slot8-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
         </div>
 
         <!-- 탐색 버튼 -->
@@ -450,85 +450,52 @@
     <div class="tab-panel card" id="panel-magic">
       <div class="card-hd">
         <span class="card-ttl">✨ 마법 편집</span>
-        <span class="badge b-blue" id="magic-status">게임 시작 필요</span>
+        <span class="badge b-blue" id="magic-status">아이템 탐색 먼저</span>
       </div>
       <div class="card-body" style="padding:10px;">
 
-        <!-- 안내 -->
         <div style="font-size:9px;line-height:1.8;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
           <b style="color:var(--accent);">📌 사용법</b><br>
-          각 주소(1A~1E)가 마법 8개를 비트로 저장<br>
-          ① 현재 가진 마법 값 입력 → <b>🔍 탐색</b><br>
-          ② 마법 체크박스 ON/OFF → <b>✅ 적용</b>
+          🎒 아이템 탐색 완료 후 사용 가능<br>
+          ① 캐릭터 선택 → <b>📖 읽기</b> → 마법 ON/OFF → <b>✅ 적용</b>
         </div>
 
-        <!-- ① 현재 마법 바이트 입력 (1A~1E) -->
-        <div class="lbl" style="margin-bottom:6px;">① 현재 마법 바이트 (게임에서 확인)</div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px;">
-          <div style="text-align:center;">
-            <div style="font-size:7px;color:var(--muted);margin-bottom:3px;">1A</div>
-            <div id="mb1A" style="background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;font-family:monospace;cursor:pointer;min-height:30px;" onclick="magicPadOpen('1A')">00</div>
+        <!-- 캐릭터 선택 -->
+        <div class="lbl" style="margin-bottom:4px;">① 캐릭터</div>
+        <select id="magic-char-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;">
+          <option value="0">01. 사울</option><option value="1">02. 아래스</option>
+          <option value="2">03. 유니</option><option value="3">04. 카일</option>
+          <option value="4">05. 마린</option><option value="5">06. 하노</option>
+          <option value="6">07. 시리아</option><option value="7">08. 티노</option>
+          <option value="8">09. 소피아</option><option value="9">10. 페이커</option>
+          <option value="10">11. 하와터</option><option value="11">12. 위나</option>
+          <option value="12">13. 케리</option><option value="13">14. 샨</option>
+          <option value="14">15. 사이클린</option><option value="15">16. 미티</option>
+          <option value="16">17. 파나로시아</option><option value="17">18. 샤도</option>
+          <option value="18">19. 카리스</option><option value="19">20. 래터</option>
+          <option value="20">21. 로나</option><option value="21">22. 히올프</option>
+          <option value="22">23. 란스로타</option><option value="23">24. 다커스</option>
+          <option value="24">25. 미아스튜더</option><option value="25">26. 카라스</option>
+          <option value="26">27. 워터</option><option value="27">28. 아치메치</option>
+          <option value="28">29. 롤렌</option><option value="29">30. 샌디라스</option>
+        </select>
+
+        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:10px;" onclick="magicRead()">📖 읽기</button>
+
+        <!-- 마법 체크박스 -->
+        <div id="magic-fields" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div class="lbl">② 마법 ON/OFF</div>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-ghost" style="padding:2px 7px;font-size:7px;" onclick="magicCheckAll(true)">전체ON</button>
+              <button class="btn btn-ghost" style="padding:2px 7px;font-size:7px;" onclick="magicCheckAll(false)">전체OFF</button>
+            </div>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:7px;color:var(--muted);margin-bottom:3px;">1B</div>
-            <div id="mb1B" style="background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;font-family:monospace;cursor:pointer;min-height:30px;" onclick="magicPadOpen('1B')">00</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:7px;color:var(--muted);margin-bottom:3px;">1C</div>
-            <div id="mb1C" style="background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;font-family:monospace;cursor:pointer;min-height:30px;" onclick="magicPadOpen('1C')">00</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:7px;color:var(--muted);margin-bottom:3px;">1D</div>
-            <div id="mb1D" style="background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;font-family:monospace;cursor:pointer;min-height:30px;" onclick="magicPadOpen('1D')">00</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:7px;color:var(--muted);margin-bottom:3px;">1E</div>
-            <div id="mb1E" style="background:var(--bg);color:var(--yellow);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:13px;font-weight:bold;text-align:center;font-family:monospace;cursor:pointer;min-height:30px;" onclick="magicPadOpen('1E')">00</div>
-          </div>
+          <div id="magic-checks" style="font-size:8px;line-height:2;"></div>
+          <hr class="divider" style="margin-top:8px;">
+          <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;margin-top:6px;" onclick="applyMagic()">✅ 적용</button>
+          <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">적용 후 전투/화면전환 시 반영됨</div>
         </div>
-
-        <!-- 헥스 키패드 (팝업) -->
-        <div id="magic-pad" style="display:none;background:var(--surface2);border:1px solid var(--accent);border-radius:4px;padding:6px;margin-bottom:8px;">
-          <div style="font-size:8px;color:var(--muted);margin-bottom:4px;">입력: 주소 <span id="magic-pad-lbl" style="color:var(--yellow);"></span></div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:4px;">
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('7')">7</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('8')">8</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('9')">9</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('A')">A</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('4')">4</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('5')">5</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('6')">6</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('B')">B</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('1')">1</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('2')">2</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('3')">3</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('C')">C</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:10px;color:var(--red);" onclick="magicPad('CLR')">CLR</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('0')">0</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:12px;" onclick="magicPad('F')">F</button>
-            <button class="btn btn-ghost" style="padding:7px;font-size:10px;color:var(--green);" onclick="magicPad('OK')">OK</button>
-          </div>
-        </div>
-
-        <!-- 탐색 버튼 -->
-        <button class="btn btn-primary" style="width:100%;padding:8px;margin-bottom:8px;" onclick="magicScan()">🔍 탐색 (5바이트 패턴)</button>
-
-        <!-- 탐색 결과 -->
-        <div id="magic-found" style="display:none;font-size:8px;color:var(--muted);margin-bottom:8px;text-align:center;">
-          📍 <span id="magic-found-addr" style="color:var(--yellow);font-weight:bold;"></span>
-        </div>
-
-        <hr class="divider">
-
-        <!-- ② 마법 체크박스 -->
-        <div class="lbl" style="margin-bottom:6px;">② 마법 ON/OFF <button class="btn btn-ghost" style="padding:2px 6px;font-size:7px;margin-left:6px;" onclick="magicCheckAll(true)">전체ON</button> <button class="btn btn-ghost" style="padding:2px 6px;font-size:7px;" onclick="magicCheckAll(false)">전체OFF</button></div>
-        <div id="magic-checks" style="font-size:8px;line-height:2;"></div>
-
-        <hr class="divider" style="margin-top:8px;">
-
-        <!-- 적용 버튼 -->
-        <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;margin-top:6px;" onclick="applyMagic()">✅ 적용</button>
-        <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">적용 후 전투/화면전환 시 반영됨</div>
       </div>
     </div>
 
@@ -958,13 +925,50 @@ var MAGIC_TABLE = [
   { off:0x1E, bit:0x08, name:'사악귀' },
 ];
 
-var magicBaseAddr = null;  // 찾은 마법 베이스 주소 (1A 오프셋 기준)
-var magicPadTarget = null; // 현재 입력 중인 주소 ID ('1A'~'1E')
+// ─── 마법 읽기/적용 (statBase 기반) ───
+function magicRead(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  if(!itemPatternAddr){ toast('⚠ 🎒 아이템 탐색 먼저 하세요','err'); return; }
+  var charIdx = parseInt(document.getElementById('magic-char-sel').value);
+  var base = statBase(charIdx);
+  MAGIC_TABLE.forEach(function(m){
+    var val = h[base + m.off];
+    var cb = document.getElementById('mc_'+m.off.toString(16).toUpperCase()+'_'+m.bit);
+    if(cb) cb.checked = !!(val & m.bit);
+  });
+  document.getElementById('magic-fields').style.display = 'block';
+  toast('📖 마법 읽기 완료','ok');
+}
 
-// 마법 체크박스 UI 생성
-function buildMagicChecks(){
+function magicCheckAll(val){
+  MAGIC_TABLE.forEach(function(m){
+    var cb = document.getElementById('mc_'+m.off.toString(16).toUpperCase()+'_'+m.bit);
+    if(cb) cb.checked = val;
+  });
+}
+
+function applyMagic(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  if(!itemPatternAddr){ toast('⚠ 🎒 아이템 탐색 먼저 하세요','err'); return; }
+  var charIdx = parseInt(document.getElementById('magic-char-sel').value);
+  var base = statBase(charIdx);
+  [0x1A, 0x1B, 0x1C, 0x1D, 0x1E].forEach(function(off){
+    var newVal = 0;
+    MAGIC_TABLE.filter(function(m){ return m.off === off; }).forEach(function(m){
+      var cb = document.getElementById('mc_'+off.toString(16).toUpperCase()+'_'+m.bit);
+      if(cb && cb.checked) newVal |= m.bit;
+    });
+    mWrite(base + off, newVal, 8);
+  });
+  toast('✨ 마법 적용!','ok');
+}
+
+// 마법 체크박스 UI 생성 (페이지 로드 시 1회)
+(function buildMagicChecks(){
   var box = document.getElementById('magic-checks');
-  box.innerHTML = '';
+  if(!box) return;
   var groups = ['1A','1B','1C','1D','1E'];
   groups.forEach(function(g){
     var div = document.createElement('div');
@@ -982,97 +986,8 @@ function buildMagicChecks(){
     div.appendChild(row);
     box.appendChild(div);
   });
-}
+})();
 
-// 헥스 키패드
-function magicPadOpen(addrId){
-  magicPadTarget = addrId;
-  document.getElementById('magic-pad').style.display = 'block';
-  document.getElementById('magic-pad-lbl').textContent = addrId;
-}
-function magicPad(k){
-  if(!magicPadTarget) return;
-  var el = document.getElementById('mb'+magicPadTarget);
-  var cur = el.textContent === '00' ? '' : el.textContent.replace(/^0/,'');
-  if(k==='CLR'){ el.textContent='00'; return; }
-  if(k==='OK'){ document.getElementById('magic-pad').style.display='none'; magicPadTarget=null; return; }
-  var next = (cur+k).slice(-2);
-  el.textContent = ('0'+next).slice(-2).toUpperCase();
-}
-
-// 5바이트 패턴(1A~1E)으로 탐색
-function magicScan(){
-  var h = heap();
-  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var v1A = parseInt(document.getElementById('mb1A').textContent,16);
-  var v1B = parseInt(document.getElementById('mb1B').textContent,16);
-  var v1C = parseInt(document.getElementById('mb1C').textContent,16);
-  var v1D = parseInt(document.getElementById('mb1D').textContent,16);
-  var v1E = parseInt(document.getElementById('mb1E').textContent,16);
-
-  var results = [];
-  for(var i = SCAN_START; i < SCAN_END - 5; i++){
-    if(h[i]===v1A && h[i+1]===v1B && h[i+2]===v1C && h[i+3]===v1D && h[i+4]===v1E){
-      results.push(i);
-    }
-  }
-
-  var foundEl = document.getElementById('magic-found');
-  var addrEl  = document.getElementById('magic-found-addr');
-  foundEl.style.display = 'block';
-
-  if(results.length === 0){
-    addrEl.style.color = 'var(--red)';
-    addrEl.textContent = '결과 없음 — 바이트값 다시 확인';
-    magicBaseAddr = null;
-    toast('⚠ 패턴 없음','err'); return;
-  }
-
-  magicBaseAddr = results[0];
-  addrEl.style.color = 'var(--yellow)';
-  addrEl.textContent = results.length+'개 발견 → 0x'+results[0].toString(16);
-
-  // 현재 값으로 체크박스 갱신
-  MAGIC_TABLE.forEach(function(m){
-    var byteOff = m.off - 0x1A;
-    var val = h[magicBaseAddr + byteOff];
-    var cb = document.getElementById('mc_'+m.off.toString(16).toUpperCase()+'_'+m.bit);
-    if(cb) cb.checked = !!(val & m.bit);
-  });
-
-  toast('✅ '+results.length+'개 발견! 마법 ON/OFF 후 적용하세요','ok');
-}
-
-// 마법 전체 ON/OFF
-function magicCheckAll(val){
-  MAGIC_TABLE.forEach(function(m){
-    var cb = document.getElementById('mc_'+m.off.toString(16).toUpperCase()+'_'+m.bit);
-    if(cb) cb.checked = val;
-  });
-}
-
-// 적용
-function applyMagic(){
-  var h = heap();
-  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  if(!magicBaseAddr){ toast('⚠ 먼저 🔍 탐색을 하세요','err'); return; }
-
-  var offsets = [0x1A, 0x1B, 0x1C, 0x1D, 0x1E];
-  offsets.forEach(function(off){
-    var byteOff = off - 0x1A;
-    var addr = magicBaseAddr + byteOff;
-    var newVal = 0;
-    MAGIC_TABLE.filter(function(m){ return m.off === off; }).forEach(function(m){
-      var cb = document.getElementById('mc_'+off.toString(16).toUpperCase()+'_'+m.bit);
-      if(cb && cb.checked) newVal |= m.bit;
-    });
-    mWrite(addr, newVal, 8);
-  });
-
-  toast('✨ 마법 적용!','ok');
-}
-
-buildMagicChecks();
 var itemPatternAddr   = null;  // 찾은 슬롯1 코드 주소
 var itemSlotStep      = 1;     // 슬롯 간격 (1 or 2바이트)
 var itemScanCharIdx   = 0;     // 탐색 기준 캐릭터 번호
