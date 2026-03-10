@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.19</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.20</span>
   </div>
 </header>
 
@@ -809,11 +809,11 @@ var STAT_FIELDS = [
   {id:'sv_finDP', off:0x4A, bits:16, max:9999, label:'최종 DP'},
   {id:'sv_hit',   off:0x4C, bits:16, max:9999, label:'HIT'},
   {id:'sv_ev',    off:0x4E, bits:16, max:9999, label:'EV'},
-  {id:'sv_ap',    off:0x37, bits:8,  max:255,  label:'순수 AP'},
-  {id:'sv_dp',    off:0x39, bits:8,  max:255,  label:'순수 DP'},
-  {id:'sv_mv',    off:0x3A, bits:8,  max:255,  label:'MV'},
-  {id:'sv_ex',    off:0x3B, bits:8,  max:255,  label:'EX'},
-  {id:'sv_dx',    off:0x3D, bits:8,  max:255,  label:'DX'},
+  {id:'sv_ap',    off:0x36, bits:8,  max:255,  label:'순수 AP'},
+  {id:'sv_dp',    off:0x38, bits:8,  max:255,  label:'순수 DP'},
+  {id:'sv_mv',    off:0x39, bits:8,  max:99,   label:'MV'},
+  {id:'sv_ex',    off:0x3A, bits:8,  max:255,  label:'EX'},
+  {id:'sv_dx',    off:0x3C, bits:8,  max:255,  label:'DX'},
   {id:'sv_lv',    off:0x21, bits:8,  max:80,   label:'LV'},
   {id:'sv_atk',   off:0x22, bits:8,  max:255,  label:'공격술효과'},
   {id:'sv_def',   off:0x23, bits:8,  max:255,  label:'방어술효과'},
