@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.18</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.19</span>
   </div>
 </header>
 
@@ -1020,18 +1020,17 @@ function itemPatternScan(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
 
-  var slots = [1,2,3,4,5,6,7,8].map(function(n){
-    return getSlotValue(n);
-  });
-  // 없음(FF)이 아닌 슬롯만 패턴으로 사용 (최소 2개)
-  var pattern = slots.filter(function(v){ return v !== 0xFF; });
-  if(pattern.length < 2){ toast('⚠ 슬롯을 2개 이상 선택하세요','err'); return; }
+  var slots = [1,2,3,4,5,6,7,8].map(function(n){ return getSlotValue(n); });
+
+  // 아이템이 있는 슬롯이 최소 1개 필요
+  var nonEmpty = slots.filter(function(v){ return v !== 0xFF; });
+  if(nonEmpty.length < 1){ toast('⚠ 슬롯을 1개 이상 선택하세요','err'); return; }
 
   var results = [];
   [1,2].forEach(function(step){
-    outer: for(var i = SCAN_START; i < SCAN_END - step * slots.length; i++){
-      for(var j = 0; j < slots.length; j++){
-        if(slots[j] === 0xFF) continue; // 빈 슬롯은 무시
+    outer: for(var i = SCAN_START; i < SCAN_END - step * 8; i++){
+      for(var j = 0; j < 8; j++){
+        // 없음(FF)도 포함해서 모든 슬롯 완전 일치
         if(h[i + j*step] !== slots[j]) continue outer;
       }
       results.push({addr:i, step:step});
