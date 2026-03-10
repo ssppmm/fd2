@@ -163,7 +163,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.4</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.5</span>
   </div>
 </header>
 
@@ -628,53 +628,80 @@ function buildItemSelect(selId, defaultCode){
 buildItemSelect('item-new-sel', 0x0B);
 
 // ─── 아이템 직접 편집 ───
-// 메모리 맵: 캐릭터 블록 베이스 + 오프셋
-// 베이스: 0x18C6C0 (스테이지 맵 화면 기준), 캐릭터 간격 0x50
-// 아이템 슬롯: +0x0B(무기), +0x0D(갑옷), +0x0F(보조) — 각 1바이트(8bit)
-var ITEM_BASE = 0x18C6C0;
+// 캐릭터 블록: 간격 0x50, 아이템: +0x0B(무기) +0x0D(갑옷) +0x0F(보조)
 var ITEM_STEP = 0x50;
+var itemFoundBase = null;  // 동적으로 찾은 실제 베이스
 
-function itemCharBase(){
-  var idx = parseInt(document.getElementById('item-char-sel').value);
-  return ITEM_BASE + idx * ITEM_STEP;
+// 골드 주소 근처에서 캐릭터 블록 베이스 탐색
+// 조건: +0x02(캐릭터순서)=0, +0x06(적아군)=1(아군), +0x11(LV) 1~80
+function itemFindBase(){
+  var h = heap();
+  if(!h) return null;
+  // 골드 주소 기준 ±0x1000000 범위 탐색
+  var ref   = goldAddrs.length > 0 ? goldAddrs[0] : 0x20b94d3;
+  var start = Math.max(0x10000,  ref - 0x1000000);
+  var end   = Math.min(h.length, ref + 0x1000000);
+  var cands = [];
+  for(var i = start; i < end - 0x50; i++){
+    // +0x02=0(사울 순서), +0x06=1(아군), +0x11=LV(1~80)
+    if(h[i+0x02]===0 && h[i+0x06]===1){
+      var lv = h[i+0x11];
+      if(lv >= 1 && lv <= 80) cands.push(i);
+    }
+  }
+  return cands;
 }
 
 function itemSlotOff(){
   return parseInt(document.getElementById('item-slot-sel').value, 16);
 }
 
-// 현재 슬롯 아이템 읽기
+// 베이스 탐색 후 읽기
 function itemRead(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var addr = itemCharBase() + itemSlotOff();
-  var code = h[addr];  // 8bit
+
+  // 베이스 탐색
+  var cands = itemFindBase();
+  if(!cands || cands.length === 0){
+    toast('⚠ 캐릭터 블록을 찾지 못했습니다','err'); return;
+  }
+  // 후보가 여러 개면 첫 번째 사용 (로그에 표시)
+  itemFoundBase = cands[0];
+
+  var idx  = parseInt(document.getElementById('item-char-sel').value);
+  var addr = itemFoundBase + idx * ITEM_STEP + itemSlotOff();
+  var code = h[addr];
   var obj  = ITEMS.find(function(x){ return x.code === code; });
   var name = obj ? (obj.vip ? '🔥'+obj.name : obj.name) : ('알수없음(0x'+code.toString(16)+')');
+
   document.getElementById('item-cur-display').style.display = 'block';
   document.getElementById('item-cur-name').textContent = name;
-  document.getElementById('item-cur-addr').textContent = '  @0x'+addr.toString(16);
-  toast('📖 현재: '+name,'ok');
+  document.getElementById('item-cur-addr').textContent =
+    '  base:0x'+itemFoundBase.toString(16)+' addr:0x'+addr.toString(16)
+    + (cands.length>1 ? ' (후보'+cands.length+'개)' : '');
+  toast('📖 '+name,'ok');
 }
 
-// 선택한 아이템으로 쓰기
+// 적용
 function applyItem(){
   var h = heap();
   if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
-  var addr    = itemCharBase() + itemSlotOff();
+  if(!itemFoundBase){ toast('⚠ 먼저 📖 읽기를 눌러주세요','err'); return; }
+
+  var idx     = parseInt(document.getElementById('item-char-sel').value);
+  var addr    = itemFoundBase + idx * ITEM_STEP + itemSlotOff();
   var newCode = parseInt(document.getElementById('item-new-sel').value);
   var newObj  = ITEMS.find(function(x){ return x.code === newCode; });
   var newName = newObj ? newObj.name : '0x'+newCode.toString(16);
-  mWrite(addr, newCode, 8);  // 8bit 쓰기
-  // 검증
+
+  mWrite(addr, newCode, 8);
   var written = h[addr];
   if(written === (newCode & 0xFF)){
     toast('🎒 '+newName+' 적용!','ok');
-    document.getElementById('item-cur-name').textContent = newObj ? (newObj.vip?'🔥'+newName:newName) : newName;
-    document.getElementById('item-cur-addr').textContent = '  @0x'+addr.toString(16);
-    document.getElementById('item-cur-display').style.display = 'block';
+    document.getElementById('item-cur-name').textContent = newObj?(newObj.vip?'🔥'+newName:newName):newName;
   } else {
-    toast('⚠ 쓰기 실패 (읽힌값:'+written+')','err');
+    toast('⚠ 쓰기 실패 (written:0x'+written.toString(16)+')','err');
   }
 }
 
