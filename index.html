@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.39</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v41</span>
   </div>
 </header>
 
@@ -232,7 +232,7 @@
   <div class="editor-col">
     <div class="tabs">
       <div class="tab active" data-tab="gold">💰 골드</div>
-      <div class="tab" data-tab="items">🎒 아이템</div>
+      <div class="tab" data-tab="items">🔍 스캔</div>
       <div class="tab" data-tab="stat">👤 캐릭터</div>
       <div class="tab" data-tab="magic">✨ 마법</div>
     </div>
@@ -278,7 +278,7 @@
     <!-- 아이템 탭 -->
     <div class="tab-panel card" id="panel-items">
       <div class="card-hd">
-        <span class="card-ttl">🎒 아이템 편집</span>
+        <span class="card-ttl">🔍 아이템 스캔</span>
         <span class="badge b-blue" id="item-status">게임 시작 필요</span>
       </div>
       <div class="card-body" style="padding:10px;">
@@ -286,9 +286,8 @@
         <!-- 안내 -->
         <div style="font-size:9px;line-height:1.8;background:var(--surface2);padding:8px;border-radius:3px;margin-bottom:10px;">
           <b style="color:var(--accent);">📌 사용법</b><br>
-          게임에서 캐릭터 장비 화면 확인 → 슬롯1~4 아이템 선택<br>
-          <b>🔍 패턴 탐색</b> → 주소 찾기 → 바꿀 슬롯/아이템 선택 → <b>✅ 적용</b><br>
-          <span style="color:var(--muted);">슬롯이 비어있으면 없음(FF) 선택</span>
+          게임에서 1번째 캐릭터 장비 확인 → 슬롯1~8 아이템 선택<br>
+          <b>🔍 패턴 탐색</b> → 주소 확인 → 캐릭터 탭에서 아이템 변경
         </div>
 
         <!-- 슬롯 1~8 현재 아이템 입력 -->
@@ -313,41 +312,6 @@
           <div id="item-result-dump" style="font-family:monospace;font-size:7px;color:var(--muted);margin-top:4px;white-space:pre;"></div>
         </div>
 
-        <hr class="divider">
-
-        <!-- ② 바꿀 슬롯 + 아이템 -->
-        <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:8px;">
-          <div style="flex:1;">
-            <div class="lbl" style="margin-bottom:4px;">② 슬롯</div>
-            <select id="item-slot-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:6px;font-size:9px;">
-              <option value="0">슬롯 1</option>
-              <option value="1">슬롯 2</option>
-              <option value="2">슬롯 3</option>
-              <option value="3">슬롯 4</option>
-              <option value="4">슬롯 5</option>
-              <option value="5">슬롯 6</option>
-              <option value="6">슬롯 7</option>
-              <option value="7">슬롯 8</option>
-            </select>
-          </div>
-          <div style="flex:2;">
-            <div class="lbl" style="margin-bottom:4px;">③ 바꿀 아이템 <span style="color:#ff9900;font-size:7px;">🔥OB</span></div>
-            <select id="item-new-sel" style="width:100%;background:var(--surface);color:var(--text);border:2px solid var(--green);border-radius:4px;padding:6px;font-size:9px;">
-            </select>
-          </div>
-        </div>
-
-        <!-- 적용 결과 표시 -->
-        <div id="item-cur-display" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px;margin-bottom:8px;font-size:9px;text-align:center;">
-          적용: <span id="item-cur-name" style="color:var(--yellow);font-weight:bold;"></span>
-          <span style="color:var(--muted);font-size:7px;" id="item-cur-addr"></span>
-        </div>
-
-        <!-- 적용 버튼 -->
-        <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="applyItem()">✅ 적용</button>
-        <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">
-          적용 후 전투/화면전환 시 게임에 반영됨
-        </div>
       </div>
     </div>
 
@@ -767,6 +731,12 @@ function buildItemSelect(selId, defaultCode){
   var sel = document.getElementById(selId);
   if(!sel) return;
   sel.innerHTML = '';
+  // 없음 옵션 맨 위
+  var optNone = document.createElement('option');
+  optNone.value = 0xFF;
+  optNone.textContent = '--- 없음 (빈 슬롯) ---';
+  if(defaultCode === 0xFF) optNone.selected = true;
+  sel.appendChild(optNone);
   ITEMS.forEach(function(item){
     var opt = document.createElement('option');
     opt.value = item.code;
@@ -1204,7 +1174,6 @@ document.querySelectorAll('.touch-btn[data-key]').forEach(function(b){var k=b.ge
 
 // 초기화
 dbGet(SAV).then(function(d){document.getElementById('save-notice').textContent=d?'💾 저장된 세이브 있음':'';});
-buildItemSelect('item-new-sel', 0x0B);
 for(var _i=1;_i<=8;_i++) buildSlotSelect('slot'+_i+'-sel');
 for(var _j=1;_j<=8;_j++) buildItemSelect('ci-slot'+_j, 0xFF);
 </script>
