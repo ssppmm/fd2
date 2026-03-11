@@ -57,6 +57,8 @@
     .btn-dl:hover    { background: var(--blue);  color: #000; }
     .btn-ul    { background: transparent; border-color: var(--green); color: var(--green); }
     .btn-ul:hover    { background: var(--green); color: #000; }
+    .btn-del   { background: transparent; border-color: var(--red);   color: var(--red); }
+    .btn-del:hover   { background: var(--red);   color: #fff; }
     .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
     .touch-controls { display: none; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-top: 8px; }
@@ -165,7 +167,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v41</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v42</span>
   </div>
 </header>
 
@@ -208,6 +210,7 @@
       <button class="btn btn-save"  id="btn-save">💾 저장</button>
       <button class="btn btn-dl"    id="btn-dl">⬇ 다운로드</button>
       <button class="btn btn-ul"    id="btn-ul-t">⬆ 불러오기</button>
+      <button class="btn btn-del"   id="btn-del">🗑 삭제</button>
       <button class="btn btn-ghost" id="btn-full">⛶ 전체화면</button>
       <input type="file" id="btn-ul" accept=".SAV,.sav" style="display:none" />
     </div>
@@ -588,6 +591,18 @@ function dbSet(k,v){return openDB().then(function(db){return new Promise(functio
 function doSave(){if(!fs0){toast('⚠ 게임 실행 후 저장하세요','err');return;}try{var d=fs0.fs.readFile('/'+SAV);if(d&&d.length>0){dbSet(SAV,d).then(function(){toast('💾 저장 완료!','ok');log('세이브 저장 ('+d.length+' bytes)','ok');document.getElementById('save-notice').textContent='💾 저장된 세이브 있음';});}else{toast('⚠ 게임에서 먼저 저장하세요','err');}}catch(e){toast('⚠ 저장 실패','err');log('저장 실패: '+e.message,'err');}}
 function doDl(){var d=null;if(fs0){try{d=fs0.fs.readFile('/'+SAV);}catch(e){}}if(d&&d.length>0){dlBlob(d);return;}dbGet(SAV).then(function(s){if(s&&s.length>0)dlBlob(s);else toast('⚠ 먼저 💾 저장을 누르세요','err');});}
 function dlBlob(d){var b=new Blob([d],{type:'application/octet-stream'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='FD2.SAV';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);toast('⬇ FD2.SAV 다운로드!','ok');}
+function doDelete(){
+  if(!confirm('IndexedDB 세이브 데이터를 삭제할까요?\n(PC에 다운로드된 파일은 유지됩니다)')) return;
+  openDB().then(function(db){
+    var tx = db.transaction('saves','readwrite');
+    tx.objectStore('saves').delete(SAV);
+    tx.oncomplete = function(){
+      toast('🗑 세이브 삭제 완료','ok');
+      log('IndexedDB 세이브 삭제','ok');
+      document.getElementById('save-notice').textContent='';
+    };
+  });
+}
 function doUpload(file){var r=new FileReader();r.onload=function(e){var d=new Uint8Array(e.target.result);dbSet(SAV,d).then(function(){if(fs0){try{fs0.fs.writeFile('/'+SAV,d);}catch(err){}}toast('⬆ 불러오기 완료!','ok');log('세이브 불러오기 ('+d.length+' bytes)','ok');document.getElementById('save-notice').textContent='💾 저장된 세이브 있음';});};r.readAsArrayBuffer(file);}
 
 // ─── 게임 시작 ───
@@ -1157,6 +1172,7 @@ function applyItem(){
 document.getElementById('btn-start').addEventListener('click',startGame);
 document.getElementById('btn-play').addEventListener('click',startGame);
 document.getElementById('btn-save').addEventListener('click',doSave);
+document.getElementById('btn-del').addEventListener('click',doDelete);
 document.getElementById('btn-dl').addEventListener('click',doDl);
 document.getElementById('btn-ul-t').addEventListener('click',function(){document.getElementById('btn-ul').click();});
 document.getElementById('btn-ul').addEventListener('change',function(e){if(e.target.files[0])doUpload(e.target.files[0]);e.target.value='';});
