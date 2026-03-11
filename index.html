@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.37</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.38</span>
   </div>
 </header>
 
@@ -292,25 +292,7 @@
         </div>
 
         <!-- 슬롯 1~8 현재 아이템 입력 -->
-        <div class="lbl" style="margin-bottom:4px;">① 탐색 기준 캐릭터</div>
-        <select id="item-scan-char" style="width:100%;background:var(--surface);color:var(--yellow);border:2px solid var(--accent);border-radius:3px;padding:6px;font-size:9px;margin-bottom:8px;font-weight:bold;">
-          <option value="0">01번째 캐릭</option><option value="1">02번째 캐릭</option>
-          <option value="2">03번째 캐릭</option><option value="3">04번째 캐릭</option>
-          <option value="4">05번째 캐릭</option><option value="5">06번째 캐릭</option>
-          <option value="6">07번째 캐릭</option><option value="7">08번째 캐릭</option>
-          <option value="8">09번째 캐릭</option><option value="9">10번째 캐릭</option>
-          <option value="10">11번째 캐릭</option><option value="11">12번째 캐릭</option>
-          <option value="12">13번째 캐릭</option><option value="13">14번째 캐릭</option>
-          <option value="14">15번째 캐릭</option><option value="15">16번째 캐릭</option>
-          <option value="16">17번째 캐릭</option><option value="17">18번째 캐릭</option>
-          <option value="18">19번째 캐릭</option><option value="19">20번째 캐릭</option>
-          <option value="20">21번째 캐릭</option><option value="21">22번째 캐릭</option>
-          <option value="22">23번째 캐릭</option><option value="23">24번째 캐릭</option>
-          <option value="24">25번째 캐릭</option><option value="25">26번째 캐릭</option>
-          <option value="26">27번째 캐릭</option><option value="27">28번째 캐릭</option>
-          <option value="28">29번째 캐릭</option><option value="29">30번째 캐릭</option>
-        </select>
-        <div class="lbl" style="margin-bottom:6px;">② 해당 캐릭터의 현재 장착 아이템</div>
+        <div class="lbl" style="margin-bottom:6px;">① 해당 캐릭터의 현재 장착 아이템 <span style="color:var(--accent);font-size:8px;">(1번째 캐릭 기준 자동 탐색)</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="slot-grid">
           <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 1</div><select id="slot1-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
           <div><div style="font-size:7px;color:var(--muted);margin-bottom:2px;">슬롯 5</div><select id="slot5-sel" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
@@ -1071,7 +1053,7 @@ function itemPatternScan(){
   var r = results[0];
   itemPatternAddr   = r.addr;
   itemSlotStep      = r.step;
-  itemScanCharIdx   = parseInt(document.getElementById('item-scan-char').value);
+  itemScanCharIdx   = 0;  // 항상 1번째 캐릭 기준
 
   addrEl.style.color = 'var(--yellow)';
   addrEl.textContent = results.length+'개 발견 → 0x'+r.addr.toString(16)+' (step='+r.step+')';
