@@ -165,7 +165,7 @@
   <div class="logo">🐉 FD2</div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
   <div class="header-links">
-    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.38</span>
+    <span style="color:var(--yellow);font-size:10px;font-weight:bold;">v2026.03.10.39</span>
   </div>
 </header>
 
@@ -233,7 +233,7 @@
     <div class="tabs">
       <div class="tab active" data-tab="gold">💰 골드</div>
       <div class="tab" data-tab="items">🎒 아이템</div>
-      <div class="tab" data-tab="stat">⚔ 스탯</div>
+      <div class="tab" data-tab="stat">👤 캐릭터</div>
       <div class="tab" data-tab="magic">✨ 마법</div>
     </div>
 
@@ -354,7 +354,7 @@
     <!-- 스탯 탭 -->
     <div class="tab-panel card" id="panel-stat">
       <div class="card-hd">
-        <span class="card-ttl">⚔ 스탯 편집</span>
+        <span class="card-ttl">👤 캐릭터 편집</span>
         <span class="badge b-blue" id="stat-status">아이템 탐색 먼저</span>
       </div>
       <div class="card-body" style="padding:10px;">
@@ -422,7 +422,24 @@
             <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">봉쇄술효과</div><div id="sv_blk" class="stat-disp" data-off="0x27" data-bits="8"></div></div>
           </div>
 
-          <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="statApply()">✅ 적용</button>
+          <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="statApply()">✅ 스탯 적용</button>
+          <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">적용 후 전투/화면전환 시 반영됨</div>
+
+          <hr class="divider" style="margin:12px 0;">
+
+          <!-- 아이템 섹션 -->
+          <div style="font-size:7px;color:var(--accent);font-family:var(--font-pixel);margin-bottom:8px;">▶ 장착 아이템</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="char-item-grid">
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 1</div><select id="ci-slot1" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 5</div><select id="ci-slot5" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 2</div><select id="ci-slot2" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 6</div><select id="ci-slot6" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 3</div><select id="ci-slot3" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 7</div><select id="ci-slot7" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 4</div><select id="ci-slot4" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+            <div><div class="lbl" style="margin-bottom:2px;font-size:7px;">슬롯 8</div><select id="ci-slot8" style="width:100%;background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:3px;padding:3px 2px;font-size:8px;"></select></div>
+          </div>
+          <button class="btn btn-accent" style="width:100%;padding:9px;font-size:10px;" onclick="charItemApply()">✅ 아이템 적용</button>
           <div style="margin-top:5px;font-size:7px;color:var(--muted);text-align:center;">적용 후 전투/화면전환 시 반영됨</div>
         </div>
       </div>
@@ -823,6 +840,27 @@ function statRead(){
   });
 
   document.getElementById('stat-fields').style.display = 'block';
+
+  // 아이템 슬롯 읽기 (캐릭터 탭)
+  if(itemPatternAddr){
+    var block0 = itemPatternAddr - ITEM1_OFF - itemScanCharIdx * STAT_STEP;
+    var itemBase = block0 + charIdx * STAT_STEP + ITEM1_OFF;
+    for(var s=1;s<=8;s++){
+      var slotAddr = itemBase + (s-1) * itemSlotStep;
+      var code = h[slotAddr];
+      var sel = document.getElementById('ci-slot'+s);
+      if(sel){
+        // 옵션 없으면 빌드
+        if(sel.options.length === 0) buildItemSelect('ci-slot'+s, code);
+        // 현재 코드로 선택
+        for(var o=0;o<sel.options.length;o++){
+          if(parseInt(sel.options[o].value)===code){ sel.selectedIndex=o; break; }
+        }
+        sel.dataset.addr = slotAddr;
+      }
+    }
+  }
+
   toast('📖 스탯 읽기 완료 (base: 0x'+base.toString(16)+')','ok');
 }
 
@@ -864,6 +902,23 @@ function statApply(){
   });
   toast('⚔ 스탯 '+cnt+'개 적용!','ok');
 }
+// 캐릭터 탭 아이템 일괄 적용
+function charItemApply(){
+  var h = heap();
+  if(!h){ toast('⚠ 게임을 먼저 시작하세요','err'); return; }
+  if(!itemPatternAddr){ toast('⚠ 🎒 아이템 탐색 먼저 하세요','err'); return; }
+  var cnt = 0;
+  for(var s=1;s<=8;s++){
+    var sel = document.getElementById('ci-slot'+s);
+    if(!sel || !sel.dataset.addr) continue;
+    var addr = parseInt(sel.dataset.addr);
+    var code = parseInt(sel.value);
+    mWrite(addr, code, 8);
+    cnt++;
+  }
+  toast('🎒 아이템 '+cnt+'개 적용!','ok');
+}
+
 // 주소 오프셋(캐릭터 베이스+off): 1A~1E, 각 바이트의 비트가 마법 ON/OFF
 var MAGIC_TABLE = [
   { off:0x1A, bit:0x10, name:'뇌격술' },
@@ -1151,6 +1206,7 @@ document.querySelectorAll('.touch-btn[data-key]').forEach(function(b){var k=b.ge
 dbGet(SAV).then(function(d){document.getElementById('save-notice').textContent=d?'💾 저장된 세이브 있음':'';});
 buildItemSelect('item-new-sel', 0x0B);
 for(var _i=1;_i<=8;_i++) buildSlotSelect('slot'+_i+'-sel');
+for(var _j=1;_j<=8;_j++) buildItemSelect('ci-slot'+_j, 0xFF);
 </script>
 </body>
 </html>
