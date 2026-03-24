@@ -25,46 +25,40 @@
     .status-off  { background: var(--red);   color: #fff; }
     .status-load { background: var(--blue);  color: #000; }
     .status-on   { background: var(--green); color: #000; }
-    main { max-width: 1300px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+    main { max-width: 1300px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 1fr 380px; gap: 16px; align-items: start; }
     @media (max-width: 960px) { main { grid-template-columns: 1fr; } }
 
     /* ══ 기본 플레이어 ══ */
     .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-    /* DOSBox 캔버스: 320×200 비율 = 62.5vw 높이, 가로폭 꽉 채움 */
-    #canvas { width: 100%; height: auto; max-height: 60vh; display: block; }
+    /* 헤더(~44px) + 툴바(~46px) + padding(32px) 제외한 높이를 캔버스가 꽉 채움 */
+    #canvas { width: 100%; height: auto; max-height: calc(100vh - 140px); display: block; }
 
-    /* ══ 터치컨트롤: 캔버스 위 오버레이 ══ */
-    .touch-controls {
-      display: none;
-      position: absolute; bottom: 0; left: 0; right: 0;
-      height: 100%; pointer-events: none;
-      z-index: 50;
-    }
-    .touch-controls .dpad {
-      position: absolute; bottom: 10px; left: 10px;
-      pointer-events: all;
-    }
-    .touch-controls .act-btns {
-      position: absolute; bottom: 10px; right: 10px;
-      pointer-events: all;
-    }
+    /* ══ 터치컨트롤 기본: 숨김 ══ */
+    .touch-controls { display: none; }
 
-    /* ══ 모바일 일반: player-wrapper 높이를 320×200 비율로 고정 ══ */
+    /* ══ 모바일 일반화면: 캔버스 아래 D패드 배치 ══ */
     @media (pointer: coarse) {
-      /* 가로폭 100% 기준으로 200/320 = 62.5% 높이 확보 */
       .player-wrapper {
-        height: 0 !important;
-        padding-bottom: 62.5% !important;
-        overflow: visible !important;
+        display: flex; flex-direction: column;
+        overflow: hidden;
+        padding-bottom: 0 !important; height: auto !important;
       }
-      /* 캔버스는 wrapper 위치에 absolute로 꽉 채움 */
       #canvas {
-        position: absolute !important;
-        top: 0 !important; left: 0 !important;
-        width: 100% !important; height: 100% !important;
-        max-height: none !important;
+        position: static !important;
+        width: 100% !important; height: auto !important;
+        max-height: none !important; display: block;
       }
-      .touch-controls { display: block !important; overflow: visible; }
+      .touch-controls {
+        display: flex !important;
+        position: static !important;
+        width: 100%; height: 130px;
+        justify-content: space-between; align-items: center;
+        padding: 6px 16px;
+        background: #0a0a0f;
+        pointer-events: all;
+      }
+      .touch-controls .dpad  { position: static !important; }
+      .touch-controls .act-btns { position: static !important; }
       .pc-ctrl { display: none !important; }
     }
 
@@ -245,7 +239,7 @@
 </head>
 <body>
 <header>
-  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v51</span></div>
+  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v53</span></div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
 
 </header>
