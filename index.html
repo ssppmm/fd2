@@ -51,14 +51,19 @@
       .touch-controls {
         display: flex !important;
         position: static !important;
-        width: 100%; height: 130px;
-        justify-content: space-between; align-items: center;
-        padding: 6px 16px;
+        width: 100%; height: 160px;
+        justify-content: space-around; align-items: center;
+        padding: 8px 12px;
         background: #0a0a0f;
         pointer-events: all;
+        box-sizing: border-box;
       }
       .touch-controls .dpad  { position: static !important; }
       .touch-controls .act-btns { position: static !important; }
+      /* 모바일 일반: 버튼 48px로 축소해서 160px 안에 수납 */
+      .touch-controls .touch-btn { width: 48px !important; height: 48px !important; font-size: 17px !important; }
+      .touch-controls .touch-btn.act { width: 68px !important; height: 48px !important; font-size: 12px !important; }
+      .touch-controls .dpad { grid-template-columns: repeat(3, 48px) !important; grid-template-rows: repeat(3, 48px) !important; gap: 4px !important; }
       .pc-ctrl { display: none !important; }
     }
 
@@ -239,7 +244,7 @@
 </head>
 <body>
 <header>
-  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v54</span></div>
+  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v55</span></div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
 
 </header>
