@@ -244,7 +244,7 @@
 </head>
 <body>
 <header>
-  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v55</span></div>
+  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v56</span></div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
 
 </header>
@@ -738,18 +738,8 @@ document.addEventListener('fullscreenchange', onFsChange);
 document.addEventListener('webkitfullscreenchange', onFsChange);
 document.addEventListener('mozfullscreenchange', onFsChange);
 
-// ESC 키를 capture 단계에서 가로채 브라우저 전체화면 해제 차단
-// 게임에는 ESC를 그대로 전달
-document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape' && isFullscreenActive()){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    // 게임 캔버스에 ESC 전달
-    var cv = document.getElementById('canvas');
-    var ev = new KeyboardEvent('keydown', {key:'Escape', code:'Escape', keyCode:27, bubbles:true, cancelable:true});
-    cv.dispatchEvent(ev);
-  }
-}, true); // capture:true — 브라우저보다 먼저 실행
+
+
 
 
 // ─── 아이템 데이터 (코드 = txt 파일 기준 정확한 16진수) ───
