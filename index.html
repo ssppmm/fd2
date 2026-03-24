@@ -30,9 +30,10 @@
 
     /* ══ 기본 플레이어 ══ */
     .player-wrapper { position: relative; background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    /* DOSBox 캔버스: 320×200 비율 = 62.5vw 높이, 가로폭 꽉 채움 */
     #canvas { width: 100%; height: auto; max-height: 60vh; display: block; }
 
-    /* ══ 터치컨트롤: 캔버스 위 오버레이 (항상 absolute) ══ */
+    /* ══ 터치컨트롤: 캔버스 위 오버레이 ══ */
     .touch-controls {
       display: none;
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -48,9 +49,22 @@
       pointer-events: all;
     }
 
-    /* ══ 모바일 일반: 오버레이 표시 ══ */
+    /* ══ 모바일 일반: player-wrapper 높이를 320×200 비율로 고정 ══ */
     @media (pointer: coarse) {
-      .touch-controls { display: block !important; }
+      /* 가로폭 100% 기준으로 200/320 = 62.5% 높이 확보 */
+      .player-wrapper {
+        height: 0 !important;
+        padding-bottom: 62.5% !important;
+        overflow: visible !important;
+      }
+      /* 캔버스는 wrapper 위치에 absolute로 꽉 채움 */
+      #canvas {
+        position: absolute !important;
+        top: 0 !important; left: 0 !important;
+        width: 100% !important; height: 100% !important;
+        max-height: none !important;
+      }
+      .touch-controls { display: block !important; overflow: visible; }
       .pc-ctrl { display: none !important; }
     }
 
@@ -193,7 +207,7 @@
 </head>
 <body>
 <header>
-  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v50</span></div>
+  <div class="logo">🐉 FD2 <span style="font-size:10px;color:var(--yellow);font-weight:bold;vertical-align:middle;">v52</span></div>
   <span class="game-status status-off" id="gs">게임 꺼짐</span>
 
 </header>
@@ -661,31 +675,57 @@ function startGame(){
     });
   });
 }
+var fsIntentionalExit = false;
 function isFullscreenActive(){
   return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
 }
 function fullscreen(){
-  var el = document.documentElement; // 항상 전체 페이지 기준으로 네이티브 전체화면
+  var el = document.documentElement;
   if(!isFullscreenActive()){
     var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
     if(req) req.call(el);
   } else {
+    fsIntentionalExit = true; // 버튼으로 의도적 해제
     var ex = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
     if(ex) ex.call(document);
   }
 }
 
 // 전체화면 진입/해제 시 body 클래스로 CSS 제어
+
 function onFsChange(){
   if(isFullscreenActive()){
     document.body.classList.add('is-fullscreen');
+    fsIntentionalExit = false;
   } else {
     document.body.classList.remove('is-fullscreen');
+    // 의도치 않은 해제(ESC 등)면 자동 재진입 시도
+    if(!fsIntentionalExit){
+      setTimeout(function(){
+        var el = document.documentElement;
+        var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+        if(req) req.call(el).catch(function(){});
+      }, 100);
+    }
+    fsIntentionalExit = false;
   }
 }
 document.addEventListener('fullscreenchange', onFsChange);
 document.addEventListener('webkitfullscreenchange', onFsChange);
 document.addEventListener('mozfullscreenchange', onFsChange);
+
+// ESC 키를 capture 단계에서 가로채 브라우저 전체화면 해제 차단
+// 게임에는 ESC를 그대로 전달
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && isFullscreenActive()){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    // 게임 캔버스에 ESC 전달
+    var cv = document.getElementById('canvas');
+    var ev = new KeyboardEvent('keydown', {key:'Escape', code:'Escape', keyCode:27, bubbles:true, cancelable:true});
+    cv.dispatchEvent(ev);
+  }
+}, true); // capture:true — 브라우저보다 먼저 실행
 
 
 // ─── 아이템 데이터 (코드 = txt 파일 기준 정확한 16진수) ───
